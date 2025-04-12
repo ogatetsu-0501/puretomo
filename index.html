@@ -1,122 +1,127 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <!-- ここでページの基本情報を設定します -->
+    <!-- ページの基本情報を設定 -->
     <meta charset="UTF-8" />
-    <!-- 文字コードUTF-8に設定 -->
+    <!-- 文字コードUTF-8 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- 画面サイズに合わせる -->
+    <!-- 画面サイズに対応 -->
     <title>アバター管理画面</title>
     <!-- ページのタイトル -->
 
     <style>
       /* ----- 全体の基本設定 ----- */
       body {
-        font-family: Arial, sans-serif; /* 読みやすいフォントを指定 */
-        margin: 0; /* 余白なし */
-        padding: 0; /* 余白なし */
-        display: flex; /* 横並びに配置 */
+        font-family: Arial, sans-serif; /* 読みやすいフォント */
+        margin: 0; /* 余白をなくす */
+        padding: 0; /* 余白をなくす */
+        display: flex; /* レイアウトをflexで設定 */
         flex-direction: column; /* 上下に配置 */
-        height: 100vh; /* 画面全体の高さにする */
+        height: 100vh; /* 画面全体の高さ */
       }
-      /* ----- ヘッダー部分（ハンバーガーメニュー付き） ----- */
+      /* ----- ヘッダー部分 ----- */
       header {
-        display: flex; /* 横並び */
+        display: flex; /* 横並びに */
         align-items: center; /* 縦方向中央寄せ */
-        background-color: #4caf50; /* ヘッダーの背景色（緑） */
-        color: white; /* ヘッダーの文字色を白に */
-        padding: 10px; /* 内側の余白 */
+        background-color: #4caf50; /* 緑の背景 */
+        color: white; /* 文字色は白 */
+        padding: 10px; /* 内側に10pxの余白 */
       }
-      /* ハンバーガーメニューボタンのスタイル */
       .hamburger {
-        font-size: 24px; /* 文字サイズ大きく */
-        cursor: pointer; /* マウスポインタに */
-        margin-right: 10px; /* 右側に少し余白 */
+        font-size: 24px; /* 大きな文字サイズ */
+        cursor: pointer; /* マウスカーソルをポインターに */
+        margin-right: 10px; /* 右側に余白 */
       }
-      /* ----- メインエリア（左側：メニューと左パネル、右側：一覧表示） ----- */
+      /* ----- メインエリア ----- */
       .main-container {
-        flex: 1; /* 画面残り全体を使う */
+        flex: 1; /* 残りの領域を利用 */
         display: flex; /* 左右に配置 */
-        overflow: hidden; /* はみ出しを隠す */
+        overflow: hidden; /* はみ出し部分は隠す */
       }
-      /* 左側のサイドバー（メニュー）のスタイル */
+      /* サイドバー（メニュー）の設定 */
       .sidebar {
-        width: 200px; /* サイドバーの幅 */
-        background-color: #333; /* 背景を暗く */
-        color: white; /* 文字色を白に */
+        width: 200px; /* 幅200px */
+        background-color: #333; /* 暗い背景 */
+        color: white; /* 文字色は白 */
         display: none; /* 初期は非表示 */
         flex-shrink: 0; /* 幅固定 */
       }
-      /* サイドバー内のメニューリスト */
       .sidebar ul {
         list-style: none; /* 箇条書きの点をなくす */
         padding: 0; /* 内側余白なし */
         margin: 0; /* 外側余白なし */
       }
       .sidebar li {
-        padding: 15px; /* 余白を設定 */
-        cursor: pointer; /* マウスカーソルをポインターに */
+        padding: 15px; /* 各項目に15pxの余白 */
+        cursor: pointer; /* カーソルをポインターに */
       }
       .sidebar li:hover {
         background-color: #575757; /* ホバー時に背景色変更 */
       }
-      /* 左側のコンテンツエリア（フォーム部分）のスタイル */
+      /* 左側パネル（入力や設定フォーム）の設定 */
       .left-panel {
         width: 30%; /* 画面の30%の幅 */
-        padding: 20px; /* 内側の余白 */
-        box-sizing: border-box; /* パディングも含む */
+        padding: 20px; /* 内側余白20px */
+        box-sizing: border-box; /* パディングも含める */
       }
-      /* 右側のエリア（一覧表示）のスタイル */
+      /* 右側パネル（一覧表示）の設定 */
       .right-panel {
         width: 70%; /* 画面の70%の幅 */
-        padding: 20px; /* 内側の余白 */
+        padding: 20px; /* 内側余白20px */
         box-sizing: border-box; /* パディングも含む */
-        overflow-y: auto; /* 縦スクロール可能に */
+        overflow-y: auto; /* 縦方向スクロール可能 */
       }
       /* ----- フォームや表の共通設定 ----- */
       .form-group {
-        margin-bottom: 15px; /* フォームグループ間の下余白 */
+        margin-bottom: 15px; /* 各フォームグループの下余白 */
       }
       input[type="text"],
       input[type="number"],
       select {
-        width: 100%; /* 入力欄を横いっぱいに */
-        padding: 5px; /* 内側の余白 */
+        width: 100%; /* 幅100% */
+        padding: 5px; /* 内側に5pxの余白 */
         box-sizing: border-box; /* パディング含む幅計算 */
       }
       button {
         padding: 10px; /* ボタン内余白 */
-        width: 100%; /* 幅いっぱい */
-        background-color: #4caf50; /* 緑背景 */
+        width: 100%; /* 幅100% */
+        background-color: #4caf50; /* 緑の背景 */
         border: none; /* 枠線なし */
-        color: white; /* 文字色白 */
+        color: white; /* 文字色は白 */
         font-size: 16px; /* 文字サイズ16px */
-        cursor: pointer; /* カーソルポインター */
+        cursor: pointer; /* カーソルをポインターに */
       }
       button:disabled {
         background-color: #cccccc; /* 無効時はグレー */
-        cursor: not-allowed; /* 使用不可カーソル */
+        cursor: not-allowed; /* 禁止カーソル */
       }
-      /* 表形式の表示設定 */
       table {
-        width: 100%; /* 表の幅いっぱい */
-        border-collapse: collapse; /* セルの境界をくっつける */
+        width: 100%; /* 表全体の幅100% */
+        border-collapse: collapse; /* セルの枠線を結合 */
       }
       th,
       td {
-        border: 1px solid #ccc; /* セルの境界線 */
-        padding: 8px; /* セル内余白 */
+        border: 1px solid #ccc; /* 薄い枠線 */
+        padding: 8px; /* セル内に8pxの余白 */
         text-align: center; /* 中央寄せ */
       }
       th {
-        background-color: #e0e0e0; /* ヘッダーの背景色 */
+        background-color: #e0e0e0; /* ヘッダー背景色 */
+      }
+      /* 更新希望ステータスのチェックボックス群の設定 */
+      .update-status-group {
+        display: flex; /* 横並びに */
+        flex-wrap: wrap; /* 複数行に折り返す */
+      }
+      .update-status-group label {
+        margin-right: 10px; /* チェックボックス間に余白 */
       }
     </style>
   </head>
   <body>
-    <!-- ヘッダー部分 -->
+    <!-- ヘッダー -->
     <header>
-      <!-- ハンバーガーメニューアイコン -->
+      <!-- ハンバーガーアイコン -->
       <div class="hamburger" id="hamburgerBtn">&#9776;</div>
       <!-- ヘッダーのタイトル -->
       <h1 style="margin: 0; font-size: 18px">アバター管理</h1>
@@ -124,21 +129,22 @@
 
     <!-- メインエリア -->
     <div class="main-container">
-      <!-- サイドバー（ハンバーガーメニューをクリックしたときに表示） -->
+      <!-- サイドバー（メニュー） -->
       <div class="sidebar" id="sidebar">
         <ul>
           <!-- メニュー項目 -->
           <li data-target="avatarForm">所持アバター追加</li>
           <li data-target="settings">設定</li>
+          <li data-target="tradeSearch">販売アバター検索</li>
         </ul>
       </div>
 
-      <!-- 左側パネル：メニュー切り替えに応じたコンテンツ -->
+      <!-- 左側パネル：各フォームの表示領域 -->
       <div class="left-panel" id="leftPanel">
-        <!-- 初期表示は「所持アバター追加」 -->
+        <!-- 所持アバター追加フォーム（初期表示） -->
         <div id="avatarForm">
           <h2>所持アバター追加</h2>
-          <!-- パーツ（予測変換付き） -->
+          <!-- パーツ入力（予測変換付き） -->
           <div class="form-group">
             <label for="partInput">パーツ（表示名）:</label>
             <input
@@ -176,7 +182,7 @@
               <option value="モイトイ"></option>
             </datalist>
           </div>
-          <!-- 種類①（予測変換付き） -->
+          <!-- 種類①入力（予測変換付き） -->
           <div class="form-group">
             <label for="type1Input">種類①:</label>
             <input
@@ -202,7 +208,7 @@
               <option value="VIT"></option>
             </datalist>
           </div>
-          <!-- 種類②（予測変換付き、任意） -->
+          <!-- 種類②入力（予測変換付き、任意） -->
           <div class="form-group">
             <label for="type2Input">種類②:</label>
             <input
@@ -242,24 +248,39 @@
           <button id="addButton" disabled>追加</button>
         </div>
 
-        <!-- 設定フォーム（初期は非表示） -->
+        <!-- 設定フォーム（非表示） -->
         <div id="settings" style="display: none">
           <h2>設定</h2>
           <!-- アバター性別選択 -->
           <div class="form-group">
             <label for="genderSelect">アバター性別選択:</label>
-            <!-- セレクトボックス。値はFまたはM、表示は「女」と「男」 -->
             <select id="genderSelect">
               <option value="F">女</option>
               <option value="M">男</option>
             </select>
           </div>
-          <!-- 保存ボタン -->
+          <!-- 更新希望ステータスチェックボックス群 -->
+          <div class="form-group">
+            <label>更新希望ステータス:</label>
+            <div id="updateStatusContainer" class="update-status-group">
+              <!-- チェックボックスはJavaScriptで生成 -->
+            </div>
+          </div>
+          <!-- 設定保存ボタン -->
           <button id="saveSettingsButton">設定を保存</button>
+        </div>
+
+        <!-- 販売アバター検索フォーム（非表示） -->
+        <div id="tradeSearch" style="display: none">
+          <h2>販売アバター検索</h2>
+          <!-- combinedData.json の読み込み結果を表示するエリア -->
+          <div id="tradeDataDisplay">
+            <p>データ未読み込み</p>
+          </div>
         </div>
       </div>
 
-      <!-- 右側パネル：追加されたアバターの一覧を表形式で表示 -->
+      <!-- 右側パネル：所持アバター一覧を表形式で表示 -->
       <div class="right-panel">
         <h2>追加されたアバター一覧</h2>
         <table id="avatarTable">
@@ -273,7 +294,7 @@
             </tr>
           </thead>
           <tbody>
-            <!-- JavaScriptで行が追加されます -->
+            <!-- 各行はJavaScriptで生成 -->
           </tbody>
         </table>
       </div>
@@ -281,53 +302,56 @@
 
     <script>
       // ----- ハンバーガーメニューとサイドバーの処理 -----
-      // ヘッダーのハンバーガーメニューボタンを取得
-      const hamburgerBtn = document.getElementById("hamburgerBtn");
-      // サイドバーの要素を取得
-      const sidebar = document.getElementById("sidebar");
+      const hamburgerBtn = document.getElementById("hamburgerBtn"); // ハンバーガーアイコンを取得
+      const sidebar = document.getElementById("sidebar"); // サイドバーを取得
 
-      // ハンバーガーメニューボタンをクリックしたときの処理
+      // ハンバーガーアイコンをクリックするとサイドバーの表示/非表示を切り替える
       hamburgerBtn.addEventListener("click", function () {
-        // サイドバーが表示されていなければ表示、表示されていれば非表示にする
         if (sidebar.style.display === "none" || sidebar.style.display === "") {
-          sidebar.style.display = "block";
+          sidebar.style.display = "block"; // サイドバーを表示
         } else {
-          sidebar.style.display = "none";
+          sidebar.style.display = "none"; // サイドバーを非表示
         }
       });
 
-      // サイドバーのメニュー項目を取得し、クリック時の処理を設定
+      // サイドバー内の各メニュー項目を取得する
       const sidebarItems = document.querySelectorAll(".sidebar li");
-      // 左側パネルの中身を入れ替えるエリアを取得
-      const leftPanel = document.getElementById("leftPanel");
-      // 「所持アバター追加」と「設定」の要素を取得
+      // 左側パネル内の各フォームエリアを取得する
       const avatarFormDiv = document.getElementById("avatarForm");
       const settingsDiv = document.getElementById("settings");
+      const tradeSearchDiv = document.getElementById("tradeSearch");
 
-      // サイドバーの各項目にクリックイベントを設定する
+      // サイドバーの各項目にクリックイベントを設定
       sidebarItems.forEach(function (item) {
         item.addEventListener("click", function () {
-          // 選択されたターゲットを取得（data-target属性）
-          const target = item.getAttribute("data-target");
-          // サイドバーを非表示にする
-          sidebar.style.display = "none";
-          // 所持アバター追加と設定を切り替える
+          const target = item.getAttribute("data-target"); // クリックされた項目のdata-target属性を取得
+          sidebar.style.display = "none"; // サイドバーを閉じる
           if (target === "avatarForm") {
-            avatarFormDiv.style.display = "block";
+            avatarFormDiv.style.display = "block"; // 所持アバター追加フォームを表示
             settingsDiv.style.display = "none";
+            tradeSearchDiv.style.display = "none";
           } else if (target === "settings") {
             avatarFormDiv.style.display = "none";
-            settingsDiv.style.display = "block";
-            // 設定のセレクトボックスはローカルストレージから復元
+            settingsDiv.style.display = "block"; // 設定フォームを表示
+            tradeSearchDiv.style.display = "none";
+            // 性別設定をローカルストレージから復元
             const savedGender = localStorage.getItem("avatarGender");
             if (savedGender) {
               document.getElementById("genderSelect").value = savedGender;
             }
+            // 更新希望ステータスのチェックボックスを生成
+            generateUpdateStatusCheckboxes();
+          } else if (target === "tradeSearch") {
+            avatarFormDiv.style.display = "none";
+            settingsDiv.style.display = "none";
+            tradeSearchDiv.style.display = "block"; // 販売アバター検索フォームを表示
+            // 販売アバター検索用のデータ読み込み処理を呼び出す
+            loadTradeData();
           }
         });
       });
 
-      // ----- アバター追加フォームの処理 -----
+      // ----- 所持アバター追加フォームの処理 -----
       // パーツ表示名から隠し値へのマッピングオブジェクト
       const partsMapping = {
         トップス: "H",
@@ -374,9 +398,9 @@
         "VIT",
       ];
 
-      // グローバルなアバター情報リスト
+      // グローバルな所持アバター情報リスト
       let avatarList = [];
-      // ページ読み込み時にローカルストレージから復元
+      // ページ読み込み時にローカルストレージから所持アバター情報を復元
       window.addEventListener("load", function () {
         const storedData = localStorage.getItem("avatarList");
         if (storedData) {
@@ -397,44 +421,40 @@
       type1Input.addEventListener("change", function () {
         const selectedType1 = type1Input.value.trim();
         if (selectedType1 === "") {
-          // 種類①が空なら種類②を無効にして空にする
           type2Input.disabled = true;
           type2Input.value = "";
         } else {
-          // 種類①が入力されたら種類②を有効にし、候補を更新
           type2Input.disabled = false;
           updateType2Datalist(selectedType1);
         }
         checkInput();
       });
 
-      // パーツ、種類①、上昇値の入力が変更されたらチェック
+      // パーツ、種類①、上昇値の入力変更時にチェック
       partInput.addEventListener("input", checkInput);
       type1Input.addEventListener("input", checkInput);
       valueInput.addEventListener("input", checkInput);
 
-      // 入力必須項目のチェック：パーツ・種類①・上昇値
+      // 必須項目（パーツ、種類①、上昇値）のチェック関数
       function checkInput() {
         const isPartEntered = partInput.value.trim() !== "";
         const isType1Entered = type1Input.value.trim() !== "";
         const isValueEntered =
           valueInput.value.trim() !== "" && !isNaN(valueInput.value);
-        if (isPartEntered && isType1Entered && isValueEntered) {
-          addButton.disabled = false;
-        } else {
-          addButton.disabled = true;
-        }
+        addButton.disabled = !(
+          isPartEntered &&
+          isType1Entered &&
+          isValueEntered
+        );
       }
 
       // 種類②のdatalist更新関数
       function updateType2Datalist(selectedType1) {
         const type2Datalist = document.getElementById("type2List");
         type2Datalist.innerHTML = "";
-        // 空の候補を追加
         const emptyOption = document.createElement("option");
         emptyOption.value = "";
         type2Datalist.appendChild(emptyOption);
-        // 種類①で選ばれたもの以外の候補を追加
         typeOptions.forEach(function (option) {
           if (option !== selectedType1) {
             const opt = document.createElement("option");
@@ -444,23 +464,18 @@
         });
       }
 
-      // 追加ボタンがクリックされたときの処理
+      // 追加ボタンのクリック処理（所持アバター追加）
       addButton.addEventListener("click", function () {
         const partText = partInput.value.trim();
         const partValue = partsMapping[partText] || "";
         const type1Value = type1Input.value.trim();
-        // 種類②は未入力なら"なし"とする
         const type2Value =
           type2Input.value.trim() === "" ? "なし" : type2Input.value.trim();
         const increaseValue = valueInput.value.trim();
-
-        // マッピングに該当しなければ警告して中断
         if (partValue === "") {
           alert("パーツ入力が正しくありません。候補から選んでください。");
           return;
         }
-
-        // 新しいアバター情報を作成してリストに追加
         const newAvatar = {
           partText: partText,
           partValue: partValue,
@@ -470,10 +485,7 @@
         };
         avatarList.push(newAvatar);
         renderTable();
-        // ローカルストレージに保存
         localStorage.setItem("avatarList", JSON.stringify(avatarList));
-
-        // 入力欄をリセット
         partInput.value = "";
         type1Input.value = "";
         type2Input.value = "";
@@ -482,12 +494,12 @@
         checkInput();
       });
 
-      // 表を再描画する関数
+      // 表を再描画する関数（所持アバター一覧）
       function renderTable() {
         avatarTableBody.innerHTML = "";
         avatarList.forEach(function (avatar, index) {
           const row = document.createElement("tr");
-          // パーツ（表示名）
+          // パーツ（表示名のみ）
           const partCell = document.createElement("td");
           partCell.textContent = avatar.partText;
           row.appendChild(partCell);
@@ -508,7 +520,7 @@
           const delButton = document.createElement("button");
           delButton.textContent = "削除";
           delButton.addEventListener("click", function () {
-            // リストから削除
+            // 該当のアバター情報をリストから削除する
             avatarList.splice(index, 1);
             renderTable();
             localStorage.setItem("avatarList", JSON.stringify(avatarList));
@@ -520,18 +532,130 @@
       }
 
       // ----- 設定フォームの処理 -----
-      // 設定の保存ボタンを取得
       const saveSettingsButton = document.getElementById("saveSettingsButton");
       const genderSelect = document.getElementById("genderSelect");
+      const updateStatusContainer = document.getElementById(
+        "updateStatusContainer"
+      );
+      // 更新希望ステータスの候補リストは typeOptions と同じ
+      const updateStatusOptions = typeOptions;
 
-      // 保存ボタンがクリックされたときの処理
+      // 更新希望ステータスのチェックボックス群を生成する関数
+      function generateUpdateStatusCheckboxes() {
+        updateStatusContainer.innerHTML = ""; // コンテナを空にする
+        let savedStatus = localStorage.getItem("updateStatus");
+        if (savedStatus) {
+          savedStatus = JSON.parse(savedStatus);
+        } else {
+          savedStatus = [];
+        }
+        updateStatusOptions.forEach(function (status) {
+          // チェックボックスの input 要素を作成
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.id = "status_" + status;
+          checkbox.value = status;
+          if (savedStatus.includes(status)) {
+            checkbox.checked = true;
+          }
+          // ラベル要素を作成
+          const label = document.createElement("label");
+          label.htmlFor = "status_" + status;
+          label.textContent = status;
+          updateStatusContainer.appendChild(checkbox);
+          updateStatusContainer.appendChild(label);
+        });
+      }
+
+      // 設定保存ボタンのクリック処理
       saveSettingsButton.addEventListener("click", function () {
-        // 選択された性別の値を取得（"F" または "M"）
+        // 性別選択の値を保存
         const selectedGender = genderSelect.value;
-        // ローカルストレージに保存
         localStorage.setItem("avatarGender", selectedGender);
+        // 更新希望ステータスのチェックボックスの値を取得して保存
+        const checkboxes = updateStatusContainer.querySelectorAll(
+          'input[type="checkbox"]'
+        );
+        const selectedStatuses = [];
+        checkboxes.forEach(function (chk) {
+          if (chk.checked) {
+            selectedStatuses.push(chk.value);
+          }
+        });
+        localStorage.setItem("updateStatus", JSON.stringify(selectedStatuses));
         alert("設定を保存しました。");
       });
+
+      // ----- 販売アバター検索の処理 -----
+      // loadTradeData() 関数は、combinedData.json を読み込み、
+      // formattedTradeItemList の各 listingItems 内に itemTradeWithBagcat から該当する itemCode の情報を追記し、
+      // ユーザー設定の性別でフィルタリングを行った後、最終結果をログに出力します。
+      function loadTradeData() {
+        fetch("combinedData.json")
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error("ネットワーク応答が正しくありません");
+            }
+            return response.json();
+          })
+          .then(function (data) {
+            // combinedData.json から formattedTradeItemList と itemTradeWithBagcat を取得
+            let formattedTradeItemList = data.formattedTradeItemList;
+            const itemTradeWithBagcat = data.itemTradeWithBagcat;
+            // ローカルストレージから性別設定を取得
+            const savedGender = localStorage.getItem("avatarGender");
+            if (savedGender === "M" || savedGender === "F") {
+              // 性別フィルタ：たとえば "M" を選択しているなら、listingItems 内に "F" がある配列を除外
+              formattedTradeItemList = formattedTradeItemList.filter(function (
+                listingArray
+              ) {
+                if (!Array.isArray(listingArray)) return true;
+                if (savedGender === "M") {
+                  return !listingArray.some(function (item) {
+                    return item.itemGender === "F";
+                  });
+                }
+                if (savedGender === "F") {
+                  return !listingArray.some(function (item) {
+                    return item.itemGender === "M";
+                  });
+                }
+                return true;
+              });
+            }
+            // 各 listingArray の listingItems 内に対して、
+            // itemTradeWithBagcat から一致する itemCode の情報 (bagcat と itemName) を探して追加する
+            formattedTradeItemList.forEach(function (listingArray) {
+              if (Array.isArray(listingArray)) {
+                listingArray.forEach(function (listingItem) {
+                  // listingItem.itemCode に一致する項目を itemTradeWithBagcat から検索
+                  const found = itemTradeWithBagcat.find(function (element) {
+                    return element.itemCode === listingItem.itemCode;
+                  });
+                  if (found) {
+                    // 一致した場合、bagcat と itemName を listingItem に追加
+                    listingItem.bagcat = found.bagcat;
+                    listingItem.itemName = found.itemName;
+                  }
+                });
+              }
+            });
+            // 結果のメッセージを表示エリアにセット
+            const tradeDataDisplay =
+              document.getElementById("tradeDataDisplay");
+            tradeDataDisplay.innerHTML =
+              "<p>formattedTradeItemList と itemTradeWithBagcat の読み込みと加工が完了しました。</p>";
+            // 整形後の formattedTradeItemList をログに出力（bagcat と itemName が追加された状態）
+            console.log("整形後の formattedTradeItemList:");
+            console.log(JSON.stringify(formattedTradeItemList, null, 2));
+          })
+          .catch(function (error) {
+            const tradeDataDisplay =
+              document.getElementById("tradeDataDisplay");
+            tradeDataDisplay.innerHTML =
+              "<p>読み込みに失敗しました: " + error.message + "</p>";
+          });
+      }
     </script>
   </body>
 </html>
