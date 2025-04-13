@@ -1,40 +1,39 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <!-- ページの基本情報を設定 -->
+    <!-- ページの基本設定 -->
     <meta charset="UTF-8" />
-    <!-- 文字コードUTF-8 -->
+    <!-- 文字コードをUTF-8に指定 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- 画面サイズに対応 -->
+    <!-- 画面サイズに合わせる -->
     <title>アバター管理画面</title>
-    <!-- ページのタイトル -->
-
+    <!-- ページタイトル -->
     <style>
       /* ----- 全体の基本設定 ----- */
       body {
         font-family: Arial, sans-serif; /* 読みやすいフォント */
         margin: 0; /* 余白をなくす */
         padding: 0; /* 余白をなくす */
-        display: flex; /* レイアウトをflexで設定 */
+        display: flex; /* Flexレイアウト */
         flex-direction: column; /* 上下に配置 */
         height: 100vh; /* 画面全体の高さ */
       }
       /* ----- ヘッダー部分 ----- */
       header {
-        display: flex; /* 横並びに */
+        display: flex; /* 横並び */
         align-items: center; /* 縦方向中央寄せ */
         background-color: #4caf50; /* 緑の背景 */
         color: white; /* 文字色は白 */
-        padding: 10px; /* 内側に10pxの余白 */
+        padding: 10px; /* 内側余白10px */
       }
       .hamburger {
         font-size: 24px; /* 大きな文字サイズ */
-        cursor: pointer; /* マウスカーソルをポインターに */
-        margin-right: 10px; /* 右側に余白 */
+        cursor: pointer; /* マウスカーソルを指マークに */
+        margin-right: 10px; /* 右側余白 */
       }
       /* ----- メインエリア ----- */
       .main-container {
-        flex: 1; /* 残りの領域を利用 */
+        flex: 1; /* 残りの領域を使用 */
         display: flex; /* 左右に配置 */
         overflow: hidden; /* はみ出し部分は隠す */
       }
@@ -47,81 +46,81 @@
         flex-shrink: 0; /* 幅固定 */
       }
       .sidebar ul {
-        list-style: none; /* 箇条書きの点をなくす */
+        list-style: none; /* 箇条書きのマーカーを消す */
         padding: 0; /* 内側余白なし */
         margin: 0; /* 外側余白なし */
       }
       .sidebar li {
         padding: 15px; /* 各項目に15pxの余白 */
-        cursor: pointer; /* カーソルをポインターに */
+        cursor: pointer; /* カーソルを指マークに */
       }
       .sidebar li:hover {
         background-color: #575757; /* ホバー時に背景色変更 */
       }
-      /* 左側パネル（入力や設定フォーム）の設定 */
+      /* 左側パネル（入力・設定フォーム）の設定 */
       .left-panel {
-        width: 30%; /* 画面の30%の幅 */
+        width: 30%; /* 画面の30% */
         padding: 20px; /* 内側余白20px */
-        box-sizing: border-box; /* パディングも含める */
+        box-sizing: border-box; /* パディング含む */
       }
       /* 右側パネル（一覧表示）の設定 */
       .right-panel {
-        width: 70%; /* 画面の70%の幅 */
+        width: 70%; /* 画面の70% */
         padding: 20px; /* 内側余白20px */
-        box-sizing: border-box; /* パディングも含む */
-        overflow-y: auto; /* 縦方向スクロール可能 */
+        box-sizing: border-box; /* パディング含む */
+        overflow-y: auto; /* 縦スクロール可能 */
       }
       /* ----- フォームや表の共通設定 ----- */
       .form-group {
-        margin-bottom: 15px; /* 各フォームグループの下余白 */
+        margin-bottom: 15px; /* 各入力グループの下に15px余白 */
       }
       input[type="text"],
       input[type="number"],
       select {
-        width: 100%; /* 幅100% */
-        padding: 5px; /* 内側に5pxの余白 */
-        box-sizing: border-box; /* パディング含む幅計算 */
+        width: 100%; /* 入力欄の横幅100% */
+        padding: 5px; /* 内側余白5px */
+        box-sizing: border-box; /* パディング含む */
       }
       button {
-        padding: 10px; /* ボタン内余白 */
-        width: 100%; /* 幅100% */
+        padding: 10px; /* ボタン内余白10px */
+        width: 100%; /* ボタン横幅100% */
         background-color: #4caf50; /* 緑の背景 */
         border: none; /* 枠線なし */
         color: white; /* 文字色は白 */
         font-size: 16px; /* 文字サイズ16px */
-        cursor: pointer; /* カーソルをポインターに */
+        cursor: pointer; /* カーソルを指マークに */
       }
       button:disabled {
         background-color: #cccccc; /* 無効時はグレー */
-        cursor: not-allowed; /* 禁止カーソル */
+        cursor: not-allowed; /* 使用不可のカーソル */
       }
       table {
-        width: 100%; /* 表全体の幅100% */
-        border-collapse: collapse; /* セルの枠線を結合 */
+        width: 100%; /* 表横幅100% */
+        border-collapse: collapse; /* セル間枠線を結合 */
       }
       th,
       td {
         border: 1px solid #ccc; /* 薄い枠線 */
-        padding: 8px; /* セル内に8pxの余白 */
-        text-align: center; /* 中央寄せ */
+        padding: 8px; /* セル内余白8px */
+        text-align: center; /* 文字を中央寄せ */
       }
       th {
         background-color: #e0e0e0; /* ヘッダー背景色 */
       }
       /* 更新希望ステータスのチェックボックス群の設定 */
       .update-status-group {
-        display: flex; /* 横並びに */
+        display: flex; /* 横並び */
         flex-wrap: wrap; /* 複数行に折り返す */
       }
       .update-status-group label {
-        margin-right: 10px; /* チェックボックス間に余白 */
+        margin-right: 10px; /* 各チェックボックス間に余白 */
       }
     </style>
   </head>
   <body>
     <!-- ヘッダー -->
     <header>
-      <!-- ハンバーガーアイコン -->
+      <!-- ハンバーガーメニューアイコン -->
       <div class="hamburger" id="hamburgerBtn">&#9776;</div>
       <!-- ヘッダーのタイトル -->
       <h1 style="margin: 0; font-size: 18px">アバター管理</h1>
@@ -321,10 +320,10 @@
       const settingsDiv = document.getElementById("settings");
       const tradeSearchDiv = document.getElementById("tradeSearch");
 
-      // サイドバーの各項目にクリックイベントを設定
+      // サイドバー各項目クリック時の処理
       sidebarItems.forEach(function (item) {
         item.addEventListener("click", function () {
-          const target = item.getAttribute("data-target"); // クリックされた項目のdata-target属性を取得
+          const target = item.getAttribute("data-target"); // data-target 属性を取得
           sidebar.style.display = "none"; // サイドバーを閉じる
           if (target === "avatarForm") {
             avatarFormDiv.style.display = "block"; // 所持アバター追加フォームを表示
@@ -334,7 +333,7 @@
             avatarFormDiv.style.display = "none";
             settingsDiv.style.display = "block"; // 設定フォームを表示
             tradeSearchDiv.style.display = "none";
-            // 性別設定をローカルストレージから復元
+            // ローカルストレージから性別設定を復元
             const savedGender = localStorage.getItem("avatarGender");
             if (savedGender) {
               document.getElementById("genderSelect").value = savedGender;
@@ -346,7 +345,8 @@
             settingsDiv.style.display = "none";
             tradeSearchDiv.style.display = "block"; // 販売アバター検索フォームを表示
             // 販売アバター検索用のデータ読み込み処理を呼び出す
-            loadTradeData();
+            // ここでは、logItemCodes 関数で処理を実行するよ。
+            logItemCodes();
           }
         });
       });
@@ -400,7 +400,7 @@
 
       // グローバルな所持アバター情報リスト
       let avatarList = [];
-      // ページ読み込み時にローカルストレージから所持アバター情報を復元
+      // ページ読み込み時にローカルストレージから所持アバター情報を復元する
       window.addEventListener("load", function () {
         const storedData = localStorage.getItem("avatarList");
         if (storedData) {
@@ -409,7 +409,7 @@
         }
       });
 
-      // 各入力欄とボタン、テーブルの要素を取得
+      // 各入力欄とボタン、テーブル要素を取得
       const partInput = document.getElementById("partInput");
       const type1Input = document.getElementById("type1Input");
       const type2Input = document.getElementById("type2Input");
@@ -417,7 +417,7 @@
       const addButton = document.getElementById("addButton");
       const avatarTableBody = document.querySelector("#avatarTable tbody");
 
-      // 種類①入力欄が変更されたときの処理
+      // 種類①入力欄変更時の処理
       type1Input.addEventListener("change", function () {
         const selectedType1 = type1Input.value.trim();
         if (selectedType1 === "") {
@@ -430,12 +430,12 @@
         checkInput();
       });
 
-      // パーツ、種類①、上昇値の入力変更時にチェック
+      // パーツ、種類①、上昇値入力時のチェック
       partInput.addEventListener("input", checkInput);
       type1Input.addEventListener("input", checkInput);
       valueInput.addEventListener("input", checkInput);
 
-      // 必須項目（パーツ、種類①、上昇値）のチェック関数
+      // 必須項目（パーツ、種類①、上昇値）の入力チェック関数
       function checkInput() {
         const isPartEntered = partInput.value.trim() !== "";
         const isType1Entered = type1Input.value.trim() !== "";
@@ -520,7 +520,6 @@
           const delButton = document.createElement("button");
           delButton.textContent = "削除";
           delButton.addEventListener("click", function () {
-            // 該当のアバター情報をリストから削除する
             avatarList.splice(index, 1);
             renderTable();
             localStorage.setItem("avatarList", JSON.stringify(avatarList));
@@ -550,7 +549,6 @@
           savedStatus = [];
         }
         updateStatusOptions.forEach(function (status) {
-          // チェックボックスの input 要素を作成
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
           checkbox.id = "status_" + status;
@@ -558,7 +556,6 @@
           if (savedStatus.includes(status)) {
             checkbox.checked = true;
           }
-          // ラベル要素を作成
           const label = document.createElement("label");
           label.htmlFor = "status_" + status;
           label.textContent = status;
@@ -569,10 +566,8 @@
 
       // 設定保存ボタンのクリック処理
       saveSettingsButton.addEventListener("click", function () {
-        // 性別選択の値を保存
         const selectedGender = genderSelect.value;
         localStorage.setItem("avatarGender", selectedGender);
-        // 更新希望ステータスのチェックボックスの値を取得して保存
         const checkboxes = updateStatusContainer.querySelectorAll(
           'input[type="checkbox"]'
         );
@@ -587,73 +582,59 @@
       });
 
       // ----- 販売アバター検索の処理 -----
-      // loadTradeData() 関数は、combinedData.json を読み込み、
-      // formattedTradeItemList の各 listingItems 内に itemTradeWithBagcat から該当する itemCode の情報を追記し、
-      // ユーザー設定の性別でフィルタリングを行った後、最終結果をログに出力します。
-      function loadTradeData() {
-        fetch("combinedData.json")
+      // logItemCodes 関数：combinedData.json を取得し、formattedTradeItemList 内の各 listingItems にある itemCode について
+      // itemTradeWithBagcat 内から一致する itemCode を探し、見つかった場合はそのオブジェクトに "bagcat" プロパティとして値を追加するよ。
+      // 最後に、追加後の結果をコンソールに出力するよ。
+      function logItemCodes() {
+        fetch("combinedData.json") // combinedData.json を取ってくるよ。
           .then(function (response) {
+            // 取ってきたデータが正しく返ってきたかチェックするよ。
             if (!response.ok) {
               throw new Error("ネットワーク応答が正しくありません");
             }
-            return response.json();
+            return response.json(); // JSON形式に変換するよ。
           })
           .then(function (data) {
-            // combinedData.json から formattedTradeItemList と itemTradeWithBagcat を取得
-            let formattedTradeItemList = data.formattedTradeItemList;
-            const itemTradeWithBagcat = data.itemTradeWithBagcat;
-            // ローカルストレージから性別設定を取得
-            const savedGender = localStorage.getItem("avatarGender");
-            if (savedGender === "M" || savedGender === "F") {
-              // 性別フィルタ：たとえば "M" を選択しているなら、listingItems 内に "F" がある配列を除外
-              formattedTradeItemList = formattedTradeItemList.filter(function (
-                listingArray
-              ) {
-                if (!Array.isArray(listingArray)) return true;
-                if (savedGender === "M") {
-                  return !listingArray.some(function (item) {
-                    return item.itemGender === "F";
-                  });
-                }
-                if (savedGender === "F") {
-                  return !listingArray.some(function (item) {
-                    return item.itemGender === "M";
-                  });
-                }
-                return true;
-              });
-            }
-            // 各 listingArray の listingItems 内に対して、
-            // itemTradeWithBagcat から一致する itemCode の情報 (bagcat と itemName) を探して追加する
-            formattedTradeItemList.forEach(function (listingArray) {
-              if (Array.isArray(listingArray)) {
-                listingArray.forEach(function (listingItem) {
-                  // listingItem.itemCode に一致する項目を itemTradeWithBagcat から検索
-                  const found = itemTradeWithBagcat.find(function (element) {
-                    return element.itemCode === listingItem.itemCode;
-                  });
-                  if (found) {
-                    // 一致した場合、bagcat と itemName を listingItem に追加
-                    listingItem.bagcat = found.bagcat;
-                    listingItem.itemName = found.itemName;
+            // combinedData.json から formattedTradeItemList と itemTradeWithBagcat を取り出すよ。
+            var formattedTradeItemList = data.formattedTradeItemList;
+            var itemTradeWithBagcat = data.itemTradeWithBagcat;
+
+            // formattedTradeItemList の各グループ（配列）を順番に処理するよ。
+            formattedTradeItemList.forEach(function (group, groupIndex) {
+              // グループが配列かどうかをチェックするよ。
+              if (Array.isArray(group)) {
+                // グループ内の各オブジェクトを順番に処理するよ。
+                group.forEach(function (item, itemIndex) {
+                  // オブジェクトから listingItems を取り出すよ。
+                  var listingItems = item.listingItems;
+                  // listingItems が配列かチェックするよ。
+                  if (Array.isArray(listingItems)) {
+                    // listingItems 内の各アイテムを順番に処理するよ。
+                    listingItems.forEach(function (listItem, listIndex) {
+                      // listItem から itemCode を取り出すよ。
+                      var currentItemCode = listItem.itemCode;
+                      // itemTradeWithBagcat の中から currentItemCode と一致するオブジェクトを探すよ。
+                      var match = itemTradeWithBagcat.find(function (element) {
+                        return element.itemCode === currentItemCode;
+                      });
+                      // 一致する要素が見つかったら、listItem に "bagcat" プロパティを追加するよ。
+                      if (match) {
+                        listItem.bagcat = match.bagcat;
+                      }
+                    });
                   }
                 });
               }
             });
-            // 結果のメッセージを表示エリアにセット
-            const tradeDataDisplay =
-              document.getElementById("tradeDataDisplay");
-            tradeDataDisplay.innerHTML =
-              "<p>formattedTradeItemList と itemTradeWithBagcat の読み込みと加工が完了しました。</p>";
-            // 整形後の formattedTradeItemList をログに出力（bagcat と itemName が追加された状態）
-            console.log("整形後の formattedTradeItemList:");
-            console.log(JSON.stringify(formattedTradeItemList, null, 2));
+            // 処理が終わったら、結果をコンソールに表示するよ。
+            console.log(
+              "【最終結果】bagcat を追加後の formattedTradeItemList:"
+            );
+            console.log(formattedTradeItemList);
           })
           .catch(function (error) {
-            const tradeDataDisplay =
-              document.getElementById("tradeDataDisplay");
-            tradeDataDisplay.innerHTML =
-              "<p>読み込みに失敗しました: " + error.message + "</p>";
+            // エラーが発生したら、内容をコンソールに表示するよ。
+            console.error("エラーが発生しました:", error);
           });
       }
     </script>
