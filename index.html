@@ -2,214 +2,228 @@
 <html lang="ja">
   <head>
     <!-- ページの基本設定 -->
-    <meta charset="UTF-8" /> <!-- 文字コード UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- 画面サイズに対応 -->
-    <title>アバター管理画面</title> <!-- ページタイトル -->
+    <meta charset="UTF-8" /> <!-- 文字コードをUTF-8にするよ -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- 画面サイズに合わせるよ -->
+    <title>アバター管理画面</title> <!-- ページのタイトルを設定するよ -->
     <style>
       /* ----- 全体の基本設定 ----- */
       html, body {
-        height: 100%; /* 高さを100%にする */
-        margin: 0; /* 余白をなくす */
-        padding: 0; /* 内側余白をなくす */
+        height: 100%; /* 画面全体の高さにするよ */
+        margin: 0;    /* 余白をなくすよ */
+        padding: 0;   /* 内側の余白もなくすよ */
       }
       body {
-        display: flex; /* 横並びに配置 */
-        flex-direction: column; /* 縦方向に積む */
-        font-family: Arial, sans-serif; /* フォント設定 */
+        display: flex;         /* 子要素を横並びにするよ */
+        flex-direction: column;/* 縦方向に積むよ */
+        font-family: Arial, sans-serif; /* フォントを設定するよ */
       }
       
       /* ----- ヘッダー ----- */
       header {
-        display: flex; /* 横並びに配置 */
-        align-items: center; /* 縦中央に揃える */
-        background-color: #4caf50; /* 背景色 */
-        color: white; /* 文字色 */
-        padding: 10px; /* 内側余白 */
+        display: flex; /* ヘッダー内の要素を横並びにするよ */
+        align-items: center; /* 縦方向に中央寄せするよ */
+        background-color: #4caf50; /* 背景色を設定するよ */
+        color: white; /* 文字色を白にするよ */
+        padding: 10px; /* 内側に余白を作るよ */
       }
       .hamburger {
-        font-size: 24px; /* 文字サイズ */
-        cursor: pointer; /* カーソルをポインターに */
-        margin-right: 10px; /* 右に余白 */
+        font-size: 24px;  /* 文字サイズを大きくするよ */
+        cursor: pointer;  /* マウスカーソルをポインターにするよ */
+        margin-right: 10px; /* 右に余白を作るよ */
       }
       
       /* ----- メインエリア ----- */
       .main-container {
-        flex: 1; /* 残りの領域を使用 */
-        display: flex; /* 横並びに配置 */
-        overflow: hidden; /* はみ出した部分を隠す */
+        flex: 1;       /* 残りの領域を使うよ */
+        display: flex; /* 子要素を横並びにするよ */
+        overflow: hidden; /* はみ出した部分を隠すよ */
       }
       
       /* ----- 左側パネル ----- */
       .left-panel {
-        width: 30%; /* 初期は30%の幅 */
-        padding: 20px; /* 内側余白 */
-        box-sizing: border-box; /* パディングを含むサイズ計算 */
-        transition: width 0.3s ease; /* 幅変更のアニメーション */
+        width: 30%;         /* 幅を30%にするよ */
+        padding: 20px;      /* 内側に余白を作るよ */
+        box-sizing: border-box; /* パディング分も幅に含めるよ */
+        transition: width 0.3s ease; /* 幅が変わるときのアニメーション設定 */
       }
       
       /* ----- 右側パネル（追加されたアバター一覧） ----- */
       .right-panel {
-        width: 70%; /* 初期は70%の幅 */
-        padding: 20px; /* 内側余白 */
-        box-sizing: border-box; /* パディングを含むサイズ計算 */
-        overflow: auto; /* はみ出す場合はスクロール */
-        transition: transform 0.3s ease; /* スライドのアニメーション */
+        width: 70%;         /* 幅を70%にするよ */
+        padding: 20px;      /* 内側に余白を作るよ */
+        box-sizing: border-box; /* パディングも含めたサイズ計算 */
+        overflow: auto;     /* 中身がはみ出したときはスクロールできるよ */
+        transition: transform 0.3s ease; /* スライドのアニメーション設定 */
       }
-      /* 右側パネルを右にスライドさせるクラス */
+      /* 右側パネルを右にスライドさせるときのクラス */
       .right-panel.closed {
-        transform: translateX(100%); /* 右にずらす */
+        transform: translateX(100%); /* 右へずらすよ */
       }
       
       /* ----- サイドバー ----- */
       .sidebar {
-        width: 200px; /* 幅を200pxに設定 */
-        background-color: #333; /* 背景色 */
-        color: white; /* 文字色 */
-        display: none; /* 初期は非表示 */
-        flex-shrink: 0; /* 縮まらない */
+        width: 200px;             /* 幅を200pxにするよ */
+        background-color: #333;   /* 背景色を濃いグレーにするよ */
+        color: white;             /* 文字色を白にするよ */
+        display: none;            /* 初期は非表示にするよ */
+        flex-shrink: 0;           /* 縮まらないようにするよ */
       }
       .sidebar ul {
-        list-style: none; /* マーカーを表示しない */
-        margin: 0; /* 外側余白なし */
-        padding: 0; /* 内側余白なし */
+        list-style: none; /* マーカーを表示しないよ */
+        margin: 0;        /* 外側の余白をなくすよ */
+        padding: 0;       /* 内側の余白もなくすよ */
       }
       .sidebar li {
-        padding: 15px; /* 内側余白 */
-        cursor: pointer; /* カーソルをポインターに */
+        padding: 15px;    /* 内側に余白を作るよ */
+        cursor: pointer;  /* マウスカーソルをポインターにするよ */
       }
       .sidebar li:hover {
-        background-color: #575757; /* ホバー時の背景色 */
+        background-color: #575757; /* マウスオーバー時の背景色を変えるよ */
       }
       
       /* ----- フォームや表の共通設定 ----- */
       .form-group {
-        margin-bottom: 15px; /* 下に余白をつける */
+        margin-bottom: 15px; /* 下に余白を作るよ */
       }
       input[type="text"],
       input[type="number"],
       select {
-        width: 100%; /* 幅を100%に */
-        padding: 5px; /* 内側余白 */
-        box-sizing: border-box; /* パディングを含めたサイズ計算 */
+        width: 100%;      /* 幅を100%にするよ */
+        padding: 5px;     /* 内側に余白を作るよ */
+        box-sizing: border-box; /* パディングも含めたサイズ計算 */
       }
       button {
-        padding: 10px; /* 内側余白 */
-        width: 100%; /* 幅を100%に */
-        background-color: #4caf50; /* 背景色 */
-        border: none; /* 枠線なし */
-        color: white; /* 文字色 */
-        font-size: 16px; /* 文字サイズ */
-        cursor: pointer; /* カーソルをポインターに */
+        padding: 10px;         /* 内側に余白を作るよ */
+        width: 100%;           /* 幅を100%にするよ */
+        background-color: #4caf50; /* 背景色を設定するよ */
+        border: none;          /* 枠線を消すよ */
+        color: white;          /* 文字色を白にするよ */
+        font-size: 16px;       /* 文字サイズを設定するよ */
+        cursor: pointer;       /* マウスカーソルをポインターにするよ */
       }
       button:disabled {
-        background-color: #cccccc; /* 無効時の背景色 */
-        cursor: not-allowed; /* カーソルを禁止マークに */
+        background-color: #cccccc; /* 無効時の背景色にするよ */
+        cursor: not-allowed;       /* 禁止マークのカーソルにするよ */
       }
       
-      /* テーブルの設定 */
+      /* ----- テーブルの設定 ----- */
+      /* このコンテナでテーブル内のスクロールを可能にするよ */
       .scrollable-table-container {
-        overflow: auto; /* はみ出す部分はスクロール */
-        position: relative; /* 子要素の位置固定用 */
+        overflow: auto; 
+        position: relative; 
+        max-height: calc(100vh - 50px); /* ウィンドウ全体から50px分引いた高さにするよ */
+        width: 100%; /* コンテナの幅を100%にするよ */
       }
       table {
-        border-collapse: collapse; /* セルの境界線をまとめる */
-        width: 100%; /* 幅を100%に */
+        border-collapse: collapse; /* セル間の枠線をくっつけるよ */
+        table-layout: auto;  /* セルの大きさは中の文字で決まるよ */
+        width: auto;        /* テーブルの幅は自動で決まるよ */
+        max-width: 100%;    /* テーブルがコンテナを超えないようにするよ */
       }
       th, td {
-        border: 1px solid #ccc; /* 枠線の設定 */
-        padding: 8px; /* 内側余白 */
-        text-align: center; /* 文字を中央揃えに */
+        border: 1px solid #ccc; /* セルの枠線を薄いグレーにするよ */
+        padding: 8px;           /* セル内に余白を作るよ */
+        text-align: center;     /* 文字を中央寄せにするよ */
       }
       thead th {
-        position: sticky; /* ヘッダー行を固定 */
-        top: 0; /* 上から0px */
-        background-color: #e0e0e0; /* ヘッダーの背景色 */
-        z-index: 2; /* 重なり順の指定 */
+        position: sticky; /* ヘッダー行を固定するよ */
+        top: 0;           /* 上端にくっつけるよ */
+        background-color: #e0e0e0; /* ヘッダーの背景色を設定するよ */
+        z-index: 2;       /* 他の要素より前面に表示するよ */
       }
       tbody td:first-child,
       thead th:first-child {
-        position: sticky; /* 最初の列を固定 */
-        left: 0; /* 左端に固定 */
-        background-color: #f0f0f0; /* 背景色 */
-        z-index: 3; /* ヘッダーより前面に */
+        position: sticky; /* 最初の列を固定するよ */
+        left: 0;          /* 左端に固定するよ */
+        background-color: #f0f0f0; /* 背景色を設定するよ */
+        z-index: 3;       /* ヘッダーよりも前面に表示するよ */
       }
       
       /* ----- 更新希望ステータス ----- */
       .update-status-group {
-        display: flex; /* 横並びに配置 */
-        flex-wrap: wrap; /* 行を折り返す */
+        display: flex;       /* 横並びにするよ */
+        flex-wrap: wrap;     /* 行が足りない場合は折り返すよ */
       }
       .update-status-group label {
-        margin-right: 10px; /* 右に余白をつける */
+        margin-right: 10px;  /* 右に余白を作るよ */
       }
       
       /* ----- モーダルウィンドウ（詳細表示用） ----- */
       #modalWindow {
-        display: none; /* 初期は非表示 */
-        position: fixed; /* 画面上に固定 */
-        top: 50%; /* 上から50%の位置 */
-        left: 50%; /* 左から50%の位置 */
-        transform: translate(-50%, -50%); /* 中央に移動 */
-        width: 80%; /* 幅は80% */
-        max-width: 600px; /* 最大幅600px */
-        background-color: #fff; /* 背景色は白 */
-        border: 1px solid #ccc; /* 枠線 */
-        padding: 15px; /* 内側余白 */
-        z-index: 1000; /* 重なり順の指定 */
-        box-shadow: 0 0 10px rgba(0,0,0,0.5); /* 影をつける */
+        display: none; /* 初期は非表示にするよ */
+        position: fixed;   /* 画面上に固定するよ */
+        top: 50%;          /* 上から50%に配置するよ */
+        left: 50%;         /* 左から50%に配置するよ */
+        transform: translate(-50%, -50%); /* 中央に移動するよ */
+        width: 80%;        /* 幅を80%にするよ */
+        max-width: 600px;  /* 幅の最大は600pxにするよ */
+        background-color: #fff; /* 背景色は白にするよ */
+        border: 1px solid #ccc; /* 枠線を設定するよ */
+        padding: 15px;     /* 内側に余白を作るよ */
+        z-index: 1000;     /* 他の要素より前に表示するよ */
+        box-shadow: 0 0 10px rgba(0,0,0,0.5); /* 影をつけるよ */
       }
       #modalContent {
-        display: flex; /* 横並びに配置 */
-        flex-direction: row; /* 横方向に並べる */
-        overflow-x: auto; /* 横方向にスクロール */
+        display: flex;       /* 横並びにするよ */
+        flex-direction: row; /* 横方向に並べるよ */
+        overflow-x: auto;    /* 横方向にスクロールできるようにするよ */
       }
       .modalItem {
-        border: 1px solid #ddd; /* 枠線の設定 */
-        margin-right: 10px; /* 右に余白 */
-        padding: 5px; /* 内側余白 */
-        text-align: center; /* 文字を中央揃え */
+        border: 1px solid #ddd; /* 枠線を薄く設定するよ */
+        margin-right: 10px;  /* 右に余白を作るよ */
+        padding: 5px;        /* 内側に余白を作るよ */
+        text-align: center;  /* 文字を中央寄せにするよ */
       }
       .modalItem img {
-        max-width: 100px; /* 画像の最大幅100px */
-        display: block; /* ブロック要素にする */
-        margin: 0 auto 5px; /* 自動余白で中央寄せ、下に余白 */
+        max-width: 100px;    /* 画像の最大幅を100pxにするよ */
+        display: block;      /* ブロック要素にするよ */
+        margin: 0 auto 5px;  /* 中央寄せにして下に余白を作るよ */
       }
-      /* 閉じるボタンはモーダルの一番下に配置 */
       #closeModal {
-        width: 100%; /* 幅を100%に */
-        margin-top: 15px; /* 上に余白 */
-        background-color: #4caf50; /* 背景色 */
-        color: #fff; /* 文字色 */
-        border: none; /* 枠線なし */
-        padding: 5px 10px; /* 内側余白 */
-        cursor: pointer; /* カーソルをポインターに */
+        width: 100%;         /* 幅を100%にするよ */
+        margin-top: 15px;     /* 上に余白を作るよ */
+        background-color: #4caf50; /* 背景色を設定するよ */
+        color: #fff;         /* 文字色を白にするよ */
+        border: none;        /* 枠線を消すよ */
+        padding: 5px 10px;   /* 内側に余白を作るよ */
+        cursor: pointer;     /* マウスカーソルをポインターにするよ */
       }
       
       /* ----- 右側パネルの開閉用ボタン ----- */
       #closeRightPanel {
-        position: fixed; /* 画面上に固定 */
-        top: 0; /* 上端に配置 */
-        left: calc(30%); /* 左側パネルの端に合わせる */
-        width: 30px; /* 幅30px */
-        height: 100vh; /* 高さ画面全体 */
-        background-color: #4caf50; /* 背景色 */
-        color: white; /* 文字色 */
-        border: none; /* 枠線なし */
-        cursor: pointer; /* カーソルをポインターに */
-        z-index: 1001; /* 重なり順の指定 */
+        position: fixed;       /* 画面上に固定するよ */
+        top: 0;                /* 上端に配置するよ */
+        left: calc(30%);       /* 左側パネルの幅に合わせるよ */
+        width: 30px;           /* 幅を30pxにするよ */
+        height: 100vh;         /* 画面全体の高さにするよ */
+        background-color: #4caf50; /* 背景色を設定するよ */
+        color: white;          /* 文字色を白にするよ */
+        border: none;          /* 枠線を消すよ */
+        cursor: pointer;       /* マウスカーソルをポインターにするよ */
+        z-index: 1001;         /* 他の要素より前に表示するよ */
       }
       #openRightPanel {
-        position: fixed; /* 画面上に固定 */
-        top: 0; /* 上端に配置 */
-        right: 0; /* 右端に配置 */
-        width: 30px; /* 幅30px */
-        height: 100vh; /* 高さ画面全体 */
-        background-color: #4caf50; /* 背景色 */
-        color: white; /* 文字色 */
-        border: none; /* 枠線なし */
-        cursor: pointer; /* カーソルをポインターに */
-        z-index: 1001; /* 重なり順の指定 */
-        display: none; /* 初期は非表示 */
+        position: fixed;       /* 画面上に固定するよ */
+        top: 0;                /* 上端に配置するよ */
+        right: 0;              /* 右端に配置するよ */
+        width: 30px;           /* 幅を30pxにするよ */
+        height: 100vh;         /* 画面全体の高さにするよ */
+        background-color: #4caf50; /* 背景色を設定するよ */
+        color: white;          /* 文字色を白にするよ */
+        border: none;          /* 枠線を消すよ */
+        cursor: pointer;       /* マウスカーソルをポインターにするよ */
+        z-index: 1001;         /* 他の要素より前に表示するよ */
+        display: none;         /* 初期は非表示にするよ */
+      }
+      
+      /* ----- レスポンシブデザイン用のメディアクエリ ----- */
+      @media (max-width: 768px) {
+        .left-panel {
+          width: 100%; /* 画面が狭くなったら左側パネルを全幅にするよ */
+        }
+        .right-panel {
+          width: 100%; /* 右側パネルも全幅にするよ */
+        }
       }
     </style>
   </head>
@@ -223,7 +237,7 @@
     <!-- モーダルウィンドウ（詳細表示用） -->
     <div id="modalWindow">
       <div id="modalContent">
-        <!-- モーダル内で各 listingItem の詳細を横並びに表示 -->
+        <!-- モーダル内で各 listingItem の詳細を横並びに表示するよ -->
       </div>
       <button id="closeModal">閉じる</button> <!-- モーダルを閉じるボタン -->
     </div>
@@ -238,8 +252,8 @@
       <div class="sidebar" id="sidebar">
         <ul>
           <li data-target="avatarForm">所持アバター追加</li> <!-- サイドバー項目：所持アバター追加 -->
-          <li data-target="settings">設定</li> <!-- サイドバー項目：設定 -->
-          <li data-target="tradeSearch">販売アバター検索</li> <!-- サイドバー項目：販売アバター検索 -->
+          <li data-target="settings">設定</li>             <!-- サイドバー項目：設定 -->
+          <li data-target="tradeSearch">販売アバター検索</li>   <!-- サイドバー項目：販売アバター検索 -->
         </ul>
       </div>
       <!-- 左側パネル -->
@@ -370,623 +384,513 @@
     
     <script>
       // ----- ハンバーガーメニューとサイドバーの処理 -----
-      // ハンバーガーメニューのボタンの要素を取得する
-      const hamburgerBtn = document.getElementById("hamburgerBtn"); // ボタンを取得
-      // サイドバーの要素を取得する
-      const sidebar = document.getElementById("sidebar"); // サイドバーを取得
-      // ハンバーガーメニュークリック時の処理を追加する
-      hamburgerBtn.addEventListener("click", function() { // クリックイベントを追加
-        // サイドバーの表示・非表示を切り替える
-        sidebar.style.display = (sidebar.style.display === "none" || sidebar.style.display === "") ? "block" : "none"; // 表示状態を反転
+      // ハンバーガーメニューボタンを取得するよ
+      const hamburgerBtn = document.getElementById("hamburgerBtn");
+      // サイドバーの要素を取得するよ
+      const sidebar = document.getElementById("sidebar");
+      // ハンバーガーメニューがクリックされたときの処理を追加するよ
+      hamburgerBtn.addEventListener("click", function() {
+        // サイドバーの表示・非表示を切り替えるよ
+        sidebar.style.display = (sidebar.style.display === "none" || sidebar.style.display === "") ? "block" : "none";
       });
-      // サイドバーの各項目を取得する
-      const sidebarItems = document.querySelectorAll(".sidebar li"); // サイドバーリストの各項目を取得
-      // 各コンテンツの表示部分を取得する
-      const avatarFormDiv = document.getElementById("avatarForm"); // 所持アバター追加画面
-      const settingsDiv = document.getElementById("settings"); // 設定画面
-      const tradeSearchDiv = document.getElementById("tradeSearch"); // 販売アバター検索画面
-      // サイドバーの項目ごとにクリックイベントを追加する
-      sidebarItems.forEach(function(item) { // 各項目について処理
-        item.addEventListener("click", function() { // クリックイベントを追加
-          // クリックされた項目のdata-target属性を取得する
-          const target = item.getAttribute("data-target"); // data-targetの値を取得
-          sidebar.style.display = "none"; // サイドバーを非表示にする
-          // クリックされた項目に応じて各画面を表示する
-          if (target === "avatarForm") { // 所持アバター追加が選ばれた場合
-            avatarFormDiv.style.display = "block"; // 所持アバター追加画面を表示
-            settingsDiv.style.display = "none"; // 設定画面を非表示
-            tradeSearchDiv.style.display = "none"; // 販売検索画面を非表示
-          } else if (target === "settings") { // 設定が選ばれた場合
-            avatarFormDiv.style.display = "none"; // 所持アバター追加画面を非表示
-            settingsDiv.style.display = "block"; // 設定画面を表示
-            tradeSearchDiv.style.display = "none"; // 販売検索画面を非表示
-            // 前回保存した性別設定を読み込む
-            const savedGender = localStorage.getItem("avatarGender"); // 保存された性別を取得
-            if (savedGender) { 
-              document.getElementById("genderSelect").value = savedGender; // 性別セレクトに設定
+      // サイドバー内の各項目を取得するよ
+      const sidebarItems = document.querySelectorAll(".sidebar li");
+      const avatarFormDiv = document.getElementById("avatarForm");
+      const settingsDiv = document.getElementById("settings");
+      const tradeSearchDiv = document.getElementById("tradeSearch");
+      // 各サイドバー項目にクリックイベントを追加するよ
+      sidebarItems.forEach(function(item) {
+        item.addEventListener("click", function() {
+          const target = item.getAttribute("data-target"); // クリックされた項目のターゲットを取得するよ
+          sidebar.style.display = "none"; // サイドバーを隠すよ
+          if (target === "avatarForm") { // 所持アバター追加が選ばれたら
+            avatarFormDiv.style.display = "block";
+            settingsDiv.style.display = "none";
+            tradeSearchDiv.style.display = "none";
+          } else if (target === "settings") { // 設定が選ばれたら
+            avatarFormDiv.style.display = "none";
+            settingsDiv.style.display = "block";
+            tradeSearchDiv.style.display = "none";
+            const savedGender = localStorage.getItem("avatarGender");
+            if (savedGender) {
+              document.getElementById("genderSelect").value = savedGender;
             }
-            generateUpdateStatusCheckboxes(); // 更新希望ステータスのチェックボックスを生成する
-          } else if (target === "tradeSearch") { // 販売アバター検索が選ばれた場合
-            avatarFormDiv.style.display = "none"; // 所持アバター追加画面を非表示
-            settingsDiv.style.display = "none"; // 設定画面を非表示
-            tradeSearchDiv.style.display = "block"; // 販売検索画面を表示
-            logItemCodes(); // 販売アバター検索の処理を実行する
+            generateUpdateStatusCheckboxes();
+          } else if (target === "tradeSearch") { // 販売アバター検索が選ばれたら
+            avatarFormDiv.style.display = "none";
+            settingsDiv.style.display = "none";
+            tradeSearchDiv.style.display = "block";
+            logItemCodes();
           }
         });
       });
       
       // ----- 所持アバター追加フォームの処理 -----
-      // パーツとタイプの対応表を定義する
       const partsMapping = {
-        トップス: "H",
-        ボトムス: "L",
-        ワンピース: "HL",
-        ヘアスタイル: "P",
-        フェイス: "F",
-        背景: "A4",
-        アウター: "CT",
-        セット衣装1: "SA",
-        セット衣装2: "SB",
-        帽子: "AE",
-        めがね: "AD",
-        アクセ1: "AF",
-        アクセ2: "B2",
-        雑貨1: "B1",
-        雑貨2: "B3",
-        ペット1: "E1",
-        ペット2: "E2",
-        ペット3: "E3",
-        ペット4: "E4",
-        エフェクト: "AA",
-        その他1: "AB",
-        その他2: "A1",
-        その他3: "A2",
-        その他4: "A3",
-        モイトイ: "BL"
+        "トップス": "H",
+        "ボトムス": "L",
+        "ワンピース": "HL",
+        "ヘアスタイル": "P",
+        "フェイス": "F",
+        "背景": "A4",
+        "アウター": "CT",
+        "セット衣装1": "SA",
+        "セット衣装2": "SB",
+        "帽子": "AE",
+        "めがね": "AD",
+        "アクセ1": "AF",
+        "アクセ2": "B2",
+        "雑貨1": "B1",
+        "雑貨2": "B3",
+        "ペット1": "E1",
+        "ペット2": "E2",
+        "ペット3": "E3",
+        "ペット4": "E4",
+        "エフェクト": "AA",
+        "その他1": "AB",
+        "その他2": "A1",
+        "その他3": "A2",
+        "その他4": "A3",
+        "モイトイ": "BL"
       };
-      // バックキャットのラベルを定義する
       const bagcatLabels = {
-        H: "トップス",
-        L: "ボトムス",
-        HL: "ワンピース",
-        P: "ヘアスタイル",
-        F: "フェイス",
-        A4: "背景",
-        CT: "アウター",
-        SA: "セット衣装1",
-        SB: "セット衣装2",
-        AE: "帽子",
-        AD: "めがね",
-        AF: "アクセ1",
-        B2: "アクセ2",
-        B1: "雑貨1",
-        B3: "雑貨2",
-        E1: "ペット1",
-        E2: "ペット2",
-        E3: "ペット3",
-        E4: "ペット4",
-        AA: "エフェクト",
-        AB: "その他1",
-        A1: "その他2",
-        A2: "その他3",
-        A3: "その他4",
-        BL: "モイトイ"
+        "H": "トップス",
+        "L": "ボトムス",
+        "HL": "ワンピース",
+        "P": "ヘアスタイル",
+        "F": "フェイス",
+        "A4": "背景",
+        "CT": "アウター",
+        "SA": "セット衣装1",
+        "SB": "セット衣装2",
+        "AE": "帽子",
+        "AD": "めがね",
+        "AF": "アクセ1",
+        "B2": "アクセ2",
+        "B1": "雑貨1",
+        "B3": "雑貨2",
+        "E1": "ペット1",
+        "E2": "ペット2",
+        "E3": "ペット3",
+        "E4": "ペット4",
+        "AA": "エフェクト",
+        "AB": "その他1",
+        "A1": "その他2",
+        "A2": "その他3",
+        "A3": "その他4",
+        "BL": "モイトイ"
       };
-      // 種類のオプション配列を定義する
       const typeOptions = ["INT","ALL","HPR","SP","PET","HP","SPR","LUK","ATK","EXP","MAT","POW","VIT","SPD"];
-      // アバター情報の配列を初期化する
       let avatarList = [];
-      // ページ読み込み時にローカルストレージからデータを取得する
       window.addEventListener("load", function(){
-        // ローカルストレージからデータを取得する
-        const storedData = localStorage.getItem("avatarList"); // 保存されたアバターリストを取得
-        if(storedData){
-          avatarList = JSON.parse(storedData); // 文字列を配列に変換
-          renderAvatarTable(); // テーブルに表示する
+        const storedData = localStorage.getItem("avatarList");
+        if (storedData) {
+          avatarList = JSON.parse(storedData);
+          renderAvatarTable();
         }
       });
-      // フォームの各要素を取得する
-      const partInput = document.getElementById("partInput"); // パーツ入力欄
-      const type1Input = document.getElementById("type1Input"); // 種類①入力欄
-      const type2Input = document.getElementById("type2Input"); // 種類②入力欄
-      const valueInput = document.getElementById("valueInput"); // 上昇値入力欄
-      const addButton = document.getElementById("addButton"); // 追加ボタン
-      // アバター一覧テーブルの tbody 要素を取得する
-      const avatarTableBody = document.querySelector("#avatarTable tbody"); // テーブルの tbody を取得
-
-      // 種類①の入力が変化したときの処理を追加する
+      const partInput = document.getElementById("partInput");
+      const type1Input = document.getElementById("type1Input");
+      const type2Input = document.getElementById("type2Input");
+      const valueInput = document.getElementById("valueInput");
+      const addButton = document.getElementById("addButton");
+      const avatarTableBody = document.querySelector("#avatarTable tbody");
       type1Input.addEventListener("change", function(){
-        // 入力された種類①の値を取得する
-        const selectedType1 = type1Input.value.trim(); // 前後の空白を除去
-        if(selectedType1===""){
-          // もし種類①が空なら種類②入力欄を無効にする
-          type2Input.disabled = true; 
-          type2Input.value = ""; // 種類②の値をクリア
+        const selectedType1 = type1Input.value.trim();
+        if (selectedType1 === "") {
+          type2Input.disabled = true;
+          type2Input.value = "";
         } else {
-          // 種類①に値がある場合は種類②入力欄を有効にする
-          type2Input.disabled = false; 
-          updateType2Datalist(selectedType1); // 種類②の候補リストを更新する
+          type2Input.disabled = false;
+          updateType2Datalist(selectedType1);
         }
-        checkInput(); // 入力チェックを実行する
+        checkInput();
       });
-      // パーツ、種類①、上昇値各入力に入力イベントを追加する
-      partInput.addEventListener("input", checkInput); // 入力チェック
-      type1Input.addEventListener("input", checkInput); // 入力チェック
-      valueInput.addEventListener("input", checkInput); // 入力チェック
-      
-      // 入力内容をチェックして、必要な項目が入力されているか確認する関数
-      function checkInput(){
-        // パーツが入力されているかを確認する
-        const isPartEntered = partInput.value.trim() !== ""; // パーツ入力チェック
-        // 種類①が入力されているかを確認する
-        const isType1Entered = type1Input.value.trim() !== ""; // 種類①入力チェック
-        // 上昇値が入力され、かつ数値かどうかを確認する
-        const isValueEntered = valueInput.value.trim() !== "" && !isNaN(valueInput.value); // 上昇値入力チェック
-        // 全ての条件を満たしていないと追加ボタンを無効にする
-        addButton.disabled = !(isPartEntered && isType1Entered && isValueEntered); // ボタンの有効無効を設定
+      partInput.addEventListener("input", checkInput);
+      type1Input.addEventListener("input", checkInput);
+      valueInput.addEventListener("input", checkInput);
+      function checkInput() {
+        const isPartEntered = partInput.value.trim() !== "";
+        const isType1Entered = type1Input.value.trim() !== "";
+        const isValueEntered = valueInput.value.trim() !== "" && !isNaN(valueInput.value);
+        addButton.disabled = !(isPartEntered && isType1Entered && isValueEntered);
       }
-      
-      // 種類②の候補リストを更新する関数
-      function updateType2Datalist(selectedType1){
-        // 種類②の datalist 要素を取得する
-        const type2Datalist = document.getElementById("type2List"); // 種類②の候補リストを取得
-        type2Datalist.innerHTML = ""; // 候補リストをクリアする
-        // 空の選択肢を追加する
-        const emptyOption = document.createElement("option"); // 空のoptionを作成
-        emptyOption.value = ""; // 空に設定
-        type2Datalist.appendChild(emptyOption); // 候補リストに追加
-        // 各種類のオプションを処理する
-        typeOptions.forEach(function(option){
-          // 種類①と同じオプションは除外する
-          if(option !== selectedType1){
-            const opt = document.createElement("option"); // option要素を作成
-            opt.value = option; // オプションの値を設定
-            type2Datalist.appendChild(opt); // 候補リストに追加
+      function updateType2Datalist(selectedType1) {
+        const type2Datalist = document.getElementById("type2List");
+        type2Datalist.innerHTML = "";
+        const emptyOption = document.createElement("option");
+        emptyOption.value = "";
+        type2Datalist.appendChild(emptyOption);
+        typeOptions.forEach(function(option) {
+          if (option !== selectedType1) {
+            const opt = document.createElement("option");
+            opt.value = option;
+            type2Datalist.appendChild(opt);
           }
         });
       }
-      
-      // 追加ボタンがクリックされたときの処理
       addButton.addEventListener("click", function(){
-        // 新しいアバター情報のオブジェクトを作成する
         const newAvatar = {
-          partText: partInput.value.trim(), // パーツ名
-          type1: type1Input.value.trim(), // 種類①
-          type2: (type2Input.value.trim() === "") ? "なし" : type2Input.value.trim(), // 種類②（未入力なら「なし」）
-          increase: valueInput.value.trim() // 上昇値
+          partText: partInput.value.trim(),
+          type1: type1Input.value.trim(),
+          type2: (type2Input.value.trim() === "") ? "なし" : type2Input.value.trim(),
+          increase: valueInput.value.trim()
         };
-        // 配列に新しいアバター情報を追加する
-        avatarList.push(newAvatar); // 新しいデータを追加
-        renderAvatarTable(); // テーブルを再表示する
-        localStorage.setItem("avatarList", JSON.stringify(avatarList)); // ローカルストレージに保存する
-        // 入力欄をクリアして初期状態に戻す
-        partInput.value = ""; 
-        type1Input.value = ""; 
-        type2Input.value = ""; 
-        type2Input.disabled = true; 
+        avatarList.push(newAvatar);
+        renderAvatarTable();
+        localStorage.setItem("avatarList", JSON.stringify(avatarList));
+        partInput.value = "";
+        type1Input.value = "";
+        type2Input.value = "";
+        type2Input.disabled = true;
         valueInput.value = "";
-        checkInput(); // 入力チェックを実行する
+        checkInput();
       });
-      
-      // アバター一覧テーブルを再描画する関数
-      function renderAvatarTable(){
-        // テーブル内を空にする
-        avatarTableBody.innerHTML = ""; 
-        // 各アバター情報ごとに処理する
-        avatarList.forEach(function(avatar, index){
-          // テーブルの1行（tr）を作成する
-          const row = document.createElement("tr"); 
-          // パーツの列（td）を作成する
-          const tdPart = document.createElement("td"); 
-          tdPart.textContent = avatar.partText; // パーツ名を設定
-          row.appendChild(tdPart); // 行に追加する
-          // 種類①の列を作成する
-          const tdType1 = document.createElement("td"); 
-          tdType1.textContent = avatar.type1; // 種類①を設定
-          row.appendChild(tdType1); // 行に追加する
-          // 種類②の列を作成する
-          const tdType2 = document.createElement("td"); 
-          tdType2.textContent = avatar.type2; // 種類②を設定
-          row.appendChild(tdType2); // 行に追加する
-          // 上昇値の列を作成する
-          const tdInc = document.createElement("td"); 
-          tdInc.textContent = avatar.increase; // 上昇値を設定
-          row.appendChild(tdInc); // 行に追加する
-          // 削除ボタンの列を作成する
-          const tdDel = document.createElement("td"); 
-          const btnDel = document.createElement("button"); 
-          btnDel.textContent = "削除"; // ボタンに「削除」と表示する
-          // 削除ボタンのクリック時の処理を追加する
+      function renderAvatarTable() {
+        avatarTableBody.innerHTML = "";
+        avatarList.forEach(function(avatar, index) {
+          const row = document.createElement("tr");
+          const tdPart = document.createElement("td");
+          tdPart.textContent = avatar.partText;
+          row.appendChild(tdPart);
+          const tdType1 = document.createElement("td");
+          tdType1.textContent = avatar.type1;
+          row.appendChild(tdType1);
+          const tdType2 = document.createElement("td");
+          tdType2.textContent = avatar.type2;
+          row.appendChild(tdType2);
+          const tdInc = document.createElement("td");
+          tdInc.textContent = avatar.increase;
+          row.appendChild(tdInc);
+          const tdDel = document.createElement("td");
+          const btnDel = document.createElement("button");
+          btnDel.textContent = "削除";
           btnDel.addEventListener("click", function(){
-            avatarList.splice(index,1); // 該当のアバター情報を配列から削除する
-            renderAvatarTable(); // テーブルを再描画する
-            localStorage.setItem("avatarList", JSON.stringify(avatarList)); // ローカルストレージに保存する
+            avatarList.splice(index, 1);
+            renderAvatarTable();
+            localStorage.setItem("avatarList", JSON.stringify(avatarList));
           });
-          tdDel.appendChild(btnDel); // ボタンをセルに追加する
-          row.appendChild(tdDel); // セルを行に追加する
-          avatarTableBody.appendChild(row); // 行をtbodyに追加する
+          tdDel.appendChild(btnDel);
+          row.appendChild(tdDel);
+          avatarTableBody.appendChild(row);
         });
       }
       
-      // 設定画面の処理
-      const saveSettingsButton = document.getElementById("saveSettingsButton"); // 設定保存ボタンの要素を取得
-      const genderSelect = document.getElementById("genderSelect"); // 性別セレクトの要素を取得
-      const updateStatusContainer = document.getElementById("updateStatusContainer"); // 更新希望ステータスのコンテナを取得
-      // 更新希望ステータスのオプションは typeOptions を使用する
-      const updateStatusOptions = typeOptions; 
-      
-      // 更新希望ステータス用のチェックボックスを生成する関数
-      function generateUpdateStatusCheckboxes(){
-        updateStatusContainer.innerHTML = ""; // 既存の内容をクリアする
-        // ローカルストレージから保存されたステータスを取得する
-        let savedStatus = localStorage.getItem("updateStatus"); 
-        if(savedStatus){ 
-          savedStatus = JSON.parse(savedStatus); // 文字列から配列に変換
-        } else { 
-          savedStatus = []; // なければ空の配列を設定
+      // ----- 設定画面の処理 -----
+      const saveSettingsButton = document.getElementById("saveSettingsButton");
+      const genderSelect = document.getElementById("genderSelect");
+      const updateStatusContainer = document.getElementById("updateStatusContainer");
+      const updateStatusOptions = typeOptions;
+      function generateUpdateStatusCheckboxes() {
+        updateStatusContainer.innerHTML = "";
+        let savedStatus = localStorage.getItem("updateStatus");
+        if (savedStatus) {
+          savedStatus = JSON.parse(savedStatus);
+        } else {
+          savedStatus = [];
         }
-        // 各更新希望ステータスのオプションについて処理する
-        updateStatusOptions.forEach(function(status){
-          // チェックボックスを作成する
-          const checkbox = document.createElement("input"); 
-          checkbox.type = "checkbox"; // 入力タイプをチェックボックスに設定
-          checkbox.id = "status_" + status; // 識別子を設定
-          checkbox.value = status; // 値を設定
-          if(savedStatus.includes(status)) { 
-            checkbox.checked = true; // 保存済みならチェックを入れる
+        updateStatusOptions.forEach(function(status) {
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.id = "status_" + status;
+          checkbox.value = status;
+          if (savedStatus.includes(status)) {
+            checkbox.checked = true;
           }
-          // ラベルを作成する
-          const label = document.createElement("label"); 
-          label.htmlFor = "status_" + status; // ラベルとチェックボックスを関連付ける
-          label.textContent = status; // 表示するテキストを設定
-          // チェックボックスとラベルをコンテナに追加する
-          updateStatusContainer.appendChild(checkbox); 
-          updateStatusContainer.appendChild(label); 
+          const label = document.createElement("label");
+          label.htmlFor = "status_" + status;
+          label.textContent = status;
+          updateStatusContainer.appendChild(checkbox);
+          updateStatusContainer.appendChild(label);
         });
       }
-      
-      // 設定保存ボタンのクリックイベントを追加する
       saveSettingsButton.addEventListener("click", function(){
-        localStorage.setItem("avatarGender", genderSelect.value); // 性別設定を保存する
-        // チェックボックスの状態を取得する
-        const checkboxes = updateStatusContainer.querySelectorAll('input[type="checkbox"]'); 
-        const selectedStatuses = []; // 選択されたステータスを入れる配列
-        checkboxes.forEach(function(chk){
-          if(chk.checked){
-            selectedStatuses.push(chk.value); // チェックが入っていたら配列に追加する
+        localStorage.setItem("avatarGender", genderSelect.value);
+        const checkboxes = updateStatusContainer.querySelectorAll('input[type="checkbox"]');
+        const selectedStatuses = [];
+        checkboxes.forEach(function(chk) {
+          if (chk.checked) {
+            selectedStatuses.push(chk.value);
           }
         });
-        localStorage.setItem("updateStatus", JSON.stringify(selectedStatuses)); // 選択内容を保存する
-        alert("設定を保存しました。"); // ユーザーに通知する
+        localStorage.setItem("updateStatus", JSON.stringify(selectedStatuses));
+        alert("設定を保存しました。");
       });
       
       // ----- 販売アバター検索の処理 -----
-      // ユニークな取引アイテムを格納するための配列を定義する
       let uniqueTradeItems = [];
-      // 販売アバター検索の処理を行う関数
-      function logItemCodes(){
-        // JSONファイルからデータを取得する
+      function logItemCodes() {
         fetch("combinedData.json")
-          .then(function(response){
-            if(!response.ok){ 
-              throw new Error("ネットワーク応答が正しくありません"); // エラーチェック
+          .then(function(response) {
+            if (!response.ok) {
+              throw new Error("ネットワーク応答が正しくありません");
             }
-            return response.json(); // 取得したデータをJSONに変換する
+            return response.json();
           })
-          .then(function(data){
-            // Step 0: バザーIDのユニーク処理（flat 配列にする）
-            var rawFormattedTradeItemList = data.formattedTradeItemList; // 生の取引アイテムリストを取得
-            uniqueTradeItems = []; // ユニークな取引アイテムの配列を初期化
-            var seenBazaarIds = {}; // 既に処理済みのバザーIDを記録するオブジェクト
-            rawFormattedTradeItemList.forEach(function(group){
-              if(Array.isArray(group) && group.length > 0){
-                var bazaarId = group[0].bazaarId; // グループの先頭のバザーIDを取得
-                if(!seenBazaarIds[bazaarId]){
-                  uniqueTradeItems.push(group[0]); // 先頭のオブジェクトのみ採用
-                  seenBazaarIds[bazaarId] = true; // 処理済みとして記録する
+          .then(function(data) {
+            var rawFormattedTradeItemList = data.formattedTradeItemList;
+            uniqueTradeItems = [];
+            var seenBazaarIds = {};
+            rawFormattedTradeItemList.forEach(function(group) {
+              if (Array.isArray(group) && group.length > 0) {
+                var bazaarId = group[0].bazaarId;
+                if (!seenBazaarIds[bazaarId]) {
+                  uniqueTradeItems.push(group[0]);
+                  seenBazaarIds[bazaarId] = true;
                 }
               }
             });
             console.log("Step 0: バザーIDユニーク処理後", uniqueTradeItems);
             
-            // ① bagcat の追加
-            uniqueTradeItems.forEach(function(item){
-              var listingItems = item.listingItems; // 出品アイテムの配列を取得
-              if(Array.isArray(listingItems)){
-                listingItems.forEach(function(listItem){
-                  var currentItemCode = listItem.itemCode; // 現在のアイテムコードを取得
-                  var match = data.itemTradeWithBagcat.find(function(element){
-                    return element.itemCode === currentItemCode; // 一致するオブジェクトを検索
+            uniqueTradeItems.forEach(function(item) {
+              var listingItems = item.listingItems;
+              if (Array.isArray(listingItems)) {
+                listingItems.forEach(function(listItem) {
+                  var currentItemCode = listItem.itemCode;
+                  var match = data.itemTradeWithBagcat.find(function(element) {
+                    return element.itemCode === currentItemCode;
                   });
-                  if(match){ 
-                    listItem.bagcat = match.bagcat; // 一致した場合、bagcat を設定する
+                  if (match) {
+                    listItem.bagcat = match.bagcat;
                   }
                 });
               }
             });
             console.log("Step ①: bagcat 追加後", uniqueTradeItems);
             
-            // ② itemName からの抽出（type, param の追加）
-            var regex = /^【([^+]+)\+(\d+)】/; // 正規表現を定義する
-            uniqueTradeItems.forEach(function(item){
-              var listingItems = item.listingItems; // 出品アイテムの配列を取得
-              if(Array.isArray(listingItems)){
-                listingItems.forEach(function(listItem){
-                  var result = regex.exec(listItem.itemName); // itemName から値を抽出
-                  if(result){
-                    listItem.type = result[1]; // 抽出したtypeを設定
-                    listItem.param = parseInt(result[2], 10); // 抽出したパラメータを数値に変換して設定
-                  } else { 
-                    listItem.type = ""; // 該当しなければ空文字
-                    listItem.param = 0; // 0を設定
+            var regex = /^【([^+]+)\+(\d+)】/;
+            uniqueTradeItems.forEach(function(item) {
+              var listingItems = item.listingItems;
+              if (Array.isArray(listingItems)) {
+                listingItems.forEach(function(listItem) {
+                  var result = regex.exec(listItem.itemName);
+                  if (result) {
+                    listItem.type = result[1];
+                    listItem.param = parseInt(result[2], 10);
+                  } else {
+                    listItem.type = "";
+                    listItem.param = 0;
                   }
                 });
               }
             });
             console.log("Step ②: type, param 抽出後", uniqueTradeItems);
             
-            // ③ diff の計算
-            uniqueTradeItems.forEach(function(item){
-              var listingItems = item.listingItems; // 出品アイテムの配列を取得
-              if(Array.isArray(listingItems)){
-                listingItems.forEach(function(listItem){
-                  // アバター一覧から一致するアイテムを探す（※部分一致のキーは type1 と bagcat）
-                  var matchingAvatar = avatarList.find(function(avatar){
+            uniqueTradeItems.forEach(function(item) {
+              var listingItems = item.listingItems;
+              if (Array.isArray(listingItems)) {
+                listingItems.forEach(function(listItem) {
+                  var matchingAvatar = avatarList.find(function(avatar) {
                     return avatar.type1 === listItem.type && avatar.partValue === listItem.bagcat;
                   });
-                  var diff = 0; // 差分を初期化
-                  if(matchingAvatar){
-                    diff = listItem.param - Number(matchingAvatar.increase); // 差分を計算する
-                    if(diff < 0) diff = 0; // 差分が負なら0にする
-                  } else { 
-                    diff = listItem.param; // マッチしなければそのまま
+                  var diff = 0;
+                  if (matchingAvatar) {
+                    diff = listItem.param - Number(matchingAvatar.increase);
+                    if (diff < 0) diff = 0;
+                  } else {
+                    diff = listItem.param;
                   }
-                  listItem.diff = diff; // 差分を設定する
+                  listItem.diff = diff;
                 });
               }
             });
             console.log("Step ③: diff 計算後", uniqueTradeItems);
             
-            // ④ 各バザー毎の集計（同じ (type, bagcat) の listingItem が複数の場合、最大の diff のみ採用）
-            uniqueTradeItems.forEach(function(item){
-              var listingItems = item.listingItems; // 出品アイテムの配列を取得
-              if(Array.isArray(listingItems) && listingItems.length > 0){
-                var uniqueDiffs = {}; // キー: type + "_" + bagcat, 値: 最大 diff
-                listingItems.forEach(function(listItem){
-                  var key = listItem.type + "_" + listItem.bagcat; // ユニークキーを作成
-                  if(uniqueDiffs[key] === undefined){
-                    uniqueDiffs[key] = listItem.diff; // 初回はその値を設定
-                  }
-                  else { 
-                    if(listItem.diff > uniqueDiffs[key]){
-                      uniqueDiffs[key] = listItem.diff; // より大きい値に更新
+            uniqueTradeItems.forEach(function(item) {
+              var listingItems = item.listingItems;
+              if (Array.isArray(listingItems) && listingItems.length > 0) {
+                var uniqueDiffs = {};
+                listingItems.forEach(function(listItem) {
+                  var key = listItem.type + "_" + listItem.bagcat;
+                  if (uniqueDiffs[key] === undefined) {
+                    uniqueDiffs[key] = listItem.diff;
+                  } else {
+                    if (listItem.diff > uniqueDiffs[key]) {
+                      uniqueDiffs[key] = listItem.diff;
                     }
                   }
                 });
-                item.typeSums = {}; // 集計結果を格納するオブジェクトを初期化
-                for(var key in uniqueDiffs){
-                  if(uniqueDiffs.hasOwnProperty(key)){
-                    var t = key.split("_")[0]; // type部分を取得
-                    if(!item.typeSums[t]){
-                      item.typeSums[t] = 0; // 初期化
+                item.typeSums = {};
+                for (var key in uniqueDiffs) {
+                  if (uniqueDiffs.hasOwnProperty(key)) {
+                    var t = key.split("_")[0];
+                    if (!item.typeSums[t]) {
+                      item.typeSums[t] = 0;
                     }
-                    item.typeSums[t] += uniqueDiffs[key]; // 合計を更新する
+                    item.typeSums[t] += uniqueDiffs[key];
                   }
                 }
               }
             });
             console.log("Step ④: 各バザー毎の集計後", uniqueTradeItems);
             
-            // ⑤ 表の作成
-            // バザー性別フィルタリング
-            var selectedGender = localStorage.getItem("avatarGender"); // 保存された性別設定を取得
-            var filteredTradeItems = uniqueTradeItems.filter(function(item){
-              if(!item.listingItems || !Array.isArray(item.listingItems)) return true; // 出品アイテムがなければそのまま
-              if(selectedGender === "F"){
-                return !item.listingItems.some(function(listItem){ return listItem.itemGender === "M"; });
-              } else if(selectedGender === "M"){
-                return !item.listingItems.some(function(listItem){ return listItem.itemGender === "F"; });
+            var selectedGender = localStorage.getItem("avatarGender");
+            var filteredTradeItems = uniqueTradeItems.filter(function(item) {
+              if (!item.listingItems || !Array.isArray(item.listingItems)) return true;
+              if (selectedGender === "F") {
+                return !item.listingItems.some(function(listItem) { return listItem.itemGender === "M"; });
+              } else if (selectedGender === "M") {
+                return !item.listingItems.some(function(listItem) { return listItem.itemGender === "F"; });
               }
               return true;
             });
             console.log("Step ⑤a: バザー性別フィルタリング後", filteredTradeItems);
             
-            // 全バザーで出現する type をまとめ、更新希望ステータスでチェック済みの type のみ抽出
-            var allTypes = {}; // すべての type を格納するためのオブジェクト
-            filteredTradeItems.forEach(function(item){
-              if(item.typeSums){
-                for(var t in item.typeSums){
-                  if(item.typeSums.hasOwnProperty(t)){
-                    allTypes[t] = true; // 出現した type を記録する
+            var allTypes = {};
+            filteredTradeItems.forEach(function(item) {
+              if (item.typeSums) {
+                for (var t in item.typeSums) {
+                  if (item.typeSums.hasOwnProperty(t)) {
+                    allTypes[t] = true;
                   }
                 }
               }
             });
-            var selectedTypes = []; // 選択された type を格納する配列
-            var savedUpdateStatus = localStorage.getItem("updateStatus"); // 保存された更新希望ステータスを取得
-            if(savedUpdateStatus){ 
-              selectedTypes = JSON.parse(savedUpdateStatus); // 配列に変換
+            var selectedTypes = [];
+            var savedUpdateStatus = localStorage.getItem("updateStatus");
+            if (savedUpdateStatus) {
+              selectedTypes = JSON.parse(savedUpdateStatus);
             }
-            // 表示する type のみ抽出する
-            var displayTypes = Object.keys(allTypes).filter(function(t){ return selectedTypes.indexOf(t) !== -1; });
-            // displayTypesを並び替える（指定の順番に）
-            displayTypes.sort(function(a, b){
+            var displayTypes = Object.keys(allTypes).filter(function(t) { return selectedTypes.indexOf(t) !== -1; });
+            displayTypes.sort(function(a, b) {
               var idxA = typeOptions.indexOf(a), idxB = typeOptions.indexOf(b);
-              if(idxA === -1) idxA = typeOptions.length;
-              if(idxB === -1) idxB = typeOptions.length;
+              if (idxA === -1) idxA = typeOptions.length;
+              if (idxB === -1) idxB = typeOptions.length;
               return idxA - idxB;
             });
             
-            // 表の HTML 作成（各行＝1 バザー分）
-            // 販売リンクボタンは新しいタブでリンクを開くようにする
-            // --- 動的生成するテーブルをスクロールコンテナで囲む ---
-            var tableHTML = "<div class='scrollable-table-container'>"; // コンテナの開始
-            tableHTML += "<table style='width:100%; border-collapse: collapse;'>"; // テーブル開始
-            tableHTML += "<thead><tr>"; // ヘッダー行開始
-            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>販売リンク</th>"; // ヘッダーセル
-            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>締め切り日時</th>"; // ヘッダーセル
-            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>ハンコイン</th>"; // ヘッダーセル
-            displayTypes.forEach(function(t){
-              tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>" + t + "<br>(ハンコイン/差分)</th>"; // 各 type 列のヘッダー
+            var tableHTML = "<div class='scrollable-table-container'>";
+            tableHTML += "<table style='border-collapse: collapse;'>";
+            tableHTML += "<thead><tr>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>販売リンク</th>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>締め切り日時</th>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>ハンコイン</th>";
+            displayTypes.forEach(function(t) {
+              tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>" + t + "<br>(ハンコイン/差分)</th>";
             });
-            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>詳細</th>"; // 詳細列のヘッダー
-            tableHTML += "</tr></thead>"; // ヘッダー行終了
-            tableHTML += "<tbody>"; // tbody開始
-            // 各フィルタ済み取引アイテムごとに行を作成する
-            filteredTradeItems.forEach(function(item){
-              var sellEndDate = item.sellEndDate || ""; // 締め切り日時を取得
-              var hancoin = Number(item.hancoin) || 0; // ハンコインの値を取得
-              tableHTML += "<tr>"; // 行開始
-              // 販売リンクのボタン列を作成する
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>詳細</th>";
+            tableHTML += "</tr></thead>";
+            tableHTML += "<tbody>";
+            filteredTradeItems.forEach(function(item) {
+              var sellEndDate = item.sellEndDate || "";
+              var hancoin = Number(item.hancoin) || 0;
+              tableHTML += "<tr>";
               tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='openLinkInNewTab(\"" + item.bazaarId + "\")'>販売リンク</button></td>";
-              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + sellEndDate + "</td>"; // 締め切り日時列
-              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + hancoin + "</td>"; // ハンコイン列
-              displayTypes.forEach(function(t){
-                var sumDiff = (item.typeSums && item.typeSums[t]) ? item.typeSums[t] : 0; // 差分の合計を取得
-                var ratio = sumDiff !== 0 ? (hancoin / sumDiff).toFixed(2) : "0"; // ハンコイン/差分の比率を計算（小数点2桁）
-                tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + ratio + "</td>"; // 該当列を作成
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + sellEndDate + "</td>";
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + hancoin + "</td>";
+              displayTypes.forEach(function(t) {
+                var sumDiff = (item.typeSums && item.typeSums[t]) ? item.typeSums[t] : 0;
+                var ratio = sumDiff !== 0 ? (hancoin / sumDiff).toFixed(2) : "0";
+                tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + ratio + "</td>";
               });
-              // 詳細ボタンの列（モーダルウィンドウで詳細を表示）
               tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='showModal(\"" + item.bazaarId + "\")'>詳細</button></td>";
-              tableHTML += "</tr>"; // 行終了
+              tableHTML += "</tr>";
             });
-            tableHTML += "</tbody></table>"; // テーブル終了
-            tableHTML += "</div>"; // コンテナ終了
-            // 販売アバター検索の表示部分に生成したテーブルをセットする
+            tableHTML += "</tbody></table>";
+            tableHTML += "</div>";
             document.getElementById("tradeDataDisplay").innerHTML = tableHTML;
             console.log("Step ⑤: 表作成後");
             console.log(filteredTradeItems);
             
-            // --- 販売アバター検索テーブルのヘッダーセルにクリックイベントを追加する ---
-            // ここからは、ヘッダーセルをクリックするとソートする処理を追加します
-            var tradeTable = document.querySelector("#tradeDataDisplay .scrollable-table-container table"); // 生成したテーブルを取得
-            if(tradeTable){
-              // ヘッダー行の全てのセルを取得する
-              var tradeHeaderCells = tradeTable.querySelectorAll("thead th"); // ヘッダーセルを取得
-              tradeHeaderCells.forEach(function(cell, index) { // 各セルについて処理
-                cell.addEventListener("click", function(){ // クリックイベントを追加
-                  sortTableByColumn(tradeTable, index); // クリックされた列でソートする
+            // ヘッダーセルにクリックイベントを追加して、ソートする処理を実装するよ
+            var tradeTable = document.querySelector("#tradeDataDisplay .scrollable-table-container table");
+            if (tradeTable) {
+              var tradeHeaderCells = tradeTable.querySelectorAll("thead th");
+              tradeHeaderCells.forEach(function(cell, index) {
+                cell.addEventListener("click", function() {
+                  sortTableByColumn(tradeTable, index);
                 });
               });
             }
           })
-          .catch(function(error){
-            console.error("エラーが発生しました:", error); // エラー発生時の処理
+          .catch(function(error) {
+            console.error("エラーが発生しました:", error);
           });
       }
       
-      // 販売リンクボタンの処理：新しいタブでリンクを開く
       function openLinkInNewTab(bazaarId) {
-        const url = "https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=" + bazaarId; // URLを作成
-        window.open(url, "_blank"); // 新しいタブで開く
+        const url = "https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=" + bazaarId;
+        window.open(url, "_blank");
       }
       
       // ----- モーダルウィンドウの処理 -----
-      // モーダルウィンドウの要素を取得する
-      const modalWindow = document.getElementById("modalWindow"); // モーダルウィンドウ本体を取得
-      const modalContent = document.getElementById("modalContent"); // モーダルの内容部分を取得
-      const closeModalBtn = document.getElementById("closeModal"); // モーダル閉じるボタンを取得
-      // 閉じるボタンがクリックされたときの処理を追加する
-      closeModalBtn.addEventListener("click", function(){
-        modalWindow.style.display = "none"; // モーダルを非表示にする
-        modalContent.innerHTML = ""; // モーダルの内容をクリアする
+      const modalWindow = document.getElementById("modalWindow");
+      const modalContent = document.getElementById("modalContent");
+      const closeModalBtn = document.getElementById("closeModal");
+      closeModalBtn.addEventListener("click", function() {
+        modalWindow.style.display = "none";
+        modalContent.innerHTML = "";
       });
-      // モーダルウィンドウを表示する関数
       function showModal(bazaarId) {
-        // uniqueTradeItems から該当するアイテムを取得する
-        var item = uniqueTradeItems.find(function(itm){
-          return itm.bazaarId === bazaarId; // bazaarId が一致するか確認
+        var item = uniqueTradeItems.find(function(itm) {
+          return itm.bazaarId === bazaarId;
         });
-        if(!item) return; // 見つからなければ処理を中断
-        modalContent.innerHTML = ""; // モーダルの内容をクリアする
-        if(Array.isArray(item.listingItems)){
-          // 各出品アイテムごとに表示内容を作成する
-          item.listingItems.forEach(function(listItem){
-            var itemDiv = document.createElement("div"); // アイテムを表示するdivを作成
-            itemDiv.className = "modalItem"; // クラス名を設定
-            // 画像要素を作成する
-            var img = document.createElement("img"); 
-            // itemCode を小文字にして画像URLを作成
-            img.src = "https://puretomo-image.hange.jp/disp/" + listItem.itemCode.toLowerCase() + ".gif"; 
-            itemDiv.appendChild(img); // 画像をdivに追加する
-            // bagcatの日本語表示とdiffのテキストを作成する
-            var bagcatText = bagcatLabels[listItem.bagcat] || listItem.bagcat; // bagcatを日本語に戻す
-            var diffText = listItem.type + "+" + listItem.diff; // diffの文字列を作成
-            var infoP = document.createElement("p"); // 説明文を表示する段落を作成
-            infoP.textContent = bagcatText + " / 差分: " + diffText; // テキストを設定
-            itemDiv.appendChild(infoP); // 段落をdivに追加する
-            // itemNameの表示
-            var nameP = document.createElement("p"); // itemNameを表示する段落を作成
-            nameP.textContent = listItem.itemName; // itemNameを設定
-            itemDiv.appendChild(nameP); // divに追加する
-            modalContent.appendChild(itemDiv); // モーダルの内容にdivを追加する
+        if (!item) return;
+        modalContent.innerHTML = "";
+        if (Array.isArray(item.listingItems)) {
+          item.listingItems.forEach(function(listItem) {
+            var itemDiv = document.createElement("div");
+            itemDiv.className = "modalItem";
+            var img = document.createElement("img");
+            img.src = "https://puretomo-image.hange.jp/disp/" + listItem.itemCode.toLowerCase() + ".gif";
+            itemDiv.appendChild(img);
+            var bagcatText = bagcatLabels[listItem.bagcat] || listItem.bagcat;
+            var diffText = listItem.type + "+" + listItem.diff;
+            var infoP = document.createElement("p");
+            infoP.textContent = bagcatText + " / 差分: " + diffText;
+            itemDiv.appendChild(infoP);
+            var nameP = document.createElement("p");
+            nameP.textContent = listItem.itemName;
+            itemDiv.appendChild(nameP);
+            modalContent.appendChild(itemDiv);
           });
         }
-        modalWindow.style.display = "block"; // モーダルを表示する
+        modalWindow.style.display = "block";
       }
       
       // ----- 右側パネルの開閉ボタンの処理 -----
-      // 各パネルの要素を取得する
-      const rightPanel = document.getElementById("rightPanel"); // 右側パネルを取得
-      const leftPanel = document.getElementById("leftPanel"); // 左側パネルを取得
-      const closeRightPanelBtn = document.getElementById("closeRightPanel"); // 右側パネルを閉じるボタンを取得
-      const openRightPanelBtn = document.getElementById("openRightPanel"); // 右側パネルを開くボタンを取得
-      
-      // 右側パネルを閉じる処理（右にスライドし、左側を全面表示）
-      closeRightPanelBtn.addEventListener("click", function(){
-        rightPanel.classList.add("closed"); // 右側パネルを右にスライドさせる
-        leftPanel.style.width = "100%"; // 左側パネルの幅を全体に広げる
-        closeRightPanelBtn.style.display = "none"; // 閉じるボタンを非表示にする
-        openRightPanelBtn.style.display = "block"; // 開くボタンを表示する
+      const rightPanel = document.getElementById("rightPanel");
+      const leftPanel = document.getElementById("leftPanel");
+      const closeRightPanelBtn = document.getElementById("closeRightPanel");
+      const openRightPanelBtn = document.getElementById("openRightPanel");
+      closeRightPanelBtn.addEventListener("click", function() {
+        rightPanel.classList.add("closed");
+        leftPanel.style.width = "100%";
+        closeRightPanelBtn.style.display = "none";
+        openRightPanelBtn.style.display = "block";
+      });
+      openRightPanelBtn.addEventListener("click", function() {
+        rightPanel.classList.remove("closed");
+        leftPanel.style.width = "30%";
+        closeRightPanelBtn.style.display = "block";
+        openRightPanelBtn.style.display = "none";
       });
       
-      // 右側パネルを再表示する処理（左側の幅を元に戻し、右側パネルを表示）
-      openRightPanelBtn.addEventListener("click", function(){
-        rightPanel.classList.remove("closed"); // 右側パネルのスライドを解除する
-        leftPanel.style.width = "30%"; // 左側パネルの幅を元に戻す
-        closeRightPanelBtn.style.display = "block"; // 閉じるボタンを再表示する
-        openRightPanelBtn.style.display = "none"; // 開くボタンを非表示にする
-      });
-      
-      // ----- テーブルのヘッダーセルをクリックしたときにソートする処理を実装 -----
-      // ソート処理の関数を定義する
+      // ----- テーブルのヘッダーセルをクリックしたときにソートする関数 -----
       function sortTableByColumn(table, colIndex) {
-        // tbody要素を取得する
-        var tbody = table.querySelector("tbody"); // tbodyタグを取得
-        // tbody内の全ての行(tr)を配列に変換する
-        var rows = Array.from(tbody.querySelectorAll("tr")); // tr要素を配列にする
-        // 各行をソートする
+        var tbody = table.querySelector("tbody");
+        var rows = Array.from(tbody.querySelectorAll("tr"));
         rows.sort(function(rowA, rowB) {
-          // rowAのクリックされた列のセル(td)を取得する
-          var cellA = rowA.children[colIndex]; // セルを取得
-          // rowBのクリックされた列のセル(td)を取得する
-          var cellB = rowB.children[colIndex]; // セルを取得
-          // cellAのテキストを数値に変換する（parseFloatで変換）
-          var numA = parseFloat(cellA.textContent); // 数値にする
-          // cellBのテキストを数値に変換する
-          var numB = parseFloat(cellB.textContent); // 数値にする
-          // 数値が取得できなかった場合や0の場合はInfinityとする（0は最も大きい数とみなす）
-          var sortA = (isNaN(numA) || numA === 0) ? Infinity : numA; // 0またはNaNならInfinity
-          var sortB = (isNaN(numB) || numB === 0) ? Infinity : numB; // 同様に処理
-          // 小さい順に並べ替えるため、差を返す
-          return sortA - sortB; // 並び替えのための差を返す
+          var cellA = rowA.children[colIndex];
+          var cellB = rowB.children[colIndex];
+          var numA = parseFloat(cellA.textContent);
+          var numB = parseFloat(cellB.textContent);
+          var sortA = (isNaN(numA) || numA === 0) ? Infinity : numA;
+          var sortB = (isNaN(numB) || numB === 0) ? Infinity : numB;
+          return sortA - sortB;
         });
-        // ソート済みの行をtbodyに再配置する
-        rows.forEach(function(row) { // 各行について処理
-          tbody.appendChild(row); // tbodyに追加し直す
+        rows.forEach(function(row) {
+          tbody.appendChild(row);
         });
       }
       
-      // --- ページ読み込み時に、右側の「追加されたアバター一覧」テーブルのヘッダーセルにソート用クリックイベントを追加する ---
-      // アバター一覧テーブルの要素を取得する
-      var avatarTable = document.getElementById("avatarTable"); // テーブルを取得
-      if(avatarTable){
-        // ヘッダーセルをすべて取得する
-        var avatarHeaderCells = avatarTable.querySelectorAll("thead th"); // ヘッダーセルを選択
-        // それぞれのヘッダーセルにクリックイベントを追加する
-        avatarHeaderCells.forEach(function(cell, index) { // 各セルごとに処理
-          cell.addEventListener("click", function(){
-            sortTableByColumn(avatarTable, index); // クリックした列でソートする
+      // ページ読み込み時、アバター一覧テーブルのヘッダーセルにもソート用クリックイベントを追加するよ
+      var avatarTable = document.getElementById("avatarTable");
+      if (avatarTable) {
+        var avatarHeaderCells = avatarTable.querySelectorAll("thead th");
+        avatarHeaderCells.forEach(function(cell, index) {
+          cell.addEventListener("click", function() {
+            sortTableByColumn(avatarTable, index);
           });
         });
       }
