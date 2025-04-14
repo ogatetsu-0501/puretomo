@@ -10,7 +10,7 @@
       html, body {
         height: 100%;       /* 画面全体の高さにするよ */
         margin: 0;          /* 外側の余白をなくすよ */
-        padding: 0;         /* 内側の余白をなくすよ */
+        padding: 0;         /* 内側の余白もなくすよ */
       }
       body {
         font-family: Arial, sans-serif;  /* フォントの設定 */
@@ -18,70 +18,72 @@
       
       /* ----- ヘッダー ----- */
       header {
-        display: flex;       /* ヘッダー内の要素を横並びにするよ */
-        align-items: center; /* 垂直方向に中央揃えするよ */
+        display: flex;        /* ヘッダー内の要素を横並びにするよ */
+        align-items: center;  /* 垂直方向に中央寄せするよ */
         background-color: #4caf50;  /* 背景色を設定するよ */
-        color: white;        /* 文字色を白にするよ */
-        padding: 10px;       /* 内側に余白を作るよ */
+        color: white;         /* 文字色を白にするよ */
+        padding: 10px;        /* 内側に余白を作るよ */
       }
       .hamburger {
-        font-size: 24px;     /* ハンバーガーの文字サイズを大きくするよ */
-        cursor: pointer;     /* カーソルをポインターにするよ */
-        margin-right: 10px;   /* 右に余白を作るよ */
+        font-size: 24px;      /* ハンバーガーの文字サイズを大きくするよ */
+        cursor: pointer;      /* カーソルをポインターにするよ */
+        margin-right: 10px;    /* 右に余白を作るよ */
       }
       
       /* ----- サイドバー（サイドメニュー） ----- */
-      /* サイドバーは画面左外に隠しておき、ハンバーガーを押すと左側からスライドインするよ */
+      /* サイドバーは初期状態で画面左外（-220px）に隠し、ハンバーガーを押すと左側からスライドインするよ */
       .sidebar {
-        position: fixed;       /* 画面上に固定するよ */
-        top: 0;                /* 上端に合わせるよ */
-        left: -220px;          /* 初期状態は画面外（左側）に隠すよ（幅200px＋余白20px） */
-        width: 200px;          /* サイドバーの幅を200pxにするよ */
-        height: 100vh;         /* 画面全体の高さにするよ */
-        background-color: #333;/* 背景色を暗くするよ */
-        color: white;          /* 文字色を白にするよ */
-        transition: left 0.3s ease; /* 左右の位置をアニメーションで変えるよ */
-        z-index: 1500;         /* 他のパネルより前面に表示するよ */
+        position: fixed;      /* 画面上に固定するよ */
+        top: 0;               /* 上端に配置するよ */
+        left: -220px;         /* 初期状態は画面外（左側）に隠すよ（幅200px＋余白20px） */
+        width: 200px;         /* サイドバーの幅を200pxにするよ */
+        height: 100vh;        /* 画面全体の高さにするよ */
+        background-color: #333;  /* 背景色を暗くするよ */
+        color: white;         /* 文字色を白にするよ */
+        transition: left 0.3s ease; /* サイドバーの左右の位置をアニメーションで変えるよ */
+        z-index: 1500;        /* 他のパネルより前面に表示するよ */
       }
       
-      /* ----- メインエリア（全画面表示するパネルのコンテナ） ----- */
+      /* ----- メインエリア（全画面切替用コンテナ） ----- */
+      /* メインエリアは、サイドバーの表示状態に合わせて左右にスライドして押し出すよ */
       .main-container {
         position: relative;   /* 子要素の絶対位置指定の基準にするよ */
         width: 100%;          /* 横いっぱいにするよ */
-        height: calc(100vh - 50px); /* ヘッダー分50pxを引いた高さにするよ */
-        overflow: hidden;     /* はみ出す部分を隠すよ */
+        height: calc(100vh - 50px);  /* ヘッダー分50pxを引いた高さにするよ */
+        overflow: hidden;     /* はみ出した部分は隠すよ */
+        transition: margin-left 0.3s ease;  /* サイドバーに合わせて左右の余白をアニメーションするよ */
       }
       
-      /* ----- 左側パネル（各種コンテンツ） ----- */
+      /* ----- 左側・右側パネル（全画面切替用） ----- */
+      /* 左右どちらも、全画面表示するために .main-container 内に絶対配置するよ */
       .left-panel, .right-panel {
         position: absolute;   /* 画面内の絶対位置に配置するよ */
         top: 0;               /* 上端に配置するよ */
-        left: 0;              /* 左端に配置するよ */
         width: 100%;          /* 横いっぱいにするよ */
         height: 100%;         /* 高さはコンテナに合わせるよ */
-        transition: transform 0.3s ease; /* スライド動作をアニメーションするよ */
+        transition: transform 0.3s ease; /* 切り替え時のスライドアニメーション */
       }
-      /* 初期状態：右側パネル（追加されたアバター一覧）は表示、左側パネルは画面外（左に隠す） */
+      /* 初期状態では右側パネル（追加されたアバター一覧）を表示し、左側パネルを画面外（左側）に隠す */
       .left-panel {
-        transform: translateX(-100%); /* 左側パネルを左側に隠すよ */
+        transform: translateX(-100%); /* 左側パネルは隠すよ */
       }
       .right-panel {
-        transform: translateX(0); /* 右側パネルはそのまま表示するよ */
+        transform: translateX(0);  /* 右側パネルはそのまま表示するよ */
       }
       
-      /* ----- 矢印ボタン（表示切替用） ----- */
-      /* 左側に配置するボタン：現在右側パネル表示時に押すと左側コンテンツに切り替える */
+      /* ----- 矢印ボタン（画面切替用） ----- */
+      /* 左側に配置するボタン（右側パネル表示中に押すと左側コンテンツに切り替える） */
       #switchToLeft {
         position: fixed;        /* 画面上に固定するよ */
-        top: 50%;               /* 垂直中心に配置するよ */
-        left: 0;                /* 画面左端に配置するよ（※サイドバーが開いたときはJSで調整） */
+        top: 50%;               /* 垂直方向に中央に配置するよ */
+        left: 0;                /* 画面左端に配置するよ */
         transform: translateY(-50%);
-        z-index: 1600;          /* サイドバーよりも前面に表示するよ */
+        z-index: 1600;          /* サイドバーより前面に表示するよ */
       }
-      /* 右側に配置するボタン：現在左側コンテンツ表示時に押すと追加されたアバター一覧に切り替える */
+      /* 右側に配置するボタン（左側コンテンツ表示中に押すと右側（アバター一覧）に切り替える） */
       #switchToRight {
         position: fixed;        /* 画面上に固定するよ */
-        top: 50%;               /* 垂直中心に配置するよ */
+        top: 50%;               /* 垂直方向に中央に配置するよ */
         right: 0;               /* 画面右端に配置するよ */
         transform: translateY(-50%);
         z-index: 1600;
@@ -90,19 +92,19 @@
       
       /* ----- テーブルの設定 ----- */
       th, td {
-        border: 1px solid #ccc;     /* 枠線を設定するよ */
-        padding: 8px;               /* 内側に余白を作るよ */
-        text-align: center;         /* 文字を中央に寄せるよ */
-        white-space: nowrap;        /* 1行で表示するよ（改行は手動で設定） */
+        border: 1px solid #ccc; /* セルの枠線を設定するよ */
+        padding: 8px;           /* 内側に余白を作るよ */
+        text-align: center;     /* 文字を中央に寄せるよ */
+        white-space: nowrap;    /* セル内は1行表示にするよ（改行は手動） */
       }
-      /* テーブル1行目（ヘッダー）を画面上部に固定し、先頭列より上に表示する */
+      /* テーブルの1行目（ヘッダー）を固定し、1行目が先頭列より上に表示されるように z-index を設定 */
       thead th {
         position: sticky;
         top: 0;
         background-color: #e0e0e0;
-        z-index: 4;
+        z-index: 4;  /* 1行目が常に前面 */
       }
-      /* テーブル1列目を左側に固定（ヘッダーより下の階層に表示する） */
+      /* テーブルの1列目は固定し、ただしヘッダーより下に表示する */
       tbody td:first-child,
       thead th:first-child {
         position: sticky;
@@ -115,12 +117,12 @@
       .scrollable-table-container {
         overflow: auto; 
         position: relative;
-        max-height: calc(100vh - 50px); /* ウィンドウ全体から50px引いた高さにするよ */
+        max-height: calc(100vh - 50px);  /* ウィンドウ高さから50px引いた高さにするよ */
         width: auto;
       }
       table {
         border-collapse: collapse;
-        table-layout: auto;   /* 内容に合わせてセルの幅を自動設定するよ */
+        table-layout: auto;  /* セルの横幅は内容に合わせる */
         width: auto;
         max-width: 100%;
       }
@@ -191,14 +193,14 @@
       <button id="closeModal">閉じる</button>
     </div>
     
-    <!-- 矢印ボタン（切替用） -->
-    <!-- 右側パネル表示時、左端（画面左）に表示するボタン -->
+    <!-- 切替用の矢印ボタン -->
+    <!-- 右側コンテンツ表示中（全画面：追加されたアバター一覧）のときは、左端に表示 -->
     <button id="switchToLeft">←</button>
-    <!-- 左側パネル表示時、右端（画面右）に表示するボタン -->
+    <!-- 左側コンテンツ表示中のときは、右端に表示 -->
     <button id="switchToRight" style="display: none;">→</button>
     
-    <!-- メインエリア -->
-    <div class="main-container">
+    <!-- メインエリア（全画面切替用コンテナ） -->
+    <div class="main-container" id="mainContainer">
       <!-- サイドバー（サイドメニュー） -->
       <div class="sidebar" id="sidebar">
         <ul>
@@ -207,7 +209,7 @@
           <li data-target="tradeSearch">販売アバター検索</li>
         </ul>
       </div>
-      <!-- 左側パネル（各種コンテンツ） -->
+      <!-- 左側パネル（各種コンテンツ：フォーム、設定、販売検索） -->
       <div class="left-panel" id="leftPanel">
         <div id="avatarForm">
           <h2>所持アバター追加</h2>
@@ -335,64 +337,73 @@
     </div>
     
     <script>
-      // 現在の表示状態を管理する変数（"right" または "left"）
+      // 現在の全画面表示状態を管理する変数
+      // "left"：左側コンテンツ（フォーム等）表示、"right"：追加されたアバター一覧表示
       let currentView = "right";
-
-      // パネルを取得するよ
+      
+      // メインエリアコンテナを取得するよ
+      const mainContainer = document.getElementById("mainContainer");
+      // 左右のパネルを取得するよ
       const leftPanel = document.getElementById("leftPanel");
       const rightPanel = document.getElementById("rightPanel");
-
-      // 矢印ボタンを取得するよ
-      const switchToLeftBtn = document.getElementById("switchToLeft");   // 右側表示時に押すと左側コンテンツに切り替える（左端に表示）
-      const switchToRightBtn = document.getElementById("switchToRight"); // 左側表示時に押すと右側（アバター一覧）に切り替える（右端に表示）
-
-      // 初期状態を設定するよ（右側パネルを全画面表示、左側は隠す）
+      
+      // 切替用の矢印ボタンを取得するよ
+      const switchToLeftBtn = document.getElementById("switchToLeft");   // 右側表示中→左側表示へ
+      const switchToRightBtn = document.getElementById("switchToRight"); // 左側表示中→右側表示へ
+      
+      // 初期状態：右側パネル（追加されたアバター一覧）を全画面表示し、左側パネルは隠す
       window.addEventListener("load", function() {
-        // 右側は表示、左側は画面外へ（-100%）スライド
-        leftPanel.style.transform = "translateX(-100%)";
-        rightPanel.style.transform = "translateX(0)";
         currentView = "right";
-        switchToLeftBtn.style.display = "block";  // 右側表示時は、左側に切り替えるためのボタンを表示
-        switchToRightBtn.style.display = "none";  // 右側表示時は、戻すボタンは非表示
+        leftPanel.style.transform = "translateX(-100%)"; // 左側を画面外（左）に隠す
+        rightPanel.style.transform = "translateX(0)";     // 右側はそのまま表示
+        // メインエリアはサイドバーが閉じているとき、余白は0
+        mainContainer.style.marginLeft = "0";
+        // 初期状態は右側表示中なので、左側切替用ボタンを表示
+        switchToLeftBtn.style.display = "block";
+        switchToRightBtn.style.display = "none";
       });
-
-      // 関数：左側コンテンツ（フォーム等）を全画面表示する（切替）
+      
+      // 関数：左側コンテンツを全画面表示する（切替）
       function switchToLeftView() {
         currentView = "left";
-        leftPanel.style.transform = "translateX(0)";      // 左側パネルを表示
-        rightPanel.style.transform = "translateX(100%)";   // 右側パネルを画面外（右側）へ移動
-        switchToLeftBtn.style.display = "none";            // 切替用の左側ボタンは隠す
+        leftPanel.style.transform = "translateX(0)";      // 左側を表示
+        rightPanel.style.transform = "translateX(100%)";   // 右側を画面外（右）に移動
+        switchToLeftBtn.style.display = "none";            // 左側切替ボタンは隠す
         switchToRightBtn.style.display = "block";          // 右側に戻すボタンを表示
       }
-
+      
       // 関数：右側（追加されたアバター一覧）を全画面表示する（切替）
       function switchToRightView() {
         currentView = "right";
-        leftPanel.style.transform = "translateX(-100%)";   // 左側パネルを画面外（左側）へ移動
-        rightPanel.style.transform = "translateX(0)";       // 右側パネルを表示
-        switchToLeftBtn.style.display = "block";           // 左側に切り替えるボタンを表示
+        leftPanel.style.transform = "translateX(-100%)";   // 左側を画面外（左）に移動
+        rightPanel.style.transform = "translateX(0)";       // 右側を表示
+        switchToLeftBtn.style.display = "block";           // 左側に切替えるボタンを表示
         switchToRightBtn.style.display = "none";           // 右側に戻すボタンは隠す
       }
-
-      // 矢印ボタンにクリックイベントを追加するよ
+      
+      // 矢印ボタンにクリックイベントを設定するよ
       switchToLeftBtn.addEventListener("click", switchToLeftView);
       switchToRightBtn.addEventListener("click", switchToRightView);
-
+      
       // ----- サイドバー（サイドメニュー）の処理 -----
       const hamburgerBtn = document.getElementById("hamburgerBtn"); // ハンバーガーアイコンを取得
       const sidebar = document.getElementById("sidebar");           // サイドバーを取得
+      // ハンバーガーアイコンをクリックしたら、サイドバーをスライドイン／アウトするよ
       hamburgerBtn.addEventListener("click", function() {
         // もしサイドバーが隠れていたら
         if (sidebar.style.left === "" || sidebar.style.left === "-220px") {
-          sidebar.style.left = "0"; // サイドバーを表示（左端にスライドイン）
-          // サイドバーが表示されたら、左側の矢印ボタンをサイドバー分だけ右にずらす
+          sidebar.style.left = "0"; // サイドバーを画面左端に表示するよ
+          // サイドバーが出た場合、メインエリアの余白をサイドバー分だけ右にずらす
+          mainContainer.style.marginLeft = "220px";
+          // サイドバー表示中は、左側の切替矢印ボタンもサイドバー分だけ右へずらす
           switchToLeftBtn.style.left = "220px";
         } else {
-          sidebar.style.left = "-220px"; // サイドバーを隠す
+          sidebar.style.left = "-220px"; // サイドバーを隠すよ
+          mainContainer.style.marginLeft = "0";
           switchToLeftBtn.style.left = "0";
         }
       });
-
+      
       // ----- サイドバー項目選択による画面切替 -----
       const sidebarItems = document.querySelectorAll(".sidebar li");
       const avatarFormDiv = document.getElementById("avatarForm");
@@ -401,9 +412,10 @@
       sidebarItems.forEach(function(item) {
         item.addEventListener("click", function() {
           const target = item.getAttribute("data-target");
-          // サイドバーを隠す（常に左外に）
+          // サイドバーは必ず閉じる（左外に戻す）
           sidebar.style.left = "-220px";
-          switchToLeftBtn.style.left = "0"; // サイドバー閉じたので、矢印ボタンを元位置に戻す
+          mainContainer.style.marginLeft = "0";
+          switchToLeftBtn.style.left = "0";
           if (target === "avatarForm") {
             avatarFormDiv.style.display = "block";
             settingsDiv.style.display = "none";
@@ -425,7 +437,7 @@
           }
         });
       });
-
+      
       // ----- 所持アバター追加フォームの処理 -----
       const partsMapping = {
         "トップス": "H",
@@ -869,7 +881,7 @@
         });
       }
       
-      // ページ読み込み時、アバター一覧テーブルのヘッダーセルにクリックでソートする処理を追加
+      // ページ読み込み時、アバター一覧テーブルのヘッダーセルにソート用クリックイベントを追加
       var avatarTable = document.getElementById("avatarTable");
       if (avatarTable) {
         var avatarHeaderCells = avatarTable.querySelectorAll("thead th");
