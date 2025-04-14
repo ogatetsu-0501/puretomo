@@ -1,6 +1,7 @@
 <!DOCTYPE html> <!-- HTML文書の種類を宣言するよ -->
-<html lang="ja"> <!-- 言語を日本語に指定するよ -->
-  <head> <!-- ヘッダー部分、メタ情報やスタイルシートを記述するよ -->
+<html lang="ja">
+  <head>
+    <!-- ページの基本設定 -->
     <meta charset="UTF-8" /> <!-- 文字コードをUTF-8に設定するよ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- 画面サイズに合わせるよ -->
     <title>アバター管理画面</title> <!-- ページタイトルを設定するよ -->
@@ -8,145 +9,115 @@
       /* ----- 全体の基本設定 ----- */
       html, body {
         height: 100%; /* 画面全体の高さにするよ */
-        margin: 0; /* 余白をなくすよ */
-        padding: 0; /* 内側余白もなくすよ */
+        margin: 0;    /* 余白をなくすよ */
+        padding: 0;   /* 内側の余白もなくすよ */
       }
       body {
-        display: flex; /* 子要素を横並びにするよ */
-        flex-direction: column; /* 縦方向に積むよ */
+        display: flex;         /* 子要素を縦に並べるよ */
+        flex-direction: column;
         font-family: Arial, sans-serif; /* 使用するフォントを指定するよ */
       }
       
       /* ----- ヘッダー ----- */
       header {
-        display: flex; /* ヘッダー内の要素を横に並べるよ */
-        align-items: center; /* 垂直方向に中央揃えにするよ */
-        background-color: #4caf50; /* ヘッダーの背景色を設定するよ */
-        color: white; /* ヘッダーの文字色を白にするよ */
-        padding: 10px; /* ヘッダー内に余白を作るよ */
+        display: flex;           /* ヘッダー内の要素を横並びにするよ */
+        align-items: center;     /* 垂直方向に中央寄せにするよ */
+        background-color: #4caf50; /* 背景色を設定するよ */
+        color: white;            /* 文字色を白にするよ */
+        padding: 10px;           /* 内側に余白を作るよ */
       }
       .hamburger {
-        font-size: 24px; /* ハンバーガーアイコンの文字サイズを大きくするよ */
-        cursor: pointer; /* カーソルをポインターに変更するよ */
-        margin-right: 10px; /* 右に余白を作るよ */
+        font-size: 24px;         /* ハンバーガーアイコンの文字サイズを大きくするよ */
+        cursor: pointer;         /* マウスカーソルをポインターにするよ */
+        margin-right: 10px;       /* 右に余白を作るよ */
+      }
+      
+      /* ----- サイドバー（サイドメニュー） ----- */
+      /* サイドバーは固定配置し、初期状態は画面外（左側：-220px）に隠すよ */
+      .sidebar {
+        position: fixed;         /* 画面上に固定するよ */
+        top: 0;                  /* 上端に配置するよ */
+        left: -220px;            /* 画面の左外へ隠す（幅200px + 20pxの余白） */
+        width: 200px;            /* サイドバーの幅を200pxにするよ */
+        height: 100vh;           /* 画面全体の高さにするよ */
+        background-color: #333;  /* 背景色を暗めにするよ */
+        color: white;            /* 文字色を白にするよ */
+        transition: left 0.3s ease; /* 左右の位置をアニメーションするよ */
+        z-index: 1500;           /* 他のパネルより手前に表示するよ */
       }
       
       /* ----- メインエリア ----- */
       .main-container {
-        flex: 1; /* 残りの領域全体を使うよ */
-        display: flex; /* 子要素を横に並べるよ */
-        overflow: hidden; /* はみ出した内容は隠すよ */
+        flex: 1;               /* 残りの領域をすべて使うよ */
+        display: flex;         /* 子要素を横に並べるよ */
+        overflow: hidden;      /* はみ出した部分は隠すよ */
       }
       
       /* ----- 左側パネル ----- */
+      /* 左側パネルは通常は表示されるが、右側パネルが開くときに左へスライドアウトするよ */
       .left-panel {
-        width: calc(30% - 30px); /* 左側パネルの幅を30%から、左右ボタンの余白30px分引いた値にするよ */
-        padding: 20px; /* 内側に余白を作るよ */
-        box-sizing: border-box; /* パディングを含めたサイズ計算にするよ */
-        transition: width 0.3s ease; /* 幅が変わるときにアニメーションするよ */
+        width: calc(30% - 30px); /* 幅は30%から左右ボタン分30pxを差し引いた値にするよ */
+        padding: 20px;         /* 内側に余白を作るよ */
+        box-sizing: border-box; /* パディングもサイズに含めるよ */
+        transition: transform 0.3s ease; /* スライドする動きをアニメーションするよ */
       }
       
       /* ----- 右側パネル（追加されたアバター一覧） ----- */
+      /* 右側パネルは初期状態で画面外へ押し出されていて、開くと全面に表示されるよ */
       .right-panel {
-        width: calc(70% - 30px); /* 右側パネルの幅を70%から左右ボタン分の余白30pxを引いた値にするよ */
-        padding: 20px; /* 内側に余白を作るよ */
-        box-sizing: border-box; /* パディング分も含めたサイズ計算にするよ */
-        overflow: auto; /* 内容がはみ出したときはスクロールできるよ */
-        transition: transform 0.3s ease; /* パネルを動かすときのアニメーション設定 */
+        width: calc(70% - 30px);  /* 幅は70%から左右ボタン分を差し引いた値にするよ */
+        padding: 20px;           /* 内側に余白を作るよ */
+        box-sizing: border-box;  /* パディングを含めたサイズ計算にするよ */
+        overflow: auto;          /* 内容がはみ出したらスクロール可能にするよ */
+        transition: transform 0.3s ease; /* パネルがスライドするアニメーション */
       }
-      /* 右側パネルが閉じた状態のときの設定 */
+      /* 右側パネルが閉じた状態ではクラス "closed" を持つよ */
       .right-panel.closed {
-        transform: translateX(100%); /* 右へ100%ずらして非表示にするよ */
-      }
-      
-      /* ----- サイドバー ----- */
-      .sidebar {
-        width: 200px; /* サイドバーの幅を200pxにするよ */
-        background-color: #333; /* 背景色を暗く設定するよ */
-        color: white; /* 文字色を白にするよ */
-        display: none; /* 初期は非表示にするよ */
-        flex-shrink: 0; /* 縮まらないようにするよ */
-      }
-      .sidebar ul {
-        list-style: none; /* リストマーカーを表示しないよ */
-        margin: 0; /* 外側の余白をなくすよ */
-        padding: 0; /* 内側の余白もなくすよ */
-      }
-      .sidebar li {
-        padding: 15px; /* 内側に余白を作るよ */
-        cursor: pointer; /* カーソルをポインターに変更するよ */
-      }
-      .sidebar li:hover {
-        background-color: #575757; /* マウスオーバー時の背景色を変更するよ */
-      }
-      
-      /* ----- フォームや表の共通設定 ----- */
-      .form-group {
-        margin-bottom: 15px; /* 各項目の下に余白を作るよ */
-      }
-      input[type="text"],
-      input[type="number"],
-      select {
-        width: 100%; /* 入力欄の幅を100%にするよ */
-        padding: 5px; /* 入力欄内に余白を作るよ */
-        box-sizing: border-box; /* パディング含む幅にするよ */
-      }
-      button {
-        padding: 10px; /* ボタン内に余白を作るよ */
-        width: 100%; /* ボタンの幅を100%にするよ */
-        background-color: #4caf50; /* ボタンの背景色を設定するよ */
-        border: none; /* 枠線は消すよ */
-        color: white; /* 文字色を白にするよ */
-        font-size: 16px; /* ボタンの文字サイズを設定するよ */
-        cursor: pointer; /* カーソルをポインターにするよ */
-      }
-      button:disabled {
-        background-color: #cccccc; /* ボタンが無効なとき、背景色を薄くするよ */
-        cursor: not-allowed; /* 無効状態のとき、カーソルを禁止表示にするよ */
+        transform: translateX(100%); /* 右側に全体押し出して非表示にするよ */
       }
       
       /* ----- テーブルの設定 ----- */
-      /* 各セルは内容に合わせた横幅になり、改行は手動で入れるよ */
+      /* セルの内容はそのまま1行で表示するよ */
       th, td {
-        border: 1px solid #ccc;       /* セルの枠線を設定するよ */
-        padding: 8px;                 /* セル内に余白を作るよ */
-        text-align: center;           /* 文字を中央に寄せるよ */
-        white-space: nowrap;          /* 改行なしで１行に表示するよ */
+        border: 1px solid #ccc;   /* 枠線を薄いグレーにするよ */
+        padding: 8px;             /* セル内に余白を作るよ */
+        text-align: center;       /* 文字を中央にするよ */
+        white-space: nowrap;      /* 1行に表示するよ（改行は手動で入れるよ） */
       }
-      /* テーブルの1行目（ヘッダー）を固定して常に上部に表示するよ */
+      /* テーブルヘッダー（1行目）は固定して上部に表示し、1行目が先頭列より上に来るようにするよ */
       thead th {
-        position: sticky;   /* 位置を固定するよ */
-        top: 0;             /* 上から0pxで表示するよ */
-        background-color: #e0e0e0; /* ヘッダーの背景色を設定するよ */
-        z-index: 4;         /* ヘッダーが最前面に表示されるようにするよ */
+        position: sticky;   /* 固定位置にするよ */
+        top: 0;             /* 上端にくっつけるよ */
+        background-color: #e0e0e0; /* ヘッダーの背景色 */
+        z-index: 4;         /* 1行目が先頭列より上に表示されるようにするよ */
       }
-      /* テーブルの1列目を固定するよ。ただし、1行目より下になるように z-index は低めに */
+      /* テーブルの1列目は固定して左側に表示するよ（ただしヘッダーより下になるよう z-index を低くする） */
       tbody td:first-child,
       thead th:first-child {
-        position: sticky;   /* 位置を固定するよ */
-        left: 0;            /* 左から0pxで表示するよ */
+        position: sticky;   /* 固定位置にするよ */
+        left: 0;            /* 左端にくっつけるよ */
         background-color: #f0f0f0; /* 背景色を設定するよ */
-        z-index: 3;         /* ヘッダーより下の階層に表示するよ */
+        z-index: 3;         /* ヘッダーより下に表示するよ */
       }
       
-      /* スクロール可能なテーブルコンテナの設定 */
+      /* ----- スクロール可能なテーブルコンテナ ----- */
       .scrollable-table-container {
         overflow: auto; 
         position: relative;
-        max-height: calc(100vh - 50px); /* ウィンドウ全体の高さから50px引いた高さにするよ */
+        max-height: calc(100vh - 50px); /* ウィンドウ全体の高さから50px分引いた高さにするよ */
         width: auto; /* コンテンツに合わせた幅にするよ */
       }
       table {
         border-collapse: collapse; /* セルの境界線をくっつけるよ */
         table-layout: auto;         /* セルの横幅は内容に合わせるよ */
-        width: auto;               /* テーブル全体の幅を自動にするよ */
+        width: auto;               /* テーブル全体の幅は自動にするよ */
         max-width: 100%;           /* テーブルがコンテナを超えないようにするよ */
       }
       
       /* ----- 更新希望ステータス ----- */
       .update-status-group {
-        display: flex;    /* 横並びにするよ */
-        flex-wrap: wrap;  /* 行が足りなければ折り返すよ */
+        display: flex;    /* 横に並べるよ */
+        flex-wrap: wrap;  /* 行が足りないときは折り返すよ */
       }
       .update-status-group label {
         margin-right: 10px; /* 各ラベルの右に余白を作るよ */
@@ -154,82 +125,82 @@
       
       /* ----- モーダルウィンドウ（詳細表示用） ----- */
       #modalWindow {
-        display: none; /* モーダルは最初は非表示にするよ */
-        position: fixed;    /* 画面上に固定するよ */
-        top: 50%;           /* 上から50%に配置するよ */
-        left: 50%;          /* 左から50%に配置するよ */
-        transform: translate(-50%, -50%); /* 中央に移動するよ */
-        width: 80%;         /* 幅を80%にするよ */
-        max-width: 600px;   /* 幅の最大は600pxにするよ */
-        background-color: #fff; /* 背景色は白にするよ */
+        display: none;       /* 最初は表示しないよ */
+        position: fixed;     /* 画面上に固定するよ */
+        top: 50%;            /* 上から50%に配置するよ */
+        left: 50%;           /* 左から50%に配置するよ */
+        transform: translate(-50%, -50%); /* 真ん中に持ってくるよ */
+        width: 80%;          /* 幅は80%にするよ */
+        max-width: 600px;    /* 幅の最大は600pxにするよ */
+        background-color: #fff; /* 背景は白にするよ */
         border: 1px solid #ccc; /* 枠線を設定するよ */
-        padding: 15px;      /* 内側に余白を作るよ */
-        z-index: 1000;      /* 他の要素より前に表示するよ */
+        padding: 15px;       /* 内側に余白を作るよ */
+        z-index: 1000;       /* 他の要素より前に表示するよ */
         box-shadow: 0 0 10px rgba(0,0,0,0.5); /* 影をつけるよ */
       }
       #modalContent {
         display: flex;       /* 横並びにするよ */
         flex-direction: row; /* 横方向に並べるよ */
-        overflow-x: auto;    /* 横方向にスクロールできるようにするよ */
+        overflow-x: auto;    /* 横スクロールを有効にするよ */
       }
       .modalItem {
         border: 1px solid #ddd; /* アイテムの枠線を設定するよ */
-        margin-right: 10px;  /* 右に余白を作るよ */
-        padding: 5px;        /* 内側に余白を作るよ */
-        text-align: center;  /* 文字を中央に寄せるよ */
+        margin-right: 10px;   /* 右に余白を作るよ */
+        padding: 5px;         /* 内側に余白を作るよ */
+        text-align: center;   /* 文字を中央に寄せるよ */
       }
       .modalItem img {
-        max-width: 100px; /* 画像の最大幅を100pxにするよ */
-        display: block;   /* 画像をブロック要素にするよ */
-        margin: 0 auto 5px; /* 画像を中央に配置し、下に余白を作るよ */
+        max-width: 100px;     /* 画像の最大幅を100pxにするよ */
+        display: block;       /* 画像をブロック要素にするよ */
+        margin: 0 auto 5px;   /* 中央に配置し下に余白を作るよ */
       }
       #closeModal {
-        width: 100%;         /* ボタンの幅を100%にするよ */
-        margin-top: 15px;     /* 上に余白を作るよ */
-        background-color: #4caf50; /* ボタンの背景色を設定するよ */
-        color: #fff;         /* ボタンの文字色を白にするよ */
-        border: none;        /* 枠線は消すよ */
-        padding: 5px 10px;   /* 内側に余白を作るよ */
-        cursor: pointer;     /* カーソルをポインターにするよ */
+        width: 100%;          /* 幅を100%にするよ */
+        margin-top: 15px;      /* 上に余白を作るよ */
+        background-color: #4caf50; /* 背景色を設定するよ */
+        color: #fff;          /* 文字色を白にするよ */
+        border: none;         /* 枠線を消すよ */
+        padding: 5px 10px;    /* 内側に余白を作るよ */
+        cursor: pointer;      /* カーソルをポインターにするよ */
       }
       
       /* ----- 右側パネルの開閉用ボタン ----- */
-      /* 右端に配置する開くボタン（デフォルトで表示） */
+      /* 右端の開くボタン（デフォルトで表示するよ） */
       #openRightPanel {
-        position: fixed; /* 画面上に固定するよ */
-        top: 0;          /* 上端に配置するよ */
-        right: 0;        /* 右端に配置するよ */
-        width: 30px;     /* 幅を30pxにするよ */
-        height: 100vh;   /* 画面全体の高さにするよ */
+        position: fixed;       /* 画面上に固定するよ */
+        top: 0;                /* 上端に配置するよ */
+        right: 0;              /* 右端に配置するよ */
+        width: 30px;           /* 幅を30pxにするよ */
+        height: 100vh;         /* 画面全体の高さにするよ */
         background-color: #4caf50; /* 背景色を設定するよ */
-        color: white;    /* 文字色を白にするよ */
-        border: none;    /* 枠線は消すよ */
-        cursor: pointer; /* カーソルをポインターにするよ */
-        z-index: 1001;   /* 前面に表示するよ */
-        display: block;  /* 初期は表示するよ */
+        color: white;          /* 文字色を白にするよ */
+        border: none;          /* 枠線を消すよ */
+        cursor: pointer;       /* カーソルをポインターにするよ */
+        z-index: 1001;         /* 前面に表示するよ */
+        display: block;        /* 初期状態で表示するよ */
       }
-      /* 左端に配置する閉じるボタン（初期は非表示） */
+      /* 左端の閉じるボタン（右側パネルが開いたときに表示されるよ） */
       #closeRightPanel {
-        position: fixed; /* 画面上に固定するよ */
-        top: 0;          /* 上端に配置するよ */
-        left: 0;         /* 左端に配置するよ */
-        width: 30px;     /* 幅を30pxにするよ */
-        height: 100vh;   /* 画面全体の高さにするよ */
+        position: fixed;       /* 画面上に固定するよ */
+        top: 0;                /* 上端に配置するよ */
+        left: 220px;           /* 左端から220pxの位置に配置するよ（サイドバーの幅200px＋20px余白） */
+        width: 30px;           /* 幅を30pxにするよ */
+        height: 100vh;         /* 画面全体の高さにするよ */
         background-color: #4caf50; /* 背景色を設定するよ */
-        color: white;    /* 文字色を白にするよ */
-        border: none;    /* 枠線は消すよ */
-        cursor: pointer; /* カーソルをポインターにするよ */
-        z-index: 1001;   /* 前面に表示するよ */
-        display: none;   /* 初期は非表示にするよ */
+        color: white;          /* 文字色を白にするよ */
+        border: none;          /* 枠線を消すよ */
+        cursor: pointer;       /* カーソルをポインターにするよ */
+        z-index: 1001;         /* 前面に表示するよ */
+        display: none;         /* 初期状態では非表示にするよ */
       }
       
       /* ----- レスポンシブデザイン用のメディアクエリ ----- */
       @media (max-width: 768px) {
         .left-panel {
-          width: calc(100% - 30px); /* 画面が狭くなったら左側パネルはボタン分を引いた全幅にするよ */
+          width: calc(100% - 30px); /* 画面が狭くなったら左側パネルはボタン分を差し引いた全幅にするよ */
         }
         .right-panel {
-          width: calc(100% - 30px); /* 右側パネルも同様に調整するよ */
+          width: calc(100% - 30px); /* 同様に調整するよ */
         }
       }
     </style>
@@ -237,33 +208,35 @@
   <body>
     <!-- ヘッダー -->
     <header>
-      <div class="hamburger" id="hamburgerBtn">&#9776;</div> <!-- ハンバーガーメニューのボタンを表示するよ -->
-      <h1 style="margin: 0; font-size: 18px">アバター管理</h1> <!-- ヘッダーのタイトルを表示するよ -->
+      <div class="hamburger" id="hamburgerBtn">&#9776;</div> <!-- ハンバーガーメニューのボタン -->
+      <h1 style="margin: 0; font-size: 18px">アバター管理</h1> <!-- ヘッダーのタイトル -->
     </header>
     
     <!-- モーダルウィンドウ（詳細表示用） -->
-    <div id="modalWindow"> <!-- モーダルウィンドウ本体 -->
-      <div id="modalContent"> <!-- モーダル内の内容を表示するよ -->
-        <!-- 各 listingItem の詳細を横に並べるよ -->
+    <div id="modalWindow">
+      <div id="modalContent">
+        <!-- モーダル内で各 listingItem の詳細を横に並べるよ -->
       </div>
-      <button id="closeModal">閉じる</button> <!-- モーダルを閉じるためのボタン -->
+      <button id="closeModal">閉じる</button> <!-- モーダルを閉じるボタン -->
     </div>
     
     <!-- 右側パネルの開閉用ボタン -->
-    <button id="openRightPanel">⇐</button>   <!-- デフォルトで右側パネルを開くボタン（右端に表示） -->
-    <button id="closeRightPanel">⇒</button> <!-- パネルが開いたときに左端に表示される閉じるボタン -->
+    <!-- 右端の「開く」ボタン（常に右側に表示） -->
+    <button id="openRightPanel">⇐</button>
+    <!-- 左端の「閉じる」ボタン（右側パネルが開いたときに表示） -->
+    <button id="closeRightPanel">⇒</button>
     
     <!-- メインエリア -->
     <div class="main-container">
-      <!-- サイドバー -->
+      <!-- サイドバー（サイドメニュー） -->
       <div class="sidebar" id="sidebar">
         <ul>
-          <li data-target="avatarForm">所持アバター追加</li> <!-- サイドバー項目：所持アバター追加 -->
-          <li data-target="settings">設定</li>             <!-- サイドバー項目：設定 -->
-          <li data-target="tradeSearch">販売アバター検索</li>   <!-- サイドバー項目：販売アバター検索 -->
+          <li data-target="avatarForm">所持アバター追加</li>
+          <li data-target="settings">設定</li>
+          <li data-target="tradeSearch">販売アバター検索</li>
         </ul>
       </div>
-      <!-- 左側パネル -->
+      <!-- 左側パネル（通常は表示され、右側パネルが開くとスライドアウトする） -->
       <div class="left-panel" id="leftPanel">
         <div id="avatarForm">
           <h2>所持アバター追加</h2>
@@ -369,7 +342,7 @@
         </div>
       </div>
       
-      <!-- 右側パネル（追加されたアバター一覧）は初期状態で閉じておく（classにclosedを追加） -->
+      <!-- 右側パネル（追加されたアバター一覧） -->
       <div class="right-panel closed" id="rightPanel">
         <h2>追加されたアバター一覧</h2>
         <div class="scrollable-table-container">
@@ -391,45 +364,89 @@
     </div>
     
     <script>
-      // ----- ハンバーガーメニューとサイドバーの処理 -----
-      const hamburgerBtn = document.getElementById("hamburgerBtn"); // ハンバーガーメニューボタンを取得するよ
-      const sidebar = document.getElementById("sidebar"); // サイドバーの要素を取得するよ
-      hamburgerBtn.addEventListener("click", function() { // ハンバーガーがクリックされたときの処理
-        sidebar.style.display = (sidebar.style.display === "none" || sidebar.style.display === "") ? "block" : "none"; // 表示・非表示を切り替えるよ
+      // ----- 右側パネルと左側パネルのスライド処理 -----
+      // 左側パネル（コンテンツ）を取得するよ
+      const leftPanel = document.getElementById("leftPanel");
+      // 右側パネル（追加されたアバター一覧）を取得するよ
+      const rightPanel = document.getElementById("rightPanel");
+      // 右側パネルを閉じるための左側に配置する矢印ボタンを取得するよ（画面左に表示）
+      const closeRightPanelBtn = document.getElementById("closeRightPanel");
+      // 右側パネルを開くための右端のボタンを取得するよ
+      const openRightPanelBtn = document.getElementById("openRightPanel");
+
+      // 右端の「開く」ボタンをクリックしたとき：右側パネルをスライドインして表示し、左側パネルを画面外へ押し出す
+      openRightPanelBtn.addEventListener("click", function() {
+        // 左側パネルを左へ完全に押し出す（画面外に隠れる）
+        leftPanel.style.transform = "translateX(-100%)";
+        // 右側パネルの「closed」クラスを除去して、画面内にスライドインさせる
+        rightPanel.classList.remove("closed");
+        // 右端の開くボタンを非表示にする
+        openRightPanelBtn.style.display = "none";
+        // 左端の閉じるボタンを表示する
+        closeRightPanelBtn.style.display = "block";
       });
-      const sidebarItems = document.querySelectorAll(".sidebar li"); // サイドバー内の各項目を取得するよ
-      const avatarFormDiv = document.getElementById("avatarForm"); // 所持アバター追加画面の要素を取得するよ
-      const settingsDiv = document.getElementById("settings"); // 設定画面の要素を取得するよ
-      const tradeSearchDiv = document.getElementById("tradeSearch"); // 販売アバター検索画面の要素を取得するよ
-      // サイドバー各項目がクリックされたときの処理を設定するよ
+
+      // 左端の「閉じる」ボタンをクリックしたとき：右側パネルを画面外に押し出し、左側パネルを元に戻す
+      closeRightPanelBtn.addEventListener("click", function() {
+        // 左側パネルを元の位置に戻す
+        leftPanel.style.transform = "translateX(0)";
+        // 右側パネルに「closed」クラスを付与して、画面外へスライドアウトさせる
+        rightPanel.classList.add("closed");
+        // 左端の閉じるボタンを非表示にする
+        closeRightPanelBtn.style.display = "none";
+        // 右端の開くボタンを再表示する
+        openRightPanelBtn.style.display = "block";
+      });
+
+      // ----- サイドバー（サイドメニュー）の処理 -----
+      // ここでは、ハンバーガーボタンを押すとサイドバーが左側からスライドインするようにするよ
+      const hamburgerBtn = document.getElementById("hamburgerBtn"); // ハンバーガーアイコンを取得するよ
+      const sidebar = document.getElementById("sidebar"); // サイドバーの要素を取得するよ
+      // 初期状態ではサイドバーは固定位置（left: -220px）に隠れている
+      // ハンバーガーがクリックされたら、サイドバーのleftプロパティを0にしてスライドインする
+      hamburgerBtn.addEventListener("click", function() {
+        // もしサイドバーが隠れていたら
+        if (sidebar.style.left === "" || sidebar.style.left === "-220px") {
+          sidebar.style.left = "0"; // サイドバーを左端にスライドインするよ
+        } else {
+          sidebar.style.left = "-220px"; // もう一度隠すよ
+        }
+      });
+
+      // ----- サイドバーの項目選択による画面切替 -----
+      const sidebarItems = document.querySelectorAll(".sidebar li");
+      const avatarFormDiv = document.getElementById("avatarForm");
+      const settingsDiv = document.getElementById("settings");
+      const tradeSearchDiv = document.getElementById("tradeSearch");
       sidebarItems.forEach(function(item) {
         item.addEventListener("click", function() {
-          const target = item.getAttribute("data-target"); // クリックされた項目のターゲット名を取得するよ
-          sidebar.style.display = "none"; // サイドバーを隠すよ
-          if (target === "avatarForm") { // 所持アバター追加が選ばれたとき
-            avatarFormDiv.style.display = "block"; // 所持アバター追加画面を表示するよ
-            settingsDiv.style.display = "none"; // 設定画面を隠すよ
-            tradeSearchDiv.style.display = "none"; // 販売検索画面を隠すよ
-          } else if (target === "settings") { // 設定が選ばれたとき
-            avatarFormDiv.style.display = "none"; // 所持アバター追加画面を隠すよ
-            settingsDiv.style.display = "block"; // 設定画面を表示するよ
-            tradeSearchDiv.style.display = "none"; // 販売検索画面を隠すよ
-            const savedGender = localStorage.getItem("avatarGender"); // 保存された性別を取得するよ
+          const target = item.getAttribute("data-target");
+          // サイドバーを隠す
+          sidebar.style.left = "-220px";
+          if (target === "avatarForm") {
+            avatarFormDiv.style.display = "block";
+            settingsDiv.style.display = "none";
+            tradeSearchDiv.style.display = "none";
+          } else if (target === "settings") {
+            avatarFormDiv.style.display = "none";
+            settingsDiv.style.display = "block";
+            tradeSearchDiv.style.display = "none";
+            const savedGender = localStorage.getItem("avatarGender");
             if (savedGender) {
-              document.getElementById("genderSelect").value = savedGender; // 取得した性別を設定するよ
+              document.getElementById("genderSelect").value = savedGender;
             }
-            generateUpdateStatusCheckboxes(); // 更新希望ステータスのチェックボックスを生成するよ
-          } else if (target === "tradeSearch") { // 販売アバター検索が選ばれたとき
-            avatarFormDiv.style.display = "none"; // 所持アバター追加画面を隠すよ
-            settingsDiv.style.display = "none"; // 設定画面を隠すよ
-            tradeSearchDiv.style.display = "block"; // 販売検索画面を表示するよ
-            logItemCodes(); // 販売アバター検索の処理を実行するよ
+            generateUpdateStatusCheckboxes();
+          } else if (target === "tradeSearch") {
+            avatarFormDiv.style.display = "none";
+            settingsDiv.style.display = "none";
+            tradeSearchDiv.style.display = "block";
+            logItemCodes();
           }
         });
       });
-      
+
       // ----- 所持アバター追加フォームの処理 -----
-      const partsMapping = { // パーツ名と対応するコードを定義するよ
+      const partsMapping = {
         "トップス": "H",
         "ボトムス": "L",
         "ワンピース": "HL",
@@ -456,7 +473,7 @@
         "その他4": "A3",
         "モイトイ": "BL"
       };
-      const bagcatLabels = { // 表示用のラベルを定義するよ
+      const bagcatLabels = {
         "H": "トップス",
         "L": "ボトムス",
         "HL": "ワンピース",
@@ -483,196 +500,196 @@
         "A3": "その他4",
         "BL": "モイトイ"
       };
-      const typeOptions = ["INT", "ALL", "HPR", "SP", "PET", "HP", "SPR", "LUK", "ATK", "EXP", "MAT", "POW", "VIT", "SPD"]; // 種類のオプションを配列で定義するよ
-      let avatarList = []; // アバター情報を格納する配列を初期化するよ
-      window.addEventListener("load", function() { // ページ読み込み時の処理
-        const storedData = localStorage.getItem("avatarList"); // 保存されたアバターリストを取得するよ
-        if (storedData) { // もし保存データがあれば
-          avatarList = JSON.parse(storedData); // JSON文字列を配列に変換するよ
-          renderAvatarTable(); // アバター一覧をテーブルに表示するよ
+      const typeOptions = ["INT", "ALL", "HPR", "SP", "PET", "HP", "SPR", "LUK", "ATK", "EXP", "MAT", "POW", "VIT", "SPD"];
+      let avatarList = [];
+      window.addEventListener("load", function() {
+        const storedData = localStorage.getItem("avatarList");
+        if (storedData) {
+          avatarList = JSON.parse(storedData);
+          renderAvatarTable();
         }
       });
-      const partInput = document.getElementById("partInput"); // パーツ入力欄を取得するよ
-      const type1Input = document.getElementById("type1Input"); // 種類①入力欄を取得するよ
-      const type2Input = document.getElementById("type2Input"); // 種類②入力欄を取得するよ
-      const valueInput = document.getElementById("valueInput"); // 上昇値入力欄を取得するよ
-      const addButton = document.getElementById("addButton"); // 追加ボタンを取得するよ
-      const avatarTableBody = document.querySelector("#avatarTable tbody"); // アバター一覧テーブルのtbodyを取得するよ
-      type1Input.addEventListener("change", function() { // 種類①入力欄の値が変わったときの処理
-        const selectedType1 = type1Input.value.trim(); // 入力値の前後の空白を削除するよ
-        if (selectedType1 === "") { // もし種類①が空なら
-          type2Input.disabled = true; // 種類②入力欄を無効にするよ
-          type2Input.value = ""; // 種類②の値をクリアするよ
-        } else { // 種類①に値が入力されている場合
-          type2Input.disabled = false; // 種類②入力欄を有効にするよ
-          updateType2Datalist(selectedType1); // 種類②の候補リストを更新するよ
+      const partInput = document.getElementById("partInput");
+      const type1Input = document.getElementById("type1Input");
+      const type2Input = document.getElementById("type2Input");
+      const valueInput = document.getElementById("valueInput");
+      const addButton = document.getElementById("addButton");
+      const avatarTableBody = document.querySelector("#avatarTable tbody");
+      type1Input.addEventListener("change", function() {
+        const selectedType1 = type1Input.value.trim();
+        if (selectedType1 === "") {
+          type2Input.disabled = true;
+          type2Input.value = "";
+        } else {
+          type2Input.disabled = false;
+          updateType2Datalist(selectedType1);
         }
-        checkInput(); // 入力値のチェックを行うよ
+        checkInput();
       });
-      partInput.addEventListener("input", checkInput); // パーツ入力欄に入力されたらチェックするよ
-      type1Input.addEventListener("input", checkInput); // 種類①入力欄に入力されたらチェックするよ
-      valueInput.addEventListener("input", checkInput); // 上昇値入力欄に入力されたらチェックするよ
-      function checkInput() { // 入力内容をチェックする関数
-        const isPartEntered = partInput.value.trim() !== ""; // パーツに値が入力されているか確認するよ
-        const isType1Entered = type1Input.value.trim() !== ""; // 種類①に値が入力されているか確認するよ
-        const isValueEntered = valueInput.value.trim() !== "" && !isNaN(valueInput.value); // 上昇値が数値として入力されているか確認するよ
-        addButton.disabled = !(isPartEntered && isType1Entered && isValueEntered); // いずれか不足していれば追加ボタンを無効にするよ
+      partInput.addEventListener("input", checkInput);
+      type1Input.addEventListener("input", checkInput);
+      valueInput.addEventListener("input", checkInput);
+      function checkInput() {
+        const isPartEntered = partInput.value.trim() !== "";
+        const isType1Entered = type1Input.value.trim() !== "";
+        const isValueEntered = valueInput.value.trim() !== "" && !isNaN(valueInput.value);
+        addButton.disabled = !(isPartEntered && isType1Entered && isValueEntered);
       }
-      function updateType2Datalist(selectedType1) { // 種類②の候補リストを更新する関数
-        const type2Datalist = document.getElementById("type2List"); // 種類②のdatalist要素を取得するよ
-        type2Datalist.innerHTML = ""; // 既存の候補をクリアするよ
-        const emptyOption = document.createElement("option"); // 空の選択肢を作るよ
-        emptyOption.value = ""; // 値を空に設定するよ
-        type2Datalist.appendChild(emptyOption); // 候補リストに追加するよ
-        typeOptions.forEach(function(option) { // 各候補を処理するよ
-          if (option !== selectedType1) { // 種類①と同じ候補は除くよ
-            const opt = document.createElement("option"); // 新しいoption要素を作るよ
-            opt.value = option; // 値を設定するよ
-            type2Datalist.appendChild(opt); // 候補リストに追加するよ
+      function updateType2Datalist(selectedType1) {
+        const type2Datalist = document.getElementById("type2List");
+        type2Datalist.innerHTML = "";
+        const emptyOption = document.createElement("option");
+        emptyOption.value = "";
+        type2Datalist.appendChild(emptyOption);
+        typeOptions.forEach(function(option) {
+          if (option !== selectedType1) {
+            const opt = document.createElement("option");
+            opt.value = option;
+            type2Datalist.appendChild(opt);
           }
         });
       }
-      addButton.addEventListener("click", function() { // 追加ボタンがクリックされたときの処理
-        const newAvatar = { // 新しいアバター情報をオブジェクトで作るよ
-          partText: partInput.value.trim(), // 入力されたパーツ名を取得するよ
-          type1: type1Input.value.trim(), // 入力された種類①を取得するよ
-          type2: (type2Input.value.trim() === "") ? "なし" : type2Input.value.trim(), // 種類②が空なら「なし」にするよ
-          increase: valueInput.value.trim() // 入力された上昇値を取得するよ
+      addButton.addEventListener("click", function() {
+        const newAvatar = {
+          partText: partInput.value.trim(),
+          type1: type1Input.value.trim(),
+          type2: (type2Input.value.trim() === "") ? "なし" : type2Input.value.trim(),
+          increase: valueInput.value.trim()
         };
-        avatarList.push(newAvatar); // アバター情報を配列に追加するよ
-        renderAvatarTable(); // アバター一覧テーブルを更新するよ
-        localStorage.setItem("avatarList", JSON.stringify(avatarList)); // ローカルストレージに保存するよ
-        partInput.value = ""; // パーツ入力欄をクリアするよ
-        type1Input.value = ""; // 種類①入力欄をクリアするよ
-        type2Input.value = ""; // 種類②入力欄をクリアするよ
-        type2Input.disabled = true; // 種類②入力欄を無効に戻すよ
-        valueInput.value = ""; // 上昇値入力欄をクリアするよ
-        checkInput(); // 入力チェックを実行するよ
+        avatarList.push(newAvatar);
+        renderAvatarTable();
+        localStorage.setItem("avatarList", JSON.stringify(avatarList));
+        partInput.value = "";
+        type1Input.value = "";
+        type2Input.value = "";
+        type2Input.disabled = true;
+        valueInput.value = "";
+        checkInput();
       });
-      function renderAvatarTable() { // アバター一覧テーブルを再描画する関数
-        avatarTableBody.innerHTML = ""; // テーブル内容をクリアするよ
-        avatarList.forEach(function(avatar, index) { // 各アバター情報について処理するよ
-          const row = document.createElement("tr"); // 新しいテーブルの行を作るよ
-          const tdPart = document.createElement("td"); // パーツ用のセルを作るよ
-          tdPart.textContent = avatar.partText; // セルにパーツ名を設定するよ
-          row.appendChild(tdPart); // 行にセルを追加するよ
-          const tdType1 = document.createElement("td"); // 種類①用のセルを作るよ
-          tdType1.textContent = avatar.type1; // セルに種類①を設定するよ
-          row.appendChild(tdType1); // 行にセルを追加するよ
-          const tdType2 = document.createElement("td"); // 種類②用のセルを作るよ
-          tdType2.textContent = avatar.type2; // セルに種類②を設定するよ
-          row.appendChild(tdType2); // 行にセルを追加するよ
-          const tdInc = document.createElement("td"); // 上昇値用のセルを作るよ
-          tdInc.textContent = avatar.increase; // セルに上昇値を設定するよ
-          row.appendChild(tdInc); // 行にセルを追加するよ
-          const tdDel = document.createElement("td"); // 削除ボタン用のセルを作るよ
-          const btnDel = document.createElement("button"); // 削除ボタンを作るよ
-          btnDel.textContent = "削除"; // ボタンに「削除」と表示するよ
-          btnDel.addEventListener("click", function() { // 削除ボタンがクリックされたときの処理
-            avatarList.splice(index, 1); // 該当のアバターを配列から削除するよ
-            renderAvatarTable(); // テーブルを再描画するよ
-            localStorage.setItem("avatarList", JSON.stringify(avatarList)); // 削除後のデータを保存するよ
+      function renderAvatarTable() {
+        avatarTableBody.innerHTML = "";
+        avatarList.forEach(function(avatar, index) {
+          const row = document.createElement("tr");
+          const tdPart = document.createElement("td");
+          tdPart.textContent = avatar.partText;
+          row.appendChild(tdPart);
+          const tdType1 = document.createElement("td");
+          tdType1.textContent = avatar.type1;
+          row.appendChild(tdType1);
+          const tdType2 = document.createElement("td");
+          tdType2.textContent = avatar.type2;
+          row.appendChild(tdType2);
+          const tdInc = document.createElement("td");
+          tdInc.textContent = avatar.increase;
+          row.appendChild(tdInc);
+          const tdDel = document.createElement("td");
+          const btnDel = document.createElement("button");
+          btnDel.textContent = "削除";
+          btnDel.addEventListener("click", function() {
+            avatarList.splice(index, 1);
+            renderAvatarTable();
+            localStorage.setItem("avatarList", JSON.stringify(avatarList));
           });
-          tdDel.appendChild(btnDel); // セルに削除ボタンを追加するよ
-          row.appendChild(tdDel); // 行にセルを追加するよ
-          avatarTableBody.appendChild(row); // テーブルのtbodyに行を追加するよ
+          tdDel.appendChild(btnDel);
+          row.appendChild(tdDel);
+          avatarTableBody.appendChild(row);
         });
       }
       
       // ----- 設定画面の処理 -----
-      const saveSettingsButton = document.getElementById("saveSettingsButton"); // 設定保存ボタンを取得するよ
-      const genderSelect = document.getElementById("genderSelect"); // 性別選択のセレクトボックスを取得するよ
-      const updateStatusContainer = document.getElementById("updateStatusContainer"); // 更新希望ステータスのコンテナを取得するよ
-      const updateStatusOptions = typeOptions; // 更新希望ステータスの候補は種類オプションを使うよ
-      function generateUpdateStatusCheckboxes() { // 更新希望ステータス用のチェックボックスを生成する関数
-        updateStatusContainer.innerHTML = ""; // コンテナの中をクリアするよ
-        let savedStatus = localStorage.getItem("updateStatus"); // 保存された状態を取得するよ
-        if (savedStatus) { // もし保存されていれば
-          savedStatus = JSON.parse(savedStatus); // JSON文字列を配列に変換するよ
+      const saveSettingsButton = document.getElementById("saveSettingsButton");
+      const genderSelect = document.getElementById("genderSelect");
+      const updateStatusContainer = document.getElementById("updateStatusContainer");
+      const updateStatusOptions = typeOptions;
+      function generateUpdateStatusCheckboxes() {
+        updateStatusContainer.innerHTML = "";
+        let savedStatus = localStorage.getItem("updateStatus");
+        if (savedStatus) {
+          savedStatus = JSON.parse(savedStatus);
         } else {
-          savedStatus = []; // なければ空配列にするよ
+          savedStatus = [];
         }
-        updateStatusOptions.forEach(function(status) { // 各候補を処理するよ
-          const checkbox = document.createElement("input"); // チェックボックスを作るよ
-          checkbox.type = "checkbox"; // 入力タイプをチェックボックスにするよ
-          checkbox.id = "status_" + status; // 識別子を設定するよ
-          checkbox.value = status; // 値を設定するよ
-          if (savedStatus.includes(status)) { // もし保存された配列に含まれていれば
-            checkbox.checked = true; // チェック状態にするよ
+        updateStatusOptions.forEach(function(status) {
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.id = "status_" + status;
+          checkbox.value = status;
+          if (savedStatus.includes(status)) {
+            checkbox.checked = true;
           }
-          const label = document.createElement("label"); // ラベルを作るよ
-          label.htmlFor = "status_" + status; // チェックボックスとラベルを結びつけるよ
-          label.textContent = status; // ラベルに候補名を表示するよ
-          updateStatusContainer.appendChild(checkbox); // コンテナにチェックボックスを追加するよ
-          updateStatusContainer.appendChild(label); // コンテナにラベルを追加するよ
+          const label = document.createElement("label");
+          label.htmlFor = "status_" + status;
+          label.textContent = status;
+          updateStatusContainer.appendChild(checkbox);
+          updateStatusContainer.appendChild(label);
         });
       }
-      saveSettingsButton.addEventListener("click", function() { // 設定保存ボタンが押されたときの処理
-        localStorage.setItem("avatarGender", genderSelect.value); // 性別を保存するよ
-        const checkboxes = updateStatusContainer.querySelectorAll('input[type="checkbox"]'); // 全チェックボックスを取得するよ
-        const selectedStatuses = []; // 選択された状態を格納する配列を初期化するよ
+      saveSettingsButton.addEventListener("click", function() {
+        localStorage.setItem("avatarGender", genderSelect.value);
+        const checkboxes = updateStatusContainer.querySelectorAll('input[type="checkbox"]');
+        const selectedStatuses = [];
         checkboxes.forEach(function(chk) {
-          if (chk.checked) { // もしチェックされていれば
-            selectedStatuses.push(chk.value); // 配列に追加するよ
+          if (chk.checked) {
+            selectedStatuses.push(chk.value);
           }
         });
-        localStorage.setItem("updateStatus", JSON.stringify(selectedStatuses)); // 選択状態を保存するよ
-        alert("設定を保存しました。"); // ユーザーに設定保存を通知するよ
+        localStorage.setItem("updateStatus", JSON.stringify(selectedStatuses));
+        alert("設定を保存しました。");
       });
       
       // ----- 販売アバター検索の処理 -----
-      let uniqueTradeItems = []; // ユニークな取引アイテムを格納する配列を初期化するよ
-      function logItemCodes() { // 取引アイテムの処理を行う関数
-        fetch("combinedData.json") // JSONファイルからデータを取得するよ
+      let uniqueTradeItems = [];
+      function logItemCodes() {
+        fetch("combinedData.json")
           .then(function(response) {
-            if (!response.ok) { // 応答が正しくなければ
-              throw new Error("ネットワーク応答が正しくありません"); // エラーを投げるよ
+            if (!response.ok) {
+              throw new Error("ネットワーク応答が正しくありません");
             }
-            return response.json(); // JSON形式に変換するよ
+            return response.json();
           })
           .then(function(data) {
-            var rawFormattedTradeItemList = data.formattedTradeItemList; // 生データを取得するよ
-            uniqueTradeItems = []; // ユニークアイテムの配列を初期化するよ
-            var seenBazaarIds = {}; // 既に出現したバザーIDを記録するためのオブジェクトを用意するよ
+            var rawFormattedTradeItemList = data.formattedTradeItemList;
+            uniqueTradeItems = [];
+            var seenBazaarIds = {};
             rawFormattedTradeItemList.forEach(function(group) {
-              if (Array.isArray(group) && group.length > 0) { // グループが配列かつ空でなければ
-                var bazaarId = group[0].bazaarId; // グループの最初のバザーIDを取得するよ
-                if (!seenBazaarIds[bazaarId]) { // まだ記録されていなければ
-                  uniqueTradeItems.push(group[0]); // そのアイテムをユニーク配列に追加するよ
-                  seenBazaarIds[bazaarId] = true; // バザーIDを記録するよ
+              if (Array.isArray(group) && group.length > 0) {
+                var bazaarId = group[0].bazaarId;
+                if (!seenBazaarIds[bazaarId]) {
+                  uniqueTradeItems.push(group[0]);
+                  seenBazaarIds[bazaarId] = true;
                 }
               }
             });
             console.log("Step 0: バザーIDユニーク処理後", uniqueTradeItems);
             
-            uniqueTradeItems.forEach(function(item) { // 各取引アイテムについて処理するよ
-              var listingItems = item.listingItems; // 出品アイテムの配列を取得するよ
-              if (Array.isArray(listingItems)) { // 配列であれば
-                listingItems.forEach(function(listItem) { // 各出品アイテムについて処理するよ
-                  var currentItemCode = listItem.itemCode; // アイテムコードを取得するよ
-                  var match = data.itemTradeWithBagcat.find(function(element) { // 対応する情報を探すよ
-                    return element.itemCode === currentItemCode; // アイテムコードが一致するか確認するよ
+            uniqueTradeItems.forEach(function(item) {
+              var listingItems = item.listingItems;
+              if (Array.isArray(listingItems)) {
+                listingItems.forEach(function(listItem) {
+                  var currentItemCode = listItem.itemCode;
+                  var match = data.itemTradeWithBagcat.find(function(element) {
+                    return element.itemCode === currentItemCode;
                   });
-                  if (match) { // 一致する情報があれば
-                    listItem.bagcat = match.bagcat; // bagcat情報を設定するよ
+                  if (match) {
+                    listItem.bagcat = match.bagcat;
                   }
                 });
               }
             });
             console.log("Step ①: bagcat 追加後", uniqueTradeItems);
             
-            var regex = /^【([^+]+)\+(\d+)】/; // 正規表現を定義するよ（アイテム名から情報を抽出）
+            var regex = /^【([^+]+)\+(\d+)】/;
             uniqueTradeItems.forEach(function(item) {
               var listingItems = item.listingItems;
               if (Array.isArray(listingItems)) {
                 listingItems.forEach(function(listItem) {
-                  var result = regex.exec(listItem.itemName); // アイテム名から情報を抽出するよ
-                  if (result) { // 抽出できたら
-                    listItem.type = result[1]; // typeを設定するよ
-                    listItem.param = parseInt(result[2], 10); // パラメータを数値に変換して設定するよ
+                  var result = regex.exec(listItem.itemName);
+                  if (result) {
+                    listItem.type = result[1];
+                    listItem.param = parseInt(result[2], 10);
                   } else {
-                    listItem.type = ""; // 失敗したら空文字にするよ
-                    listItem.param = 0; // 失敗したら0にするよ
+                    listItem.type = "";
+                    listItem.param = 0;
                   }
                 });
               }
@@ -683,17 +700,17 @@
               var listingItems = item.listingItems;
               if (Array.isArray(listingItems)) {
                 listingItems.forEach(function(listItem) {
-                  var matchingAvatar = avatarList.find(function(avatar) { // アバター一覧から対応するものを探すよ
+                  var matchingAvatar = avatarList.find(function(avatar) {
                     return avatar.type1 === listItem.type && avatar.partValue === listItem.bagcat;
                   });
-                  var diff = 0; // 差分を初期化するよ
-                  if (matchingAvatar) { // 見つかったら
-                    diff = listItem.param - Number(matchingAvatar.increase); // 差分を計算するよ
-                    if (diff < 0) diff = 0; // 負の値なら0にするよ
+                  var diff = 0;
+                  if (matchingAvatar) {
+                    diff = listItem.param - Number(matchingAvatar.increase);
+                    if (diff < 0) diff = 0;
                   } else {
-                    diff = listItem.param; // 見つからなければそのまま設定するよ
+                    diff = listItem.param;
                   }
-                  listItem.diff = diff; // 計算した差分を設定するよ
+                  listItem.diff = diff;
                 });
               }
             });
@@ -702,33 +719,33 @@
             uniqueTradeItems.forEach(function(item) {
               var listingItems = item.listingItems;
               if (Array.isArray(listingItems) && listingItems.length > 0) {
-                var uniqueDiffs = {}; // 重複を除くためにキーを作るよ
+                var uniqueDiffs = {};
                 listingItems.forEach(function(listItem) {
-                  var key = listItem.type + "_" + listItem.bagcat; // 一意なキーを作成するよ
+                  var key = listItem.type + "_" + listItem.bagcat;
                   if (uniqueDiffs[key] === undefined) {
-                    uniqueDiffs[key] = listItem.diff; // 初回は値を設定するよ
+                    uniqueDiffs[key] = listItem.diff;
                   } else {
                     if (listItem.diff > uniqueDiffs[key]) {
-                      uniqueDiffs[key] = listItem.diff; // より大きい値に更新するよ
+                      uniqueDiffs[key] = listItem.diff;
                     }
                   }
                 });
-                item.typeSums = {}; // 各typeごとの合計を格納するよ
+                item.typeSums = {};
                 for (var key in uniqueDiffs) {
                   if (uniqueDiffs.hasOwnProperty(key)) {
-                    var t = key.split("_")[0]; // type部分を取り出すよ
+                    var t = key.split("_")[0];
                     if (!item.typeSums[t]) {
-                      item.typeSums[t] = 0; // 初期値を設定するよ
+                      item.typeSums[t] = 0;
                     }
-                    item.typeSums[t] += uniqueDiffs[key]; // 合計を更新するよ
+                    item.typeSums[t] += uniqueDiffs[key];
                   }
                 }
               }
             });
             console.log("Step ④: 各バザー毎の集計後", uniqueTradeItems);
             
-            var selectedGender = localStorage.getItem("avatarGender"); // 保存された性別設定を取得するよ
-            var filteredTradeItems = uniqueTradeItems.filter(function(item) { // 性別でフィルタするよ
+            var selectedGender = localStorage.getItem("avatarGender");
+            var filteredTradeItems = uniqueTradeItems.filter(function(item) {
               if (!item.listingItems || !Array.isArray(item.listingItems)) return true;
               if (selectedGender === "F") {
                 return !item.listingItems.some(function(listItem) { return listItem.itemGender === "M"; });
@@ -739,12 +756,12 @@
             });
             console.log("Step ⑤a: バザー性別フィルタリング後", filteredTradeItems);
             
-            var allTypes = {}; // 各バザー内に出現するtypeを集めるよ
+            var allTypes = {};
             filteredTradeItems.forEach(function(item) {
               if (item.typeSums) {
                 for (var t in item.typeSums) {
                   if (item.typeSums.hasOwnProperty(t)) {
-                    allTypes[t] = true; // 存在するtypeを記録するよ
+                    allTypes[t] = true;
                   }
                 }
               }
@@ -755,52 +772,49 @@
               selectedTypes = JSON.parse(savedUpdateStatus);
             }
             var displayTypes = Object.keys(allTypes).filter(function(t) { return selectedTypes.indexOf(t) !== -1; });
-            displayTypes.sort(function(a, b) { // 表示順序を種類オプションに合わせるよ
+            displayTypes.sort(function(a, b) {
               var idxA = typeOptions.indexOf(a), idxB = typeOptions.indexOf(b);
               if (idxA === -1) idxA = typeOptions.length;
               if (idxB === -1) idxB = typeOptions.length;
               return idxA - idxB;
             });
             
-            var tableHTML = "<div class='scrollable-table-container'>"; // テーブル全体を包むコンテナを作るよ
-            tableHTML += "<table style='border-collapse: collapse;'>"; // テーブルを開始するよ
-            tableHTML += "<thead><tr>"; // ヘッダー行の開始
-            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>販売リンク</th>"; // 販売リンクのヘッダー
-            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>締め切り日時</th>"; // 締め切り日時のヘッダー
-            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>ハンコイン</th>"; // ハンコインのヘッダー
-            displayTypes.forEach(function(t) { // 各typeのヘッダーを作るよ
-              // ()で表記している部分は改行して表示するよ
+            var tableHTML = "<div class='scrollable-table-container'>";
+            tableHTML += "<table style='border-collapse: collapse;'>";
+            tableHTML += "<thead><tr>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>販売リンク</th>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>締め切り日時</th>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>ハンコイン</th>";
+            displayTypes.forEach(function(t) {
               tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>" + t + "<br>(ハンコイン/差分)</th>";
             });
-            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>詳細</th>"; // 詳細ボタンのヘッダー
-            tableHTML += "</tr></thead>"; // ヘッダー行の終了
-            tableHTML += "<tbody>"; // tbody開始
-            filteredTradeItems.forEach(function(item) { // 各取引アイテムごとに行を作るよ
-              var sellEndDate = item.sellEndDate || ""; // 締め切り日時を取得するよ
-              // 日時の文字列に半角スペースがあれば改行に置換するよ
-              if (sellEndDate.indexOf(" ") !== -1) {
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>詳細</th>";
+            tableHTML += "</tr></thead>";
+            tableHTML += "<tbody>";
+            filteredTradeItems.forEach(function(item) {
+              var sellEndDate = item.sellEndDate || "";
+              if (sellEndDate.indexOf(" ") !== -1) { // 日時の文字列にスペースがあれば改行するよ
                 sellEndDate = sellEndDate.split(" ").join("<br>");
               }
-              var hancoin = Number(item.hancoin) || 0; // ハンコインの数値を取得するよ
-              tableHTML += "<tr>"; // 行開始
-              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='openLinkInNewTab(\"" + item.bazaarId + "\")'>販売リンク</button></td>"; // 販売リンクボタンのセル
-              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + sellEndDate + "</td>"; // 締め切り日時のセル
-              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + hancoin + "</td>"; // ハンコインのセル
-              displayTypes.forEach(function(t) { // 各typeごとのセルを作るよ
-                var sumDiff = (item.typeSums && item.typeSums[t]) ? item.typeSums[t] : 0; // 該当typeの差分合計を取得するよ
-                var ratio = sumDiff !== 0 ? (hancoin / sumDiff).toFixed(2) : "0"; // 比率を計算して小数点2桁にするよ
-                tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + ratio + "</td>"; // セルに比率を表示するよ
+              var hancoin = Number(item.hancoin) || 0;
+              tableHTML += "<tr>";
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='openLinkInNewTab(\"" + item.bazaarId + "\")'>販売リンク</button></td>";
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + sellEndDate + "</td>";
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + hancoin + "</td>";
+              displayTypes.forEach(function(t) {
+                var sumDiff = (item.typeSums && item.typeSums[t]) ? item.typeSums[t] : 0;
+                var ratio = sumDiff !== 0 ? (hancoin / sumDiff).toFixed(2) : "0";
+                tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + ratio + "</td>";
               });
-              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='showModal(\"" + item.bazaarId + "\")'>詳細</button></td>"; // 詳細表示ボタンのセル
-              tableHTML += "</tr>"; // 行終了
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='showModal(\"" + item.bazaarId + "\")'>詳細</button></td>";
+              tableHTML += "</tr>";
             });
-            tableHTML += "</tbody></table>"; // テーブル終了
-            tableHTML += "</div>"; // コンテナ終了
-            document.getElementById("tradeDataDisplay").innerHTML = tableHTML; // 作成したHTMLを表示するよ
+            tableHTML += "</tbody></table>";
+            tableHTML += "</div>";
+            document.getElementById("tradeDataDisplay").innerHTML = tableHTML;
             console.log("Step ⑤: 表作成後");
             console.log(filteredTradeItems);
             
-            // ヘッダーセルにクリックイベントを追加して、ソートする処理を実装するよ
             var tradeTable = document.querySelector("#tradeDataDisplay .scrollable-table-container table");
             if (tradeTable) {
               var tradeHeaderCells = tradeTable.querySelectorAll("thead th");
@@ -812,105 +826,75 @@
             }
           })
           .catch(function(error) {
-            console.error("エラーが発生しました:", error); // エラーがあればコンソールに出力するよ
+            console.error("エラーが発生しました:", error);
           });
       }
       
-      function openLinkInNewTab(bazaarId) { // 販売リンクボタンの処理関数
-        const url = "https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=" + bazaarId; // URLを作成するよ
-        window.open(url, "_blank"); // 新しいタブで開くよ
+      function openLinkInNewTab(bazaarId) {
+        const url = "https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=" + bazaarId;
+        window.open(url, "_blank");
       }
       
       // ----- モーダルウィンドウの処理 -----
-      const modalWindow = document.getElementById("modalWindow"); // モーダルウィンドウ本体を取得するよ
-      const modalContent = document.getElementById("modalContent"); // モーダル内の内容領域を取得するよ
-      const closeModalBtn = document.getElementById("closeModal"); // モーダルを閉じるボタンを取得するよ
-      closeModalBtn.addEventListener("click", function() { // 閉じるボタンがクリックされたときの処理
-        modalWindow.style.display = "none"; // モーダルを非表示にするよ
-        modalContent.innerHTML = ""; // モーダル内の内容をクリアするよ
+      const modalWindow = document.getElementById("modalWindow");
+      const modalContent = document.getElementById("modalContent");
+      const closeModalBtn = document.getElementById("closeModal");
+      closeModalBtn.addEventListener("click", function() {
+        modalWindow.style.display = "none";
+        modalContent.innerHTML = "";
       });
-      function showModal(bazaarId) { // 指定されたバザーIDの詳細を表示する関数
-        var item = uniqueTradeItems.find(function(itm) { // 対応するアイテムを探すよ
-          return itm.bazaarId === bazaarId; // バザーIDが一致するかチェックするよ
+      function showModal(bazaarId) {
+        var item = uniqueTradeItems.find(function(itm) {
+          return itm.bazaarId === bazaarId;
         });
-        if (!item) return; // 見つからなければ何もしないよ
-        modalContent.innerHTML = ""; // モーダル内の内容をクリアするよ
-        if (Array.isArray(item.listingItems)) { // 出品アイテムが配列なら
+        if (!item) return;
+        modalContent.innerHTML = "";
+        if (Array.isArray(item.listingItems)) {
           item.listingItems.forEach(function(listItem) {
-            var itemDiv = document.createElement("div"); // 各アイテムを表示するdivを作るよ
-            itemDiv.className = "modalItem"; // クラス名を設定するよ
-            var img = document.createElement("img"); // 画像要素を作るよ
-            img.src = "https://puretomo-image.hange.jp/disp/" + listItem.itemCode.toLowerCase() + ".gif"; // 画像のURLを作成するよ
-            itemDiv.appendChild(img); // 画像をdivに追加するよ
-            var bagcatText = bagcatLabels[listItem.bagcat] || listItem.bagcat; // bagcat情報を日本語に戻すよ
-            var diffText = listItem.type + "+" + listItem.diff; // diff情報を文字列にするよ
-            var infoP = document.createElement("p"); // 説明用の段落を作るよ
-            infoP.textContent = bagcatText + " / 差分: " + diffText; // テキストを設定するよ
-            itemDiv.appendChild(infoP); // 段落をdivに追加するよ
-            var nameP = document.createElement("p"); // アイテム名表示用の段落を作るよ
-            nameP.textContent = listItem.itemName; // アイテム名を設定するよ
-            itemDiv.appendChild(nameP); // 段落をdivに追加するよ
-            modalContent.appendChild(itemDiv); // モーダルの内容領域にdivを追加するよ
+            var itemDiv = document.createElement("div");
+            itemDiv.className = "modalItem";
+            var img = document.createElement("img");
+            img.src = "https://puretomo-image.hange.jp/disp/" + listItem.itemCode.toLowerCase() + ".gif";
+            itemDiv.appendChild(img);
+            var bagcatText = bagcatLabels[listItem.bagcat] || listItem.bagcat;
+            var diffText = listItem.type + "+" + listItem.diff;
+            var infoP = document.createElement("p");
+            infoP.textContent = bagcatText + " / 差分: " + diffText;
+            itemDiv.appendChild(infoP);
+            var nameP = document.createElement("p");
+            nameP.textContent = listItem.itemName;
+            itemDiv.appendChild(nameP);
+            modalContent.appendChild(itemDiv);
           });
         }
-        modalWindow.style.display = "block"; // モーダルを表示するよ
+        modalWindow.style.display = "block";
       }
-      
-      // ----- 右側パネルの開閉用ボタンの処理 -----
-      const rightPanel = document.getElementById("rightPanel"); // 右側パネルを取得するよ
-      const leftPanel = document.getElementById("leftPanel");   // 左側パネルを取得するよ
-      const closeRightPanelBtn = document.getElementById("closeRightPanel"); // 左端に表示する閉じるボタンを取得するよ
-      const openRightPanelBtn = document.getElementById("openRightPanel");   // 右端に表示する開くボタンを取得するよ
-      
-      // 右端の「開く」ボタンが押されたら
-      openRightPanelBtn.addEventListener("click", function() {
-        // 右側パネルを開くため、"closed" クラスを除去するよ
-        rightPanel.classList.remove("closed");
-        // 左側パネルの幅をボタン分戻すよ（30px分余白を確保）
-        leftPanel.style.width = "calc(30% - 30px)";
-        // 右端のボタンを非表示にして
-        openRightPanelBtn.style.display = "none";
-        // 左端に閉じるボタンを表示するよ
-        closeRightPanelBtn.style.display = "block";
-      });
-      
-      // 左端の「閉じる」ボタンが押されたら
-      closeRightPanelBtn.addEventListener("click", function() {
-        // 右側パネルを閉じるため、"closed" クラスを付与するよ
-        rightPanel.classList.add("closed");
-        // 左側パネルの幅を全幅（ボタン分も全体に含める）にするよ
-        leftPanel.style.width = "100%";
-        // 左端の閉じるボタンを非表示にして
-        closeRightPanelBtn.style.display = "none";
-        // 右端の開くボタンを表示するよ
-        openRightPanelBtn.style.display = "block";
-      });
       
       // ----- テーブルのヘッダーセルをクリックしたときにソートする関数 -----
       function sortTableByColumn(table, colIndex) {
-        var tbody = table.querySelector("tbody"); // tbody要素を取得するよ
-        var rows = Array.from(tbody.querySelectorAll("tr")); // tbody内の行を配列に変換するよ
-        rows.sort(function(rowA, rowB) { // 各行をソートするよ
-          var cellA = rowA.children[colIndex]; // 行Aの該当セルを取得するよ
-          var cellB = rowB.children[colIndex]; // 行Bの該当セルを取得するよ
-          var numA = parseFloat(cellA.textContent); // セルAの値を数値に変換するよ
-          var numB = parseFloat(cellB.textContent); // セルBの値を数値に変換するよ
-          var sortA = (isNaN(numA) || numA === 0) ? Infinity : numA; // もし数値化できないか0ならInfinityにするよ
-          var sortB = (isNaN(numB) || numB === 0) ? Infinity : numB; // 同様にするよ
-          return sortA - sortB; // 小さい順に並べ替えるよ
+        var tbody = table.querySelector("tbody");
+        var rows = Array.from(tbody.querySelectorAll("tr"));
+        rows.sort(function(rowA, rowB) {
+          var cellA = rowA.children[colIndex];
+          var cellB = rowB.children[colIndex];
+          var numA = parseFloat(cellA.textContent);
+          var numB = parseFloat(cellB.textContent);
+          var sortA = (isNaN(numA) || numA === 0) ? Infinity : numA;
+          var sortB = (isNaN(numB) || numB === 0) ? Infinity : numB;
+          return sortA - sortB;
         });
-        rows.forEach(function(row) { // 並び替えた行をtbodyに再配置するよ
+        rows.forEach(function(row) {
           tbody.appendChild(row);
         });
       }
       
-      // ページ読み込み時、アバター一覧テーブルのヘッダーセルにソートのクリックイベントを追加するよ
-      var avatarTable = document.getElementById("avatarTable"); // アバター一覧テーブルを取得するよ
+      // ページ読み込み時、アバター一覧テーブルのヘッダーセルにもクリックでソートする処理を追加するよ
+      var avatarTable = document.getElementById("avatarTable");
       if (avatarTable) {
-        var avatarHeaderCells = avatarTable.querySelectorAll("thead th"); // ヘッダーセルを取得するよ
-        avatarHeaderCells.forEach(function(cell, index) { // 各ヘッダーセルについて処理するよ
-          cell.addEventListener("click", function() { // セルがクリックされたとき
-            sortTableByColumn(avatarTable, index); // 対応する列でソートするよ
+        var avatarHeaderCells = avatarTable.querySelectorAll("thead th");
+        avatarHeaderCells.forEach(function(cell, index) {
+          cell.addEventListener("click", function() {
+            sortTableByColumn(avatarTable, index);
           });
         });
       }
