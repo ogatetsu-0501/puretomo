@@ -2,157 +2,253 @@
 <html lang="ja">
   <head>
     <!-- ページの基本設定 -->
-    <meta charset="UTF-8" />
-    <!-- 文字コードをUTF-8に指定 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- 画面サイズに合わせる -->
-    <title>アバター管理画面</title>
-    <!-- ページタイトル -->
+    <meta charset="UTF-8" /> <!-- 文字コード UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- 画面サイズに対応 -->
+    <title>アバター管理画面</title> <!-- ページタイトル -->
     <style>
       /* ----- 全体の基本設定 ----- */
-      body {
-        font-family: Arial, sans-serif; /* 読みやすいフォント */
-        margin: 0; /* 余白をなくす */
-        padding: 0; /* 余白をなくす */
-        display: flex; /* Flexレイアウト */
-        flex-direction: column; /* 上下に配置 */
-        height: 100vh; /* 画面全体の高さ */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
       }
-      /* ----- ヘッダー部分 ----- */
+      body {
+        display: flex;
+        flex-direction: column;
+        font-family: Arial, sans-serif;
+      }
+      
+      /* ----- ヘッダー ----- */
       header {
-        display: flex; /* 横並び */
-        align-items: center; /* 縦方向中央寄せ */
-        background-color: #4caf50; /* 緑の背景 */
-        color: white; /* 文字色は白 */
-        padding: 10px; /* 内側余白10px */
+        display: flex;
+        align-items: center;
+        background-color: #4caf50;
+        color: white;
+        padding: 10px;
       }
       .hamburger {
-        font-size: 24px; /* 大きな文字サイズ */
-        cursor: pointer; /* マウスカーソルを指マークに */
-        margin-right: 10px; /* 右側余白 */
+        font-size: 24px;
+        cursor: pointer;
+        margin-right: 10px;
       }
+      
       /* ----- メインエリア ----- */
       .main-container {
-        flex: 1; /* 残りの領域を使用 */
-        display: flex; /* 左右に配置 */
-        overflow: hidden; /* はみ出し部分は隠す */
+        flex: 1;
+        display: flex;
+        overflow: hidden;
       }
-      /* サイドバー（メニュー）の設定 */
+      
+      /* ----- 左側パネル ----- */
+      .left-panel {
+        width: 30%; /* 初期は30% */
+        padding: 20px;
+        box-sizing: border-box;
+        transition: width 0.3s ease;
+      }
+      
+      /* ----- 右側パネル（追加されたアバター一覧） ----- */
+      .right-panel {
+        width: 70%; /* 初期は70% */
+        padding: 20px;
+        box-sizing: border-box;
+        overflow: auto;
+        transition: transform 0.3s ease;
+      }
+      /* 右側パネルを右にスライドさせるクラス */
+      .right-panel.closed {
+        transform: translateX(100%);
+      }
+      
+      /* ----- サイドバー ----- */
       .sidebar {
-        width: 200px; /* 幅200px */
-        background-color: #333; /* 暗い背景 */
-        color: white; /* 文字色は白 */
-        display: none; /* 初期は非表示 */
-        flex-shrink: 0; /* 幅固定 */
+        width: 200px;
+        background-color: #333;
+        color: white;
+        display: none;
+        flex-shrink: 0;
       }
       .sidebar ul {
-        list-style: none; /* 箇条書きのマーカーを消す */
-        padding: 0; /* 内側余白なし */
-        margin: 0; /* 外側余白なし */
+        list-style: none;
+        margin: 0;
+        padding: 0;
       }
       .sidebar li {
-        padding: 15px; /* 各項目に15pxの余白 */
-        cursor: pointer; /* カーソルを指マークに */
+        padding: 15px;
+        cursor: pointer;
       }
       .sidebar li:hover {
-        background-color: #575757; /* ホバー時に背景色変更 */
+        background-color: #575757;
       }
-      /* 左側パネル（入力・設定フォーム）の設定 */
-      .left-panel {
-        width: 30%; /* 画面の30% */
-        padding: 20px; /* 内側余白20px */
-        box-sizing: border-box; /* パディング含む */
-      }
-      /* 右側パネル（一覧表示）の設定 */
-      .right-panel {
-        width: 70%; /* 画面の70% */
-        padding: 20px; /* 内側余白20px */
-        box-sizing: border-box; /* パディング含む */
-        overflow-y: auto; /* 縦スクロール可能 */
-      }
+      
       /* ----- フォームや表の共通設定 ----- */
       .form-group {
-        margin-bottom: 15px; /* 各入力グループの下に15px余白 */
+        margin-bottom: 15px;
       }
       input[type="text"],
       input[type="number"],
       select {
-        width: 100%; /* 入力欄の横幅100% */
-        padding: 5px; /* 内側余白5px */
-        box-sizing: border-box; /* パディング含む */
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
       }
       button {
-        padding: 10px; /* ボタン内余白10px */
-        width: 100%; /* ボタン横幅100% */
-        background-color: #4caf50; /* 緑の背景 */
-        border: none; /* 枠線なし */
-        color: white; /* 文字色は白 */
-        font-size: 16px; /* 文字サイズ16px */
-        cursor: pointer; /* カーソルを指マークに */
+        padding: 10px;
+        width: 100%;
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
       }
       button:disabled {
-        background-color: #cccccc; /* 無効時はグレー */
-        cursor: not-allowed; /* 使用不可のカーソル */
+        background-color: #cccccc;
+        cursor: not-allowed;
+      }
+      
+      /* テーブルの設定 */
+      .scrollable-table-container {
+        overflow: auto;
+        position: relative;
       }
       table {
-        width: 100%; /* 表横幅100% */
-        border-collapse: collapse; /* セル間枠線を結合 */
+        border-collapse: collapse;
+        width: 100%;
       }
-      th,
-      td {
-        border: 1px solid #ccc; /* 薄い枠線 */
-        padding: 8px; /* セル内余白8px */
-        text-align: center; /* 文字を中央寄せ */
+      th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
       }
-      th {
-        background-color: #e0e0e0; /* ヘッダー背景色 */
+      thead th {
+        position: sticky;
+        top: 0;
+        background-color: #e0e0e0;
+        z-index: 2;
       }
-      /* 更新希望ステータスのチェックボックス群の設定 */
+      tbody td:first-child,
+      thead th:first-child {
+        position: sticky;
+        left: 0;
+        background-color: #f0f0f0;
+        z-index: 3;
+      }
+      
+      /* ----- 更新希望ステータス ----- */
       .update-status-group {
-        display: flex; /* 横並び */
-        flex-wrap: wrap; /* 複数行に折り返す */
+        display: flex;
+        flex-wrap: wrap;
       }
       .update-status-group label {
-        margin-right: 10px; /* 各チェックボックス間に余白 */
+        margin-right: 10px;
+      }
+      
+      /* ----- モーダルウィンドウ（詳細表示用） ----- */
+      #modalWindow {
+        display: none; /* 非表示が初期 */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 600px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 15px;
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      }
+      #modalContent {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+      }
+      .modalItem {
+        border: 1px solid #ddd;
+        margin-right: 10px;
+        padding: 5px;
+        text-align: center;
+      }
+      .modalItem img {
+        max-width: 100px;
+        display: block;
+        margin: 0 auto 5px;
+      }
+      /* 閉じるボタンはモーダルの一番下に */
+      #closeModal {
+        width: 100%;
+        margin-top: 15px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+      
+      /* ----- 右側パネルの開閉用ボタン ----- */
+      #closeRightPanel {
+        position: fixed;
+        top: 0;
+        left: calc(30%); /* 左側パネルの幅が30%ならその端に */
+        width: 30px;
+        height: 100vh;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        z-index: 1001;
+      }
+      #openRightPanel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 30px;
+        height: 100vh;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        z-index: 1001;
+        display: none;
       }
     </style>
   </head>
   <body>
     <!-- ヘッダー -->
     <header>
-      <!-- ハンバーガーメニューアイコン -->
       <div class="hamburger" id="hamburgerBtn">&#9776;</div>
-      <!-- ヘッダーのタイトル -->
       <h1 style="margin: 0; font-size: 18px">アバター管理</h1>
     </header>
-
+    
+    <!-- モーダルウィンドウ（詳細表示用） -->
+    <div id="modalWindow">
+      <div id="modalContent">
+        <!-- モーダル内で各 listingItem の詳細を横並びに表示 -->
+      </div>
+      <button id="closeModal">閉じる</button>
+    </div>
+    
+    <!-- 右側パネルの開閉用ボタン -->
+    <button id="closeRightPanel">⇒</button>
+    <button id="openRightPanel">⇐</button>
+    
     <!-- メインエリア -->
     <div class="main-container">
-      <!-- サイドバー（メニュー） -->
+      <!-- サイドバー -->
       <div class="sidebar" id="sidebar">
         <ul>
-          <!-- メニュー項目 -->
           <li data-target="avatarForm">所持アバター追加</li>
           <li data-target="settings">設定</li>
           <li data-target="tradeSearch">販売アバター検索</li>
         </ul>
       </div>
-
-      <!-- 左側パネル：各フォームの表示領域 -->
+      <!-- 左側パネル -->
       <div class="left-panel" id="leftPanel">
-        <!-- 所持アバター追加フォーム（初期表示） -->
         <div id="avatarForm">
           <h2>所持アバター追加</h2>
-          <!-- パーツ入力（予測変換付き） -->
           <div class="form-group">
             <label for="partInput">パーツ（表示名）:</label>
-            <input
-              type="text"
-              id="partInput"
-              list="partsList"
-              autocomplete="on"
-              placeholder="例: トップス"
-            />
+            <input type="text" id="partInput" list="partsList" autocomplete="on" placeholder="例: トップス" />
             <datalist id="partsList">
               <option value="トップス"></option>
               <option value="ボトムス"></option>
@@ -181,16 +277,9 @@
               <option value="モイトイ"></option>
             </datalist>
           </div>
-          <!-- 種類①入力（予測変換付き） -->
           <div class="form-group">
             <label for="type1Input">種類①:</label>
-            <input
-              type="text"
-              id="type1Input"
-              list="type1List"
-              autocomplete="on"
-              placeholder="例: INT"
-            />
+            <input type="text" id="type1Input" list="type1List" autocomplete="on" placeholder="例: INT" />
             <datalist id="type1List">
               <option value="INT"></option>
               <option value="ALL"></option>
@@ -205,19 +294,12 @@
               <option value="MAT"></option>
               <option value="POW"></option>
               <option value="VIT"></option>
+              <option value="SPD"></option>
             </datalist>
           </div>
-          <!-- 種類②入力（予測変換付き、任意） -->
           <div class="form-group">
             <label for="type2Input">種類②:</label>
-            <input
-              type="text"
-              id="type2Input"
-              list="type2List"
-              autocomplete="on"
-              placeholder="（未入力でも可）"
-              disabled
-            />
+            <input type="text" id="type2Input" list="type2List" autocomplete="on" placeholder="（未入力でも可）" disabled />
             <datalist id="type2List">
               <option value="INT"></option>
               <option value="ALL"></option>
@@ -232,25 +314,18 @@
               <option value="MAT"></option>
               <option value="POW"></option>
               <option value="VIT"></option>
+              <option value="SPD"></option>
             </datalist>
           </div>
-          <!-- 上昇値入力 -->
           <div class="form-group">
             <label for="valueInput">上昇値:</label>
-            <input
-              type="number"
-              id="valueInput"
-              placeholder="数値を入力してください"
-            />
+            <input type="number" id="valueInput" placeholder="数値を入力してください" />
           </div>
-          <!-- 追加ボタン -->
           <button id="addButton" disabled>追加</button>
         </div>
-
-        <!-- 設定フォーム（非表示） -->
+        
         <div id="settings" style="display: none">
           <h2>設定</h2>
-          <!-- アバター性別選択 -->
           <div class="form-group">
             <label for="genderSelect">アバター性別選択:</label>
             <select id="genderSelect">
@@ -258,101 +333,77 @@
               <option value="M">男</option>
             </select>
           </div>
-          <!-- 更新希望ステータスチェックボックス群 -->
           <div class="form-group">
             <label>更新希望ステータス:</label>
-            <div id="updateStatusContainer" class="update-status-group">
-              <!-- チェックボックスはJavaScriptで生成 -->
-            </div>
+            <div id="updateStatusContainer" class="update-status-group"></div>
           </div>
-          <!-- 設定保存ボタン -->
           <button id="saveSettingsButton">設定を保存</button>
         </div>
-
-        <!-- 販売アバター検索フォーム（非表示） -->
+        
         <div id="tradeSearch" style="display: none">
           <h2>販売アバター検索</h2>
-          <!-- combinedData.json の読み込み結果を表示するエリア -->
           <div id="tradeDataDisplay">
             <p>データ未読み込み</p>
           </div>
         </div>
       </div>
-
-      <!-- 右側パネル：所持アバター一覧を表形式で表示 -->
-      <div class="right-panel">
+      
+      <div class="right-panel" id="rightPanel">
         <h2>追加されたアバター一覧</h2>
-        <table id="avatarTable">
-          <thead>
-            <tr>
-              <th>パーツ</th>
-              <th>種類①</th>
-              <th>種類②</th>
-              <th>上昇値</th>
-              <th>削除</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- 各行はJavaScriptで生成 -->
-          </tbody>
-        </table>
+        <div class="scrollable-table-container">
+          <table id="avatarTable">
+            <thead>
+              <tr>
+                <th>販売リンク</th>
+                <th>パーツ</th>
+                <th>種類①</th>
+                <th>種類②</th>
+                <th>上昇値</th>
+                <th>削除</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
-
+    
     <script>
       // ----- ハンバーガーメニューとサイドバーの処理 -----
-      const hamburgerBtn = document.getElementById("hamburgerBtn"); // ハンバーガーアイコンを取得
-      const sidebar = document.getElementById("sidebar"); // サイドバーを取得
-
-      // ハンバーガーアイコンをクリックするとサイドバーの表示/非表示を切り替える
-      hamburgerBtn.addEventListener("click", function () {
-        if (sidebar.style.display === "none" || sidebar.style.display === "") {
-          sidebar.style.display = "block"; // サイドバーを表示
-        } else {
-          sidebar.style.display = "none"; // サイドバーを非表示
-        }
+      const hamburgerBtn = document.getElementById("hamburgerBtn");
+      const sidebar = document.getElementById("sidebar");
+      hamburgerBtn.addEventListener("click", function() {
+        sidebar.style.display = (sidebar.style.display === "none" || sidebar.style.display === "") ? "block" : "none";
       });
-
-      // サイドバー内の各メニュー項目を取得する
       const sidebarItems = document.querySelectorAll(".sidebar li");
-      // 左側パネル内の各フォームエリアを取得する
       const avatarFormDiv = document.getElementById("avatarForm");
       const settingsDiv = document.getElementById("settings");
       const tradeSearchDiv = document.getElementById("tradeSearch");
-
-      // サイドバー各項目クリック時の処理
-      sidebarItems.forEach(function (item) {
-        item.addEventListener("click", function () {
-          const target = item.getAttribute("data-target"); // data-target 属性を取得
-          sidebar.style.display = "none"; // サイドバーを閉じる
+      sidebarItems.forEach(function(item) {
+        item.addEventListener("click", function() {
+          const target = item.getAttribute("data-target");
+          sidebar.style.display = "none";
           if (target === "avatarForm") {
-            avatarFormDiv.style.display = "block"; // 所持アバター追加フォームを表示
+            avatarFormDiv.style.display = "block";
             settingsDiv.style.display = "none";
             tradeSearchDiv.style.display = "none";
           } else if (target === "settings") {
             avatarFormDiv.style.display = "none";
-            settingsDiv.style.display = "block"; // 設定フォームを表示
+            settingsDiv.style.display = "block";
             tradeSearchDiv.style.display = "none";
-            // ローカルストレージから性別設定を復元
             const savedGender = localStorage.getItem("avatarGender");
-            if (savedGender) {
-              document.getElementById("genderSelect").value = savedGender;
-            }
-            // 更新希望ステータスのチェックボックスを生成
+            if (savedGender) { document.getElementById("genderSelect").value = savedGender; }
             generateUpdateStatusCheckboxes();
           } else if (target === "tradeSearch") {
             avatarFormDiv.style.display = "none";
             settingsDiv.style.display = "none";
-            tradeSearchDiv.style.display = "block"; // 販売アバター検索フォームを表示
-            // 販売アバター検索用のデータ読み込み処理を呼び出す
-            // ここでは、logItemCodes 関数で処理を実行するよ。
+            tradeSearchDiv.style.display = "block";
             logItemCodes();
           }
         });
       });
-
+      
       // ----- 所持アバター追加フォームの処理 -----
-      // パーツ表示名から隠し値へのマッピングオブジェクト
       const partsMapping = {
         トップス: "H",
         ボトムス: "L",
@@ -378,184 +429,133 @@
         その他2: "A1",
         その他3: "A2",
         その他4: "A3",
-        モイトイ: "BL",
+        モイトイ: "BL"
       };
-
-      // 種類の候補リスト
-      const typeOptions = [
-        "INT",
-        "ALL",
-        "HPR",
-        "SP",
-        "PET",
-        "HP",
-        "SPR",
-        "LUK",
-        "ATK",
-        "EXP",
-        "MAT",
-        "POW",
-        "VIT",
-      ];
-
-      // グローバルな所持アバター情報リスト
+      const bagcatLabels = {
+        H: "トップス",
+        L: "ボトムス",
+        HL: "ワンピース",
+        P: "ヘアスタイル",
+        F: "フェイス",
+        A4: "背景",
+        CT: "アウター",
+        SA: "セット衣装1",
+        SB: "セット衣装2",
+        AE: "帽子",
+        AD: "めがね",
+        AF: "アクセ1",
+        B2: "アクセ2",
+        B1: "雑貨1",
+        B3: "雑貨2",
+        E1: "ペット1",
+        E2: "ペット2",
+        E3: "ペット3",
+        E4: "ペット4",
+        AA: "エフェクト",
+        AB: "その他1",
+        A1: "その他2",
+        A2: "その他3",
+        A3: "その他4",
+        BL: "モイトイ"
+      };
+      const typeOptions = ["INT","ALL","HPR","SP","PET","HP","SPR","LUK","ATK","EXP","MAT","POW","VIT","SPD"];
       let avatarList = [];
-      // ページ読み込み時にローカルストレージから所持アバター情報を復元する
-      window.addEventListener("load", function () {
+      window.addEventListener("load", function(){
         const storedData = localStorage.getItem("avatarList");
-        if (storedData) {
-          avatarList = JSON.parse(storedData);
-          renderTable();
-        }
+        if(storedData){ avatarList = JSON.parse(storedData); renderAvatarTable(); }
       });
-
-      // 各入力欄とボタン、テーブル要素を取得
       const partInput = document.getElementById("partInput");
       const type1Input = document.getElementById("type1Input");
       const type2Input = document.getElementById("type2Input");
       const valueInput = document.getElementById("valueInput");
       const addButton = document.getElementById("addButton");
       const avatarTableBody = document.querySelector("#avatarTable tbody");
-
-      // 種類①入力欄変更時の処理
-      type1Input.addEventListener("change", function () {
+      type1Input.addEventListener("change", function(){
         const selectedType1 = type1Input.value.trim();
-        if (selectedType1 === "") {
-          type2Input.disabled = true;
-          type2Input.value = "";
-        } else {
-          type2Input.disabled = false;
-          updateType2Datalist(selectedType1);
-        }
+        if(selectedType1===""){
+          type2Input.disabled = true; type2Input.value = "";
+        } else { type2Input.disabled = false; updateType2Datalist(selectedType1); }
         checkInput();
       });
-
-      // パーツ、種類①、上昇値入力時のチェック
       partInput.addEventListener("input", checkInput);
       type1Input.addEventListener("input", checkInput);
       valueInput.addEventListener("input", checkInput);
-
-      // 必須項目（パーツ、種類①、上昇値）の入力チェック関数
-      function checkInput() {
+      function checkInput(){
         const isPartEntered = partInput.value.trim() !== "";
         const isType1Entered = type1Input.value.trim() !== "";
-        const isValueEntered =
-          valueInput.value.trim() !== "" && !isNaN(valueInput.value);
-        addButton.disabled = !(
-          isPartEntered &&
-          isType1Entered &&
-          isValueEntered
-        );
+        const isValueEntered = valueInput.value.trim() !== "" && !isNaN(valueInput.value);
+        addButton.disabled = !(isPartEntered && isType1Entered && isValueEntered);
       }
-
-      // 種類②のdatalist更新関数
-      function updateType2Datalist(selectedType1) {
+      function updateType2Datalist(selectedType1){
         const type2Datalist = document.getElementById("type2List");
         type2Datalist.innerHTML = "";
         const emptyOption = document.createElement("option");
         emptyOption.value = "";
         type2Datalist.appendChild(emptyOption);
-        typeOptions.forEach(function (option) {
-          if (option !== selectedType1) {
+        typeOptions.forEach(function(option){
+          if(option !== selectedType1){
             const opt = document.createElement("option");
             opt.value = option;
             type2Datalist.appendChild(opt);
           }
         });
       }
-
-      // 追加ボタンのクリック処理（所持アバター追加）
-      addButton.addEventListener("click", function () {
-        const partText = partInput.value.trim();
-        const partValue = partsMapping[partText] || "";
-        const type1Value = type1Input.value.trim();
-        const type2Value =
-          type2Input.value.trim() === "" ? "なし" : type2Input.value.trim();
-        const increaseValue = valueInput.value.trim();
-        if (partValue === "") {
-          alert("パーツ入力が正しくありません。候補から選んでください。");
-          return;
-        }
+      addButton.addEventListener("click", function(){
         const newAvatar = {
-          partText: partText,
-          partValue: partValue,
-          type1: type1Value,
-          type2: type2Value,
-          increase: increaseValue,
+          partText: partInput.value.trim(),
+          type1: type1Input.value.trim(),
+          type2: (type2Input.value.trim() === "") ? "なし" : type2Input.value.trim(),
+          increase: valueInput.value.trim()
         };
         avatarList.push(newAvatar);
-        renderTable();
+        renderAvatarTable();
         localStorage.setItem("avatarList", JSON.stringify(avatarList));
-        partInput.value = "";
-        type1Input.value = "";
-        type2Input.value = "";
-        type2Input.disabled = true;
-        valueInput.value = "";
+        partInput.value = ""; type1Input.value = ""; type2Input.value = ""; type2Input.disabled = true; valueInput.value = "";
         checkInput();
       });
-
-      // 表を再描画する関数（所持アバター一覧）
-      function renderTable() {
+      function renderAvatarTable(){
         avatarTableBody.innerHTML = "";
-        avatarList.forEach(function (avatar, index) {
+        avatarList.forEach(function(avatar, index){
           const row = document.createElement("tr");
-          // パーツ（表示名のみ）
-          const partCell = document.createElement("td");
-          partCell.textContent = avatar.partText;
-          row.appendChild(partCell);
-          // 種類①
-          const type1Cell = document.createElement("td");
-          type1Cell.textContent = avatar.type1;
-          row.appendChild(type1Cell);
-          // 種類②
-          const type2Cell = document.createElement("td");
-          type2Cell.textContent = avatar.type2;
-          row.appendChild(type2Cell);
-          // 上昇値
-          const increaseCell = document.createElement("td");
-          increaseCell.textContent = avatar.increase;
-          row.appendChild(increaseCell);
-          // 削除ボタン
-          const deleteCell = document.createElement("td");
-          const delButton = document.createElement("button");
-          delButton.textContent = "削除";
-          delButton.addEventListener("click", function () {
-            avatarList.splice(index, 1);
-            renderTable();
+          const tdPart = document.createElement("td");
+          tdPart.textContent = avatar.partText;
+          row.appendChild(tdPart);
+          const tdType1 = document.createElement("td");
+          tdType1.textContent = avatar.type1;
+          row.appendChild(tdType1);
+          const tdType2 = document.createElement("td");
+          tdType2.textContent = avatar.type2;
+          row.appendChild(tdType2);
+          const tdInc = document.createElement("td");
+          tdInc.textContent = avatar.increase;
+          row.appendChild(tdInc);
+          const tdDel = document.createElement("td");
+          const btnDel = document.createElement("button");
+          btnDel.textContent = "削除";
+          btnDel.addEventListener("click", function(){
+            avatarList.splice(index,1);
+            renderAvatarTable();
             localStorage.setItem("avatarList", JSON.stringify(avatarList));
           });
-          deleteCell.appendChild(delButton);
-          row.appendChild(deleteCell);
+          tdDel.appendChild(btnDel);
+          row.appendChild(tdDel);
           avatarTableBody.appendChild(row);
         });
       }
-
-      // ----- 設定フォームの処理 -----
       const saveSettingsButton = document.getElementById("saveSettingsButton");
       const genderSelect = document.getElementById("genderSelect");
-      const updateStatusContainer = document.getElementById(
-        "updateStatusContainer"
-      );
-      // 更新希望ステータスの候補リストは typeOptions と同じ
+      const updateStatusContainer = document.getElementById("updateStatusContainer");
       const updateStatusOptions = typeOptions;
-
-      // 更新希望ステータスのチェックボックス群を生成する関数
-      function generateUpdateStatusCheckboxes() {
-        updateStatusContainer.innerHTML = ""; // コンテナを空にする
+      function generateUpdateStatusCheckboxes(){
+        updateStatusContainer.innerHTML = "";
         let savedStatus = localStorage.getItem("updateStatus");
-        if (savedStatus) {
-          savedStatus = JSON.parse(savedStatus);
-        } else {
-          savedStatus = [];
-        }
-        updateStatusOptions.forEach(function (status) {
+        if(savedStatus){ savedStatus = JSON.parse(savedStatus); } else { savedStatus = []; }
+        updateStatusOptions.forEach(function(status){
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
           checkbox.id = "status_" + status;
           checkbox.value = status;
-          if (savedStatus.includes(status)) {
-            checkbox.checked = true;
-          }
+          if(savedStatus.includes(status)) { checkbox.checked = true; }
           const label = document.createElement("label");
           label.htmlFor = "status_" + status;
           label.textContent = status;
@@ -563,80 +563,248 @@
           updateStatusContainer.appendChild(label);
         });
       }
-
-      // 設定保存ボタンのクリック処理
-      saveSettingsButton.addEventListener("click", function () {
-        const selectedGender = genderSelect.value;
-        localStorage.setItem("avatarGender", selectedGender);
-        const checkboxes = updateStatusContainer.querySelectorAll(
-          'input[type="checkbox"]'
-        );
+      saveSettingsButton.addEventListener("click", function(){
+        localStorage.setItem("avatarGender", genderSelect.value);
+        const checkboxes = updateStatusContainer.querySelectorAll('input[type="checkbox"]');
         const selectedStatuses = [];
-        checkboxes.forEach(function (chk) {
-          if (chk.checked) {
-            selectedStatuses.push(chk.value);
-          }
-        });
+        checkboxes.forEach(function(chk){ if(chk.checked){ selectedStatuses.push(chk.value); } });
         localStorage.setItem("updateStatus", JSON.stringify(selectedStatuses));
         alert("設定を保存しました。");
       });
-
+      
       // ----- 販売アバター検索の処理 -----
-      // logItemCodes 関数：combinedData.json を取得し、formattedTradeItemList 内の各 listingItems にある itemCode について
-      // itemTradeWithBagcat 内から一致する itemCode を探し、見つかった場合はそのオブジェクトに "bagcat" プロパティとして値を追加するよ。
-      // 最後に、追加後の結果をコンソールに出力するよ。
-      function logItemCodes() {
-        fetch("combinedData.json") // combinedData.json を取ってくるよ。
-          .then(function (response) {
-            // 取ってきたデータが正しく返ってきたかチェックするよ。
-            if (!response.ok) {
-              throw new Error("ネットワーク応答が正しくありません");
-            }
-            return response.json(); // JSON形式に変換するよ。
+      let uniqueTradeItems = [];
+      function logItemCodes(){
+        fetch("combinedData.json")
+          .then(function(response){
+            if(!response.ok){ throw new Error("ネットワーク応答が正しくありません"); }
+            return response.json();
           })
-          .then(function (data) {
-            // combinedData.json から formattedTradeItemList と itemTradeWithBagcat を取り出すよ。
-            var formattedTradeItemList = data.formattedTradeItemList;
-            var itemTradeWithBagcat = data.itemTradeWithBagcat;
-
-            // formattedTradeItemList の各グループ（配列）を順番に処理するよ。
-            formattedTradeItemList.forEach(function (group, groupIndex) {
-              // グループが配列かどうかをチェックするよ。
-              if (Array.isArray(group)) {
-                // グループ内の各オブジェクトを順番に処理するよ。
-                group.forEach(function (item, itemIndex) {
-                  // オブジェクトから listingItems を取り出すよ。
-                  var listingItems = item.listingItems;
-                  // listingItems が配列かチェックするよ。
-                  if (Array.isArray(listingItems)) {
-                    // listingItems 内の各アイテムを順番に処理するよ。
-                    listingItems.forEach(function (listItem, listIndex) {
-                      // listItem から itemCode を取り出すよ。
-                      var currentItemCode = listItem.itemCode;
-                      // itemTradeWithBagcat の中から currentItemCode と一致するオブジェクトを探すよ。
-                      var match = itemTradeWithBagcat.find(function (element) {
-                        return element.itemCode === currentItemCode;
-                      });
-                      // 一致する要素が見つかったら、listItem に "bagcat" プロパティを追加するよ。
-                      if (match) {
-                        listItem.bagcat = match.bagcat;
-                      }
-                    });
-                  }
+          .then(function(data){
+            // Step 0: バザーIDのユニーク処理（flat 配列にする）
+            var rawFormattedTradeItemList = data.formattedTradeItemList;
+            uniqueTradeItems = [];
+            var seenBazaarIds = {};
+            rawFormattedTradeItemList.forEach(function(group){
+              if(Array.isArray(group) && group.length > 0){
+                var bazaarId = group[0].bazaarId;
+                if(!seenBazaarIds[bazaarId]){
+                  uniqueTradeItems.push(group[0]); // 先頭のオブジェクトのみ採用
+                  seenBazaarIds[bazaarId] = true;
+                }
+              }
+            });
+            console.log("Step 0: バザーIDユニーク処理後", uniqueTradeItems);
+            
+            // ① bagcat の追加
+            uniqueTradeItems.forEach(function(item){
+              var listingItems = item.listingItems;
+              if(Array.isArray(listingItems)){
+                listingItems.forEach(function(listItem){
+                  var currentItemCode = listItem.itemCode;
+                  var match = data.itemTradeWithBagcat.find(function(element){
+                    return element.itemCode === currentItemCode;
+                  });
+                  if(match){ listItem.bagcat = match.bagcat; }
                 });
               }
             });
-            // 処理が終わったら、結果をコンソールに表示するよ。
-            console.log(
-              "【最終結果】bagcat を追加後の formattedTradeItemList:"
-            );
-            console.log(formattedTradeItemList);
+            console.log("Step ①: bagcat 追加後", uniqueTradeItems);
+            
+            // ② itemName からの抽出（type, param の追加）
+            var regex = /^【([^+]+)\+(\d+)】/;
+            uniqueTradeItems.forEach(function(item){
+              var listingItems = item.listingItems;
+              if(Array.isArray(listingItems)){
+                listingItems.forEach(function(listItem){
+                  var result = regex.exec(listItem.itemName);
+                  if(result){
+                    listItem.type = result[1];
+                    listItem.param = parseInt(result[2], 10);
+                  } else { listItem.type = ""; listItem.param = 0; }
+                });
+              }
+            });
+            console.log("Step ②: type, param 抽出後", uniqueTradeItems);
+            
+            // ③ diff の計算
+            uniqueTradeItems.forEach(function(item){
+              var listingItems = item.listingItems;
+              if(Array.isArray(listingItems)){
+                listingItems.forEach(function(listItem){
+                  var matchingAvatar = avatarList.find(function(avatar){
+                    return avatar.type1 === listItem.type && avatar.partValue === listItem.bagcat;
+                  });
+                  var diff = 0;
+                  if(matchingAvatar){
+                    diff = listItem.param - Number(matchingAvatar.increase);
+                    if(diff < 0) diff = 0;
+                  } else { diff = listItem.param; }
+                  listItem.diff = diff;
+                });
+              }
+            });
+            console.log("Step ③: diff 計算後", uniqueTradeItems);
+            
+            // ④ 各バザー毎の集計（同じ (type, bagcat) の listingItem が複数の場合、最大の diff のみ採用）
+            uniqueTradeItems.forEach(function(item){
+              var listingItems = item.listingItems;
+              if(Array.isArray(listingItems) && listingItems.length > 0){
+                var uniqueDiffs = {}; // キー: type + "_" + bagcat, 値: 最大 diff
+                listingItems.forEach(function(listItem){
+                  var key = listItem.type + "_" + listItem.bagcat;
+                  if(uniqueDiffs[key] === undefined){ uniqueDiffs[key] = listItem.diff; }
+                  else { if(listItem.diff > uniqueDiffs[key]){ uniqueDiffs[key] = listItem.diff; } }
+                });
+                item.typeSums = {};
+                for(var key in uniqueDiffs){
+                  if(uniqueDiffs.hasOwnProperty(key)){
+                    var t = key.split("_")[0];
+                    if(!item.typeSums[t]){ item.typeSums[t] = 0; }
+                    item.typeSums[t] += uniqueDiffs[key];
+                  }
+                }
+              }
+            });
+            console.log("Step ④: 各バザー毎の集計後", uniqueTradeItems);
+            
+            // ⑤ 表の作成
+            // バザー性別フィルタリング
+            var selectedGender = localStorage.getItem("avatarGender");
+            var filteredTradeItems = uniqueTradeItems.filter(function(item){
+              if(!item.listingItems || !Array.isArray(item.listingItems)) return true;
+              if(selectedGender === "F"){
+                return !item.listingItems.some(function(listItem){ return listItem.itemGender === "M"; });
+              } else if(selectedGender === "M"){
+                return !item.listingItems.some(function(listItem){ return listItem.itemGender === "F"; });
+              }
+              return true;
+            });
+            console.log("Step ⑤a: バザー性別フィルタリング後", filteredTradeItems);
+            
+            // 全バザーで出現する type をまとめ、更新希望ステータスでチェック済みの type のみ抽出
+            var allTypes = {};
+            filteredTradeItems.forEach(function(item){
+              if(item.typeSums){
+                for(var t in item.typeSums){ if(item.typeSums.hasOwnProperty(t)){ allTypes[t] = true; } }
+              }
+            });
+            var selectedTypes = [];
+            var savedUpdateStatus = localStorage.getItem("updateStatus");
+            if(savedUpdateStatus){ selectedTypes = JSON.parse(savedUpdateStatus); }
+            var displayTypes = Object.keys(allTypes).filter(function(t){ return selectedTypes.indexOf(t) !== -1; });
+            displayTypes.sort(function(a, b){
+              var idxA = typeOptions.indexOf(a), idxB = typeOptions.indexOf(b);
+              if(idxA === -1) idxA = typeOptions.length;
+              if(idxB === -1) idxB = typeOptions.length;
+              return idxA - idxB;
+            });
+            
+            // 表の HTML 作成（各行＝1 バザー分）
+            // 左端に販売リンクボタンを設置（新しいタブでリンクを開く）
+            var tableHTML = "<table style='width:100%; border-collapse: collapse;'>";
+            tableHTML += "<thead><tr>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>販売リンク</th>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>締め切り日時</th>";
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>ハンコイン</th>";
+            displayTypes.forEach(function(t){
+              tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>" + t + "<br>(ハンコイン/差分)</th>";
+            });
+            tableHTML += "<th style='border: 1px solid #ccc; padding: 8px;'>詳細</th>";
+            tableHTML += "</tr></thead>";
+            tableHTML += "<tbody>";
+            filteredTradeItems.forEach(function(item){
+              var sellEndDate = item.sellEndDate || "";
+              var hancoin = Number(item.hancoin) || 0;
+              tableHTML += "<tr>";
+              // 販売リンクボタンの列
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='openLinkInNewTab(\"" + item.bazaarId + "\")'>販売リンク</button></td>";
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + sellEndDate + "</td>";
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + hancoin + "</td>";
+              displayTypes.forEach(function(t){
+                var sumDiff = (item.typeSums && item.typeSums[t]) ? item.typeSums[t] : 0;
+                var ratio = sumDiff !== 0 ? (hancoin / sumDiff).toFixed(2) : "0";
+                tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'>" + ratio + "</td>";
+              });
+              // 詳細ボタン（モーダルウィンドウ表示）
+              tableHTML += "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='showModal(\"" + item.bazaarId + "\")'>詳細</button></td>";
+              tableHTML += "</tr>";
+            });
+            tableHTML += "</tbody></table>";
+            document.getElementById("tradeDataDisplay").innerHTML = tableHTML;
+            console.log("Step ⑤: 表作成後");
+            console.log(filteredTradeItems);
           })
-          .catch(function (error) {
-            // エラーが発生したら、内容をコンソールに表示するよ。
+          .catch(function(error){
             console.error("エラーが発生しました:", error);
           });
       }
+      
+      function openLinkInNewTab(bazaarId) {
+        const url = "https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=" + bazaarId;
+        window.open(url, "_blank");
+      }
+      
+      // ----- モーダルウィンドウの処理 -----
+      const modalWindow = document.getElementById("modalWindow");
+      const modalContent = document.getElementById("modalContent");
+      const closeModalBtn = document.getElementById("closeModal");
+      closeModalBtn.addEventListener("click", function(){
+        modalWindow.style.display = "none";
+        modalContent.innerHTML = "";
+      });
+      function showModal(bazaarId) {
+        // uniqueTradeItems は Step 0 で作成したグローバル変数
+        var item = uniqueTradeItems.find(function(itm){
+          return itm.bazaarId === bazaarId;
+        });
+        if(!item) return;
+        modalContent.innerHTML = "";
+        if(Array.isArray(item.listingItems)){
+          item.listingItems.forEach(function(listItem){
+            var itemDiv = document.createElement("div");
+            itemDiv.className = "modalItem";
+            // 画像の URL：itemCode を小文字に変換（数字はそのまま）
+            var img = document.createElement("img");
+            img.src = "https://puretomo-image.hange.jp/disp/" + listItem.itemCode.toLowerCase() + ".gif";
+            itemDiv.appendChild(img);
+            // テキスト：bagcat を日本語に戻し、diff を表示（形式: 日本語bagcat / 差分: type+diff）
+            var bagcatText = bagcatLabels[listItem.bagcat] || listItem.bagcat;
+            var diffText = listItem.type + "+" + listItem.diff;
+            var infoP = document.createElement("p");
+            infoP.textContent = bagcatText + " / 差分: " + diffText;
+            itemDiv.appendChild(infoP);
+            // itemName の表示
+            var nameP = document.createElement("p");
+            nameP.textContent = listItem.itemName;
+            itemDiv.appendChild(nameP);
+            modalContent.appendChild(itemDiv);
+          });
+        }
+        modalWindow.style.display = "block";
+      }
+      
+      // ----- 右側パネルの開閉ボタンの処理 -----
+      const rightPanel = document.getElementById("rightPanel");
+      const leftPanel = document.getElementById("leftPanel");
+      const closeRightPanelBtn = document.getElementById("closeRightPanel");
+      const openRightPanelBtn = document.getElementById("openRightPanel");
+      
+      // 右側パネルを閉じる（右にスライドさせ、左側のコンテンツを全面表示）
+      closeRightPanelBtn.addEventListener("click", function(){
+        rightPanel.classList.add("closed"); // 右側パネルを右にスライド
+        leftPanel.style.width = "100%"; // 左側パネルの幅を全体に変更
+        closeRightPanelBtn.style.display = "none"; // 閉じるボタンを隠す
+        openRightPanelBtn.style.display = "block"; // 開くボタンを表示
+      });
+      
+      // 右側パネルを再表示する（左側のコンテンツ幅を元に戻し、右側パネルを表示）
+      openRightPanelBtn.addEventListener("click", function(){
+        rightPanel.classList.remove("closed");
+        leftPanel.style.width = "30%"; // 左側パネルの幅を元に戻す
+        closeRightPanelBtn.style.display = "block";
+        openRightPanelBtn.style.display = "none";
+      });
     </script>
   </body>
 </html>
