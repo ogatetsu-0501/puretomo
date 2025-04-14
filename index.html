@@ -4,227 +4,198 @@
     <!-- ページの基本設定 -->
     <meta charset="UTF-8" /> <!-- 文字コードをUTF-8に設定するよ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> <!-- 画面サイズに合わせるよ -->
-    <title>アバター管理画面</title> <!-- ページタイトルを設定するよ -->
+    <title>アバター管理画面</title> <!-- ページタイトル -->
     <style>
       /* ----- 全体の基本設定 ----- */
       html, body {
-        height: 100%; /* 画面全体の高さにするよ */
-        margin: 0;    /* 余白をなくすよ */
-        padding: 0;   /* 内側の余白もなくすよ */
+        height: 100%;       /* 画面全体の高さにするよ */
+        margin: 0;          /* 外側の余白をなくすよ */
+        padding: 0;         /* 内側の余白をなくすよ */
       }
       body {
-        display: flex;         /* 子要素を縦に並べるよ */
-        flex-direction: column;
-        font-family: Arial, sans-serif; /* 使用するフォントを指定するよ */
+        font-family: Arial, sans-serif;  /* フォントの設定 */
       }
       
       /* ----- ヘッダー ----- */
       header {
-        display: flex;           /* ヘッダー内の要素を横並びにするよ */
-        align-items: center;     /* 垂直方向に中央寄せにするよ */
-        background-color: #4caf50; /* 背景色を設定するよ */
-        color: white;            /* 文字色を白にするよ */
-        padding: 10px;           /* 内側に余白を作るよ */
+        display: flex;       /* ヘッダー内の要素を横並びにするよ */
+        align-items: center; /* 垂直方向に中央揃えするよ */
+        background-color: #4caf50;  /* 背景色を設定するよ */
+        color: white;        /* 文字色を白にするよ */
+        padding: 10px;       /* 内側に余白を作るよ */
       }
       .hamburger {
-        font-size: 24px;         /* ハンバーガーアイコンの文字サイズを大きくするよ */
-        cursor: pointer;         /* マウスカーソルをポインターにするよ */
-        margin-right: 10px;       /* 右に余白を作るよ */
+        font-size: 24px;     /* ハンバーガーの文字サイズを大きくするよ */
+        cursor: pointer;     /* カーソルをポインターにするよ */
+        margin-right: 10px;   /* 右に余白を作るよ */
       }
       
       /* ----- サイドバー（サイドメニュー） ----- */
-      /* サイドバーは固定配置し、初期状態は画面外（左側：-220px）に隠すよ */
+      /* サイドバーは画面左外に隠しておき、ハンバーガーを押すと左側からスライドインするよ */
       .sidebar {
-        position: fixed;         /* 画面上に固定するよ */
-        top: 0;                  /* 上端に配置するよ */
-        left: -220px;            /* 画面の左外へ隠す（幅200px + 20pxの余白） */
-        width: 200px;            /* サイドバーの幅を200pxにするよ */
-        height: 100vh;           /* 画面全体の高さにするよ */
-        background-color: #333;  /* 背景色を暗めにするよ */
-        color: white;            /* 文字色を白にするよ */
-        transition: left 0.3s ease; /* 左右の位置をアニメーションするよ */
-        z-index: 1500;           /* 他のパネルより手前に表示するよ */
+        position: fixed;       /* 画面上に固定するよ */
+        top: 0;                /* 上端に合わせるよ */
+        left: -220px;          /* 初期状態は画面外（左側）に隠すよ（幅200px＋余白20px） */
+        width: 200px;          /* サイドバーの幅を200pxにするよ */
+        height: 100vh;         /* 画面全体の高さにするよ */
+        background-color: #333;/* 背景色を暗くするよ */
+        color: white;          /* 文字色を白にするよ */
+        transition: left 0.3s ease; /* 左右の位置をアニメーションで変えるよ */
+        z-index: 1500;         /* 他のパネルより前面に表示するよ */
       }
       
-      /* ----- メインエリア ----- */
+      /* ----- メインエリア（全画面表示するパネルのコンテナ） ----- */
       .main-container {
-        flex: 1;               /* 残りの領域をすべて使うよ */
-        display: flex;         /* 子要素を横に並べるよ */
-        overflow: hidden;      /* はみ出した部分は隠すよ */
+        position: relative;   /* 子要素の絶対位置指定の基準にするよ */
+        width: 100%;          /* 横いっぱいにするよ */
+        height: calc(100vh - 50px); /* ヘッダー分50pxを引いた高さにするよ */
+        overflow: hidden;     /* はみ出す部分を隠すよ */
       }
       
-      /* ----- 左側パネル ----- */
-      /* 左側パネルは通常は表示されるが、右側パネルが開くときに左へスライドアウトするよ */
+      /* ----- 左側パネル（各種コンテンツ） ----- */
+      .left-panel, .right-panel {
+        position: absolute;   /* 画面内の絶対位置に配置するよ */
+        top: 0;               /* 上端に配置するよ */
+        left: 0;              /* 左端に配置するよ */
+        width: 100%;          /* 横いっぱいにするよ */
+        height: 100%;         /* 高さはコンテナに合わせるよ */
+        transition: transform 0.3s ease; /* スライド動作をアニメーションするよ */
+      }
+      /* 初期状態：右側パネル（追加されたアバター一覧）は表示、左側パネルは画面外（左に隠す） */
       .left-panel {
-        width: calc(30% - 30px); /* 幅は30%から左右ボタン分30pxを差し引いた値にするよ */
-        padding: 20px;         /* 内側に余白を作るよ */
-        box-sizing: border-box; /* パディングもサイズに含めるよ */
-        transition: transform 0.3s ease; /* スライドする動きをアニメーションするよ */
+        transform: translateX(-100%); /* 左側パネルを左側に隠すよ */
+      }
+      .right-panel {
+        transform: translateX(0); /* 右側パネルはそのまま表示するよ */
       }
       
-      /* ----- 右側パネル（追加されたアバター一覧） ----- */
-      /* 右側パネルは初期状態で画面外へ押し出されていて、開くと全面に表示されるよ */
-      .right-panel {
-        width: calc(70% - 30px);  /* 幅は70%から左右ボタン分を差し引いた値にするよ */
-        padding: 20px;           /* 内側に余白を作るよ */
-        box-sizing: border-box;  /* パディングを含めたサイズ計算にするよ */
-        overflow: auto;          /* 内容がはみ出したらスクロール可能にするよ */
-        transition: transform 0.3s ease; /* パネルがスライドするアニメーション */
+      /* ----- 矢印ボタン（表示切替用） ----- */
+      /* 左側に配置するボタン：現在右側パネル表示時に押すと左側コンテンツに切り替える */
+      #switchToLeft {
+        position: fixed;        /* 画面上に固定するよ */
+        top: 50%;               /* 垂直中心に配置するよ */
+        left: 0;                /* 画面左端に配置するよ（※サイドバーが開いたときはJSで調整） */
+        transform: translateY(-50%);
+        z-index: 1600;          /* サイドバーよりも前面に表示するよ */
       }
-      /* 右側パネルが閉じた状態ではクラス "closed" を持つよ */
-      .right-panel.closed {
-        transform: translateX(100%); /* 右側に全体押し出して非表示にするよ */
+      /* 右側に配置するボタン：現在左側コンテンツ表示時に押すと追加されたアバター一覧に切り替える */
+      #switchToRight {
+        position: fixed;        /* 画面上に固定するよ */
+        top: 50%;               /* 垂直中心に配置するよ */
+        right: 0;               /* 画面右端に配置するよ */
+        transform: translateY(-50%);
+        z-index: 1600;
+        display: none;          /* 初期状態では非表示にするよ */
       }
       
       /* ----- テーブルの設定 ----- */
-      /* セルの内容はそのまま1行で表示するよ */
       th, td {
-        border: 1px solid #ccc;   /* 枠線を薄いグレーにするよ */
-        padding: 8px;             /* セル内に余白を作るよ */
-        text-align: center;       /* 文字を中央にするよ */
-        white-space: nowrap;      /* 1行に表示するよ（改行は手動で入れるよ） */
+        border: 1px solid #ccc;     /* 枠線を設定するよ */
+        padding: 8px;               /* 内側に余白を作るよ */
+        text-align: center;         /* 文字を中央に寄せるよ */
+        white-space: nowrap;        /* 1行で表示するよ（改行は手動で設定） */
       }
-      /* テーブルヘッダー（1行目）は固定して上部に表示し、1行目が先頭列より上に来るようにするよ */
+      /* テーブル1行目（ヘッダー）を画面上部に固定し、先頭列より上に表示する */
       thead th {
-        position: sticky;   /* 固定位置にするよ */
-        top: 0;             /* 上端にくっつけるよ */
-        background-color: #e0e0e0; /* ヘッダーの背景色 */
-        z-index: 4;         /* 1行目が先頭列より上に表示されるようにするよ */
+        position: sticky;
+        top: 0;
+        background-color: #e0e0e0;
+        z-index: 4;
       }
-      /* テーブルの1列目は固定して左側に表示するよ（ただしヘッダーより下になるよう z-index を低くする） */
+      /* テーブル1列目を左側に固定（ヘッダーより下の階層に表示する） */
       tbody td:first-child,
       thead th:first-child {
-        position: sticky;   /* 固定位置にするよ */
-        left: 0;            /* 左端にくっつけるよ */
-        background-color: #f0f0f0; /* 背景色を設定するよ */
-        z-index: 3;         /* ヘッダーより下に表示するよ */
+        position: sticky;
+        left: 0;
+        background-color: #f0f0f0;
+        z-index: 3;
       }
       
       /* ----- スクロール可能なテーブルコンテナ ----- */
       .scrollable-table-container {
         overflow: auto; 
         position: relative;
-        max-height: calc(100vh - 50px); /* ウィンドウ全体の高さから50px分引いた高さにするよ */
-        width: auto; /* コンテンツに合わせた幅にするよ */
+        max-height: calc(100vh - 50px); /* ウィンドウ全体から50px引いた高さにするよ */
+        width: auto;
       }
       table {
-        border-collapse: collapse; /* セルの境界線をくっつけるよ */
-        table-layout: auto;         /* セルの横幅は内容に合わせるよ */
-        width: auto;               /* テーブル全体の幅は自動にするよ */
-        max-width: 100%;           /* テーブルがコンテナを超えないようにするよ */
+        border-collapse: collapse;
+        table-layout: auto;   /* 内容に合わせてセルの幅を自動設定するよ */
+        width: auto;
+        max-width: 100%;
       }
       
       /* ----- 更新希望ステータス ----- */
       .update-status-group {
-        display: flex;    /* 横に並べるよ */
-        flex-wrap: wrap;  /* 行が足りないときは折り返すよ */
+        display: flex;
+        flex-wrap: wrap;
       }
       .update-status-group label {
-        margin-right: 10px; /* 各ラベルの右に余白を作るよ */
+        margin-right: 10px;
       }
       
       /* ----- モーダルウィンドウ（詳細表示用） ----- */
       #modalWindow {
-        display: none;       /* 最初は表示しないよ */
-        position: fixed;     /* 画面上に固定するよ */
-        top: 50%;            /* 上から50%に配置するよ */
-        left: 50%;           /* 左から50%に配置するよ */
-        transform: translate(-50%, -50%); /* 真ん中に持ってくるよ */
-        width: 80%;          /* 幅は80%にするよ */
-        max-width: 600px;    /* 幅の最大は600pxにするよ */
-        background-color: #fff; /* 背景は白にするよ */
-        border: 1px solid #ccc; /* 枠線を設定するよ */
-        padding: 15px;       /* 内側に余白を作るよ */
-        z-index: 1000;       /* 他の要素より前に表示するよ */
-        box-shadow: 0 0 10px rgba(0,0,0,0.5); /* 影をつけるよ */
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 600px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 15px;
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
       }
       #modalContent {
-        display: flex;       /* 横並びにするよ */
-        flex-direction: row; /* 横方向に並べるよ */
-        overflow-x: auto;    /* 横スクロールを有効にするよ */
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
       }
       .modalItem {
-        border: 1px solid #ddd; /* アイテムの枠線を設定するよ */
-        margin-right: 10px;   /* 右に余白を作るよ */
-        padding: 5px;         /* 内側に余白を作るよ */
-        text-align: center;   /* 文字を中央に寄せるよ */
+        border: 1px solid #ddd;
+        margin-right: 10px;
+        padding: 5px;
+        text-align: center;
       }
       .modalItem img {
-        max-width: 100px;     /* 画像の最大幅を100pxにするよ */
-        display: block;       /* 画像をブロック要素にするよ */
-        margin: 0 auto 5px;   /* 中央に配置し下に余白を作るよ */
+        max-width: 100px;
+        display: block;
+        margin: 0 auto 5px;
       }
       #closeModal {
-        width: 100%;          /* 幅を100%にするよ */
-        margin-top: 15px;      /* 上に余白を作るよ */
-        background-color: #4caf50; /* 背景色を設定するよ */
-        color: #fff;          /* 文字色を白にするよ */
-        border: none;         /* 枠線を消すよ */
-        padding: 5px 10px;    /* 内側に余白を作るよ */
-        cursor: pointer;      /* カーソルをポインターにするよ */
-      }
-      
-      /* ----- 右側パネルの開閉用ボタン ----- */
-      /* 右端の開くボタン（デフォルトで表示するよ） */
-      #openRightPanel {
-        position: fixed;       /* 画面上に固定するよ */
-        top: 0;                /* 上端に配置するよ */
-        right: 0;              /* 右端に配置するよ */
-        width: 30px;           /* 幅を30pxにするよ */
-        height: 100vh;         /* 画面全体の高さにするよ */
-        background-color: #4caf50; /* 背景色を設定するよ */
-        color: white;          /* 文字色を白にするよ */
-        border: none;          /* 枠線を消すよ */
-        cursor: pointer;       /* カーソルをポインターにするよ */
-        z-index: 1001;         /* 前面に表示するよ */
-        display: block;        /* 初期状態で表示するよ */
-      }
-      /* 左端の閉じるボタン（右側パネルが開いたときに表示されるよ） */
-      #closeRightPanel {
-        position: fixed;       /* 画面上に固定するよ */
-        top: 0;                /* 上端に配置するよ */
-        left: 220px;           /* 左端から220pxの位置に配置するよ（サイドバーの幅200px＋20px余白） */
-        width: 30px;           /* 幅を30pxにするよ */
-        height: 100vh;         /* 画面全体の高さにするよ */
-        background-color: #4caf50; /* 背景色を設定するよ */
-        color: white;          /* 文字色を白にするよ */
-        border: none;          /* 枠線を消すよ */
-        cursor: pointer;       /* カーソルをポインターにするよ */
-        z-index: 1001;         /* 前面に表示するよ */
-        display: none;         /* 初期状態では非表示にするよ */
-      }
-      
-      /* ----- レスポンシブデザイン用のメディアクエリ ----- */
-      @media (max-width: 768px) {
-        .left-panel {
-          width: calc(100% - 30px); /* 画面が狭くなったら左側パネルはボタン分を差し引いた全幅にするよ */
-        }
-        .right-panel {
-          width: calc(100% - 30px); /* 同様に調整するよ */
-        }
+        width: 100%;
+        margin-top: 15px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
       }
     </style>
   </head>
   <body>
     <!-- ヘッダー -->
     <header>
-      <div class="hamburger" id="hamburgerBtn">&#9776;</div> <!-- ハンバーガーメニューのボタン -->
-      <h1 style="margin: 0; font-size: 18px">アバター管理</h1> <!-- ヘッダーのタイトル -->
+      <div class="hamburger" id="hamburgerBtn">&#9776;</div> <!-- ハンバーガーアイコン -->
+      <h1 style="margin: 0; font-size: 18px">アバター管理</h1>
     </header>
     
     <!-- モーダルウィンドウ（詳細表示用） -->
     <div id="modalWindow">
       <div id="modalContent">
-        <!-- モーダル内で各 listingItem の詳細を横に並べるよ -->
+        <!-- 各 listingItem の詳細を横に並べるよ -->
       </div>
-      <button id="closeModal">閉じる</button> <!-- モーダルを閉じるボタン -->
+      <button id="closeModal">閉じる</button>
     </div>
     
-    <!-- 右側パネルの開閉用ボタン -->
-    <!-- 右端の「開く」ボタン（常に右側に表示） -->
-    <button id="openRightPanel">⇐</button>
-    <!-- 左端の「閉じる」ボタン（右側パネルが開いたときに表示） -->
-    <button id="closeRightPanel">⇒</button>
+    <!-- 矢印ボタン（切替用） -->
+    <!-- 右側パネル表示時、左端（画面左）に表示するボタン -->
+    <button id="switchToLeft">←</button>
+    <!-- 左側パネル表示時、右端（画面右）に表示するボタン -->
+    <button id="switchToRight" style="display: none;">→</button>
     
     <!-- メインエリア -->
     <div class="main-container">
@@ -236,7 +207,7 @@
           <li data-target="tradeSearch">販売アバター検索</li>
         </ul>
       </div>
-      <!-- 左側パネル（通常は表示され、右側パネルが開くとスライドアウトする） -->
+      <!-- 左側パネル（各種コンテンツ） -->
       <div class="left-panel" id="leftPanel">
         <div id="avatarForm">
           <h2>所持アバター追加</h2>
@@ -343,7 +314,7 @@
       </div>
       
       <!-- 右側パネル（追加されたアバター一覧） -->
-      <div class="right-panel closed" id="rightPanel">
+      <div class="right-panel" id="rightPanel">
         <h2>追加されたアバター一覧</h2>
         <div class="scrollable-table-container">
           <table id="avatarTable">
@@ -364,56 +335,65 @@
     </div>
     
     <script>
-      // ----- 右側パネルと左側パネルのスライド処理 -----
-      // 左側パネル（コンテンツ）を取得するよ
+      // 現在の表示状態を管理する変数（"right" または "left"）
+      let currentView = "right";
+
+      // パネルを取得するよ
       const leftPanel = document.getElementById("leftPanel");
-      // 右側パネル（追加されたアバター一覧）を取得するよ
       const rightPanel = document.getElementById("rightPanel");
-      // 右側パネルを閉じるための左側に配置する矢印ボタンを取得するよ（画面左に表示）
-      const closeRightPanelBtn = document.getElementById("closeRightPanel");
-      // 右側パネルを開くための右端のボタンを取得するよ
-      const openRightPanelBtn = document.getElementById("openRightPanel");
 
-      // 右端の「開く」ボタンをクリックしたとき：右側パネルをスライドインして表示し、左側パネルを画面外へ押し出す
-      openRightPanelBtn.addEventListener("click", function() {
-        // 左側パネルを左へ完全に押し出す（画面外に隠れる）
+      // 矢印ボタンを取得するよ
+      const switchToLeftBtn = document.getElementById("switchToLeft");   // 右側表示時に押すと左側コンテンツに切り替える（左端に表示）
+      const switchToRightBtn = document.getElementById("switchToRight"); // 左側表示時に押すと右側（アバター一覧）に切り替える（右端に表示）
+
+      // 初期状態を設定するよ（右側パネルを全画面表示、左側は隠す）
+      window.addEventListener("load", function() {
+        // 右側は表示、左側は画面外へ（-100%）スライド
         leftPanel.style.transform = "translateX(-100%)";
-        // 右側パネルの「closed」クラスを除去して、画面内にスライドインさせる
-        rightPanel.classList.remove("closed");
-        // 右端の開くボタンを非表示にする
-        openRightPanelBtn.style.display = "none";
-        // 左端の閉じるボタンを表示する
-        closeRightPanelBtn.style.display = "block";
+        rightPanel.style.transform = "translateX(0)";
+        currentView = "right";
+        switchToLeftBtn.style.display = "block";  // 右側表示時は、左側に切り替えるためのボタンを表示
+        switchToRightBtn.style.display = "none";  // 右側表示時は、戻すボタンは非表示
       });
 
-      // 左端の「閉じる」ボタンをクリックしたとき：右側パネルを画面外に押し出し、左側パネルを元に戻す
-      closeRightPanelBtn.addEventListener("click", function() {
-        // 左側パネルを元の位置に戻す
-        leftPanel.style.transform = "translateX(0)";
-        // 右側パネルに「closed」クラスを付与して、画面外へスライドアウトさせる
-        rightPanel.classList.add("closed");
-        // 左端の閉じるボタンを非表示にする
-        closeRightPanelBtn.style.display = "none";
-        // 右端の開くボタンを再表示する
-        openRightPanelBtn.style.display = "block";
-      });
+      // 関数：左側コンテンツ（フォーム等）を全画面表示する（切替）
+      function switchToLeftView() {
+        currentView = "left";
+        leftPanel.style.transform = "translateX(0)";      // 左側パネルを表示
+        rightPanel.style.transform = "translateX(100%)";   // 右側パネルを画面外（右側）へ移動
+        switchToLeftBtn.style.display = "none";            // 切替用の左側ボタンは隠す
+        switchToRightBtn.style.display = "block";          // 右側に戻すボタンを表示
+      }
+
+      // 関数：右側（追加されたアバター一覧）を全画面表示する（切替）
+      function switchToRightView() {
+        currentView = "right";
+        leftPanel.style.transform = "translateX(-100%)";   // 左側パネルを画面外（左側）へ移動
+        rightPanel.style.transform = "translateX(0)";       // 右側パネルを表示
+        switchToLeftBtn.style.display = "block";           // 左側に切り替えるボタンを表示
+        switchToRightBtn.style.display = "none";           // 右側に戻すボタンは隠す
+      }
+
+      // 矢印ボタンにクリックイベントを追加するよ
+      switchToLeftBtn.addEventListener("click", switchToLeftView);
+      switchToRightBtn.addEventListener("click", switchToRightView);
 
       // ----- サイドバー（サイドメニュー）の処理 -----
-      // ここでは、ハンバーガーボタンを押すとサイドバーが左側からスライドインするようにするよ
-      const hamburgerBtn = document.getElementById("hamburgerBtn"); // ハンバーガーアイコンを取得するよ
-      const sidebar = document.getElementById("sidebar"); // サイドバーの要素を取得するよ
-      // 初期状態ではサイドバーは固定位置（left: -220px）に隠れている
-      // ハンバーガーがクリックされたら、サイドバーのleftプロパティを0にしてスライドインする
+      const hamburgerBtn = document.getElementById("hamburgerBtn"); // ハンバーガーアイコンを取得
+      const sidebar = document.getElementById("sidebar");           // サイドバーを取得
       hamburgerBtn.addEventListener("click", function() {
         // もしサイドバーが隠れていたら
         if (sidebar.style.left === "" || sidebar.style.left === "-220px") {
-          sidebar.style.left = "0"; // サイドバーを左端にスライドインするよ
+          sidebar.style.left = "0"; // サイドバーを表示（左端にスライドイン）
+          // サイドバーが表示されたら、左側の矢印ボタンをサイドバー分だけ右にずらす
+          switchToLeftBtn.style.left = "220px";
         } else {
-          sidebar.style.left = "-220px"; // もう一度隠すよ
+          sidebar.style.left = "-220px"; // サイドバーを隠す
+          switchToLeftBtn.style.left = "0";
         }
       });
 
-      // ----- サイドバーの項目選択による画面切替 -----
+      // ----- サイドバー項目選択による画面切替 -----
       const sidebarItems = document.querySelectorAll(".sidebar li");
       const avatarFormDiv = document.getElementById("avatarForm");
       const settingsDiv = document.getElementById("settings");
@@ -421,8 +401,9 @@
       sidebarItems.forEach(function(item) {
         item.addEventListener("click", function() {
           const target = item.getAttribute("data-target");
-          // サイドバーを隠す
+          // サイドバーを隠す（常に左外に）
           sidebar.style.left = "-220px";
+          switchToLeftBtn.style.left = "0"; // サイドバー閉じたので、矢印ボタンを元位置に戻す
           if (target === "avatarForm") {
             avatarFormDiv.style.display = "block";
             settingsDiv.style.display = "none";
@@ -793,7 +774,7 @@
             tableHTML += "<tbody>";
             filteredTradeItems.forEach(function(item) {
               var sellEndDate = item.sellEndDate || "";
-              if (sellEndDate.indexOf(" ") !== -1) { // 日時の文字列にスペースがあれば改行するよ
+              if (sellEndDate.indexOf(" ") !== -1) {
                 sellEndDate = sellEndDate.split(" ").join("<br>");
               }
               var hancoin = Number(item.hancoin) || 0;
@@ -870,7 +851,7 @@
         modalWindow.style.display = "block";
       }
       
-      // ----- テーブルのヘッダーセルをクリックしたときにソートする関数 -----
+      // ----- テーブルのヘッダーセルクリック時のソート処理 -----
       function sortTableByColumn(table, colIndex) {
         var tbody = table.querySelector("tbody");
         var rows = Array.from(tbody.querySelectorAll("tr"));
@@ -888,7 +869,7 @@
         });
       }
       
-      // ページ読み込み時、アバター一覧テーブルのヘッダーセルにもクリックでソートする処理を追加するよ
+      // ページ読み込み時、アバター一覧テーブルのヘッダーセルにクリックでソートする処理を追加
       var avatarTable = document.getElementById("avatarTable");
       if (avatarTable) {
         var avatarHeaderCells = avatarTable.querySelectorAll("thead th");
