@@ -1149,16 +1149,16 @@
       "bagcat": "L"
     },
     {
+      "itemCode": "CT2UL",
+      "bagcat": "CT"
+    },
+    {
       "itemCode": "E41AZ",
       "bagcat": "E4"
     },
     {
       "itemCode": "AA299",
       "bagcat": "AA"
-    },
-    {
-      "itemCode": "CT2UL",
-      "bagcat": "CT"
     },
     {
       "itemCode": "AF150",
@@ -1177,44 +1177,8 @@
       "bagcat": "AA"
     },
     {
-      "itemCode": "LC2DNK",
-      "bagcat": "L"
-    },
-    {
-      "itemCode": "A4AQI",
-      "bagcat": "A4"
-    },
-    {
-      "itemCode": "B32ES",
-      "bagcat": "B3"
-    },
-    {
       "itemCode": "A12YF",
       "bagcat": "A1"
-    },
-    {
-      "itemCode": "AEER",
-      "bagcat": "AE"
-    },
-    {
-      "itemCode": "CT2J2",
-      "bagcat": "CT"
-    },
-    {
-      "itemCode": "AFZJ",
-      "bagcat": "AF"
-    },
-    {
-      "itemCode": "AD10D",
-      "bagcat": "AD"
-    },
-    {
-      "itemCode": "A322FU",
-      "bagcat": "A3"
-    },
-    {
-      "itemCode": "FA210Q4",
-      "bagcat": "F"
     },
     {
       "itemCode": "B226W",
@@ -6309,23 +6273,6 @@
       "hancoin": 2000
     },
     {
-      "bazaarId": "de86c8400fc64c22927a80dbc4ca2632",
-      "sellEndDate": "2025/04/15 09:28",
-      "listingItems": [
-        {
-          "itemCode": "LC2DNK",
-          "itemGender": "F",
-          "itemName": null
-        },
-        {
-          "itemCode": "CT2UL",
-          "itemGender": "F",
-          "itemName": "【POW+3】マーチングC"
-        }
-      ],
-      "hancoin": 500
-    },
-    {
       "bazaarId": "4466bb5ff40b46829251e1f589bd8ded",
       "sellEndDate": "2025/04/19 10:13",
       "listingItems": [
@@ -6348,62 +6295,6 @@
         }
       ],
       "hancoin": 5500
-    },
-    {
-      "bazaarId": "050aa7f364ac4f33899a711872f9a376",
-      "sellEndDate": "2025/04/15 09:27",
-      "listingItems": [
-        {
-          "itemCode": "A4AQI",
-          "itemGender": "A",
-          "itemName": "【POW+2】神域の名月"
-        },
-        {
-          "itemCode": "B32ES",
-          "itemGender": "F",
-          "itemName": null
-        }
-      ],
-      "hancoin": 100
-    },
-    {
-      "bazaarId": "b8ba437a3c2d43be9daf81c500ff4aaa",
-      "sellEndDate": "2025/04/15 09:26",
-      "listingItems": [
-        {
-          "itemCode": "AEER",
-          "itemGender": "A",
-          "itemName": null
-        },
-        {
-          "itemCode": "AFZJ",
-          "itemGender": "A",
-          "itemName": null
-        },
-        {
-          "itemCode": "A12YF",
-          "itemGender": "A",
-          "itemName": "【POW+1】Ｆセイバー"
-        },
-        {
-          "itemCode": "CT2J2",
-          "itemGender": "F",
-          "itemName": null
-        }
-      ],
-      "hancoin": 100
-    },
-    {
-      "bazaarId": "8cd43607172d483ca60df168fb2001ae",
-      "sellEndDate": "2025/04/15 09:26",
-      "listingItems": [
-        {
-          "itemCode": "AD10D",
-          "itemGender": "F",
-          "itemName": "【POW+6】ノクスクルス"
-        }
-      ],
-      "hancoin": 4500
     },
     {
       "bazaarId": "273766f4dc164c469387228f394e0376",
@@ -6923,6 +6814,6 @@
       "hancoin": 5000
     }
   ],
-  "startTime": "2025-04-15T09:17:59.094858",
-  "endTime": "2025-04-15T09:18:01.207479"
+  "startTime": "2025-04-15T09:30:07.028007",
+  "endTime": "2025-04-15T09:30:08.704183"
 }
