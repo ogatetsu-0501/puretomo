@@ -1,189 +1,196 @@
 <!DOCTYPE html>
-<!-- HTML文書の種類を宣言するよ -->
 <html lang="ja">
-  <!-- 日本語のページだよ -->
   <head>
     <meta charset="UTF-8" />
     <!-- 文字コードはUTF-8にするよ -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- 画面サイズに合わせるよ -->
-    <title>アバター管理画面</title>
+    <title>アバター管理画面 - 完全版</title>
     <!-- ページタイトル -->
     <style>
       /* ----- 全体の基本設定 ----- */
       html,
       body {
-        height: 100%; /* 画面全体の高さにするよ */
-        margin: 0; /* 余白をなくすよ */
-        padding: 0; /* 内側の余白もなくすよ */
+        height: 100%;
+        margin: 0;
+        padding: 0;
       }
       body {
-        font-family: Arial, sans-serif; /* フォントはArialにするよ */
+        font-family: Arial, sans-serif;
       }
 
       /* ----- ヘッダー ----- */
       header {
-        display: flex; /* 要素を横並びにするよ */
-        align-items: center; /* 垂直方向に中央揃えするよ */
-        background-color: #4caf50; /* 背景は緑にするよ */
-        color: white; /* 文字色は白にするよ */
-        padding: 10px; /* 内側に余白を作るよ */
+        display: flex;
+        align-items: center;
+        background-color: #4caf50;
+        color: white;
+        padding: 10px;
       }
       .hamburger {
-        font-size: 24px; /* アイコンを大きくするよ */
-        cursor: pointer; /* カーソルをポインターにするよ */
-        margin-right: 10px; /* 右に余白を作るよ */
+        font-size: 24px;
+        cursor: pointer;
+        margin-right: 10px;
       }
 
-      /* ----- サイドバー（サイドメニュー） ----- */
+      /* ----- サイドバー ----- */
       .sidebar {
-        position: fixed; /* 画面に固定するよ */
-        top: 0; /* 上端にくっつけるよ */
-        left: -220px; /* 初めは画面外（左）に隠すよ */
-        width: 200px; /* 幅は200pxにするよ */
-        height: 100vh; /* 画面全体の高さにするよ */
-        background-color: #333; /* 背景は濃いグレーにするよ */
-        color: white; /* 文字色は白にするよ */
-        transition: left 0.3s ease; /* なめらかに動かすよ */
-        z-index: 1500; /* 前面に出すよ */
+        position: fixed;
+        top: 0;
+        left: -220px;
+        width: 200px;
+        height: 100vh;
+        background-color: #333;
+        color: white;
+        transition: left 0.3s ease;
+        z-index: 1500;
       }
 
       /* ----- メインエリア ----- */
       .main-container {
-        position: relative; /* 内部要素の基準にするよ */
-        width: 100%; /* 横いっぱいにするよ */
-        height: calc(100vh - 50px); /* ヘッダー分を引いた高さにするよ */
-        overflow: hidden; /* はみ出した部分は隠すよ */
-        transition: margin-left 0.3s ease; /* 余白をなめらかに変えるよ */
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 50px);
+        overflow: hidden;
+        transition: margin-left 0.3s ease;
       }
 
       /* ----- 左右パネル ----- */
       .left-panel,
       .right-panel {
-        position: absolute; /* 絶対配置するよ */
-        top: 0; /* 上端に配置するよ */
-        width: 100%; /* 横いっぱいにするよ */
-        height: 100%; /* 高さはコンテナに合わせるよ */
-        transition: transform 0.3s ease; /* アニメーションをするよ */
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s ease;
       }
       .left-panel {
-        transform: translateX(-100%); /* 初めは左側パネルを隠すよ */
+        transform: translateX(-100%);
       }
       .right-panel {
-        transform: translateX(0); /* 右側パネルは表示するよ */
+        transform: translateX(0);
       }
 
       /* ----- 矢印ボタン ----- */
+      #switchToLeft,
+      #switchToRight {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1600;
+      }
       #switchToLeft {
-        position: fixed; /* 画面に固定するよ */
-        top: 50%; /* 垂直方向の中央にするよ */
-        left: 0; /* 左端にするよ */
-        transform: translateY(-50%); /* 真ん中に持ってくるよ */
-        z-index: 1600; /* 他の要素より前に出すよ */
+        left: 0;
       }
       #switchToRight {
-        position: fixed; /* 画面に固定するよ */
-        top: 50%; /* 垂直方向の中央にするよ */
-        right: 0; /* 右端にするよ */
-        transform: translateY(-50%); /* 真ん中に持ってくるよ */
-        z-index: 1600; /* 他の要素より前に出すよ */
-        display: none; /* 初めは非表示にするよ */
+        right: 0;
+        display: none;
       }
 
       /* ----- テーブル設定 ----- */
       th,
       td {
-        border: 1px solid #ccc; /* セルに枠線をつけるよ */
-        padding: 8px; /* 内側に余白を作るよ */
-        text-align: center; /* 文字を中央にするよ */
-        white-space: nowrap; /* 1行で表示するよ */
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+        white-space: nowrap;
       }
+      /* ヘッダー行全体は固定し、z-index:4に */
       thead th {
-        position: sticky; /* ヘッダー行を固定するよ */
-        top: 0; /* 上端にするよ */
-        background-color: #e0e0e0; /* ヘッダーの背景色 */
-        z-index: 4; /* 前面に出すよ */
+        position: sticky;
+        top: 0;
+        background-color: #e0e0e0;
+        z-index: 4;
       }
-      tbody td:first-child,
+      /* 左上セル (1,1) をさらに上位に、z-index:5 として水平位置も固定 */
       thead th:first-child {
-        position: sticky; /* 1列目を固定するよ */
-        left: 0; /* 左端にするよ */
-        background-color: #f0f0f0; /* 背景色を設定するよ */
-        z-index: 3; /* ヘッダーの下に出すよ */
+        left: 0;
+        z-index: 5;
+      }
+      /* 本体の最初の列（データ部分）は固定、z-index:2に */
+      tbody td:first-child {
+        position: sticky;
+        left: 0;
+        background-color: #f0f0f0;
+        z-index: 2;
+      }
+      /* その他のセルはデフォルトで z-index:1 */
+      tbody td {
+        z-index: 1;
       }
 
       /* ----- スクロール可能なテーブルコンテナ ----- */
       .scrollable-table-container {
         overflow: auto;
         position: relative;
-        max-height: calc(100vh - 50px); /* ヘッダー分を引いた高さにするよ */
+        max-height: calc(100vh - 50px);
         width: auto;
       }
       table {
-        border-collapse: collapse; /* セルの枠線をまとめるよ */
-        table-layout: auto; /* セルの幅は内容に合わせるよ */
-        width: auto; /* 横幅自動調整 */
-        max-width: 100%; /* 最大横幅は100%にするよ */
+        border-collapse: collapse;
+        table-layout: auto;
+        width: auto;
+        max-width: 100%;
       }
 
       /* ----- 更新希望ステータス ----- */
       .update-status-group {
-        display: flex; /* 横並びにするよ */
-        flex-wrap: wrap; /* 折り返すよ */
+        display: flex;
+        flex-wrap: wrap;
       }
       .update-status-group label {
-        margin-right: 10px; /* 右に余白を作るよ */
+        margin-right: 10px;
       }
 
       /* ----- モーダルウィンドウ ----- */
       #modalWindow {
-        display: none; /* 初めは非表示 */
-        position: fixed; /* 画面に固定 */
-        top: 50%; /* 垂直中央に */
-        left: 50%; /* 水平中央に */
-        transform: translate(-50%, -50%); /* 完全中央に */
-        width: 80%; /* 横幅は80% */
-        max-width: 600px; /* 最大横幅600px */
-        background-color: #fff; /* 背景は白 */
-        border: 1px solid #ccc; /* 枠線をつける */
-        padding: 15px; /* 内側に余白 */
-        z-index: 1000; /* 前面に出す */
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 影を付ける */
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80%;
+        max-width: 600px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 15px;
+        z-index: 1000;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
       }
       #modalContent {
-        display: flex; /* 横並び */
-        flex-direction: row; /* 横方向に並べる */
-        overflow-x: auto; /* 横スクロール可能に */
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
       }
       .modalItem {
-        border: 1px solid #ddd; /* 枠線 */
-        margin-right: 10px; /* 右に余白 */
-        padding: 5px; /* 内側に余白 */
-        text-align: center; /* 文字は中央 */
+        border: 1px solid #ddd;
+        margin-right: 10px;
+        padding: 5px;
+        text-align: center;
       }
       .modalItem img {
-        max-width: 100px; /* 画像の最大幅を100px */
-        display: block; /* ブロック要素 */
-        margin: 0 auto 5px; /* 中央配置して下に余白 */
+        max-width: 100px;
+        display: block;
+        margin: 0 auto 5px;
       }
       #closeModal {
-        width: 100%; /* ボタンは横いっぱい */
-        margin-top: 15px; /* 上に余白 */
-        background-color: #4caf50; /* 背景は緑 */
-        color: #fff; /* 文字色は白 */
-        border: none; /* 枠線なし */
-        padding: 5px 10px; /* 内側に余白 */
-        cursor: pointer; /* カーソルはポインター */
+        width: 100%;
+        margin-top: 15px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
       }
     </style>
   </head>
   <body>
     <header>
       <div class="hamburger" id="hamburgerBtn">&#9776;</div>
-      <!-- ハンバーガーアイコン -->
-      <h1 style="margin: 0; font-size: 18px">アバター管理</h1>
+      <h1 style="margin: 0; font-size: 18px">アバター管理画面</h1>
     </header>
 
+    <!-- モーダルウィンドウ -->
     <div id="modalWindow">
       <div id="modalContent">
         <!-- モーダルに詳細表示する内容 -->
@@ -351,23 +358,23 @@
     </div>
 
     <script>
-      // グローバル変数：bagcatMapping にCSVの対応表を格納するよ
+      // グローバル変数 bagcatMapping にCSVの対応表を格納する
       let bagcatMapping = {};
 
-      // CSV (bagcat_labels.csv) の読み込みとパース処理
+      // CSV (bagcat_labels.csv) を読み込み、bagcatMapping を作成する関数
       function loadBagcatLabels() {
         return fetch("bagcat_labels.csv")
           .then((response) => response.text())
           .then((text) => {
             const lines = text.split("\n");
-            // 最初の1行はヘッダーなのでスキップするよ
+            // ヘッダーはスキップ
             for (let i = 1; i < lines.length; i++) {
               const line = lines[i].trim();
               if (line) {
                 const parts = line.split(",");
                 if (parts.length >= 2) {
-                  const key = parts[0].trim(); // CSVの「parts」列の値
-                  const value = parts[1].trim(); // CSVの「jp」列の値
+                  const key = parts[0].trim(); // CSVのパーツコード
+                  const value = parts[1].trim(); // CSVの日本語名称
                   bagcatMapping[key] = value;
                 }
               }
@@ -392,7 +399,7 @@
         mainContainer.style.marginLeft = "0";
         switchToLeftBtn.style.display = "block";
         switchToRightBtn.style.display = "none";
-        loadBagcatLabels(); // CSVの読み込みを実行
+        loadBagcatLabels(); // CSV読み込み
       });
       function switchToLeftView() {
         currentView = "left";
@@ -460,7 +467,6 @@
       });
 
       // --- 所持アバター追加フォーム ---
-      // partsMapping は固定の内部コードとの照合用
       const partsMapping = {
         トップス: "H",
         ボトムス: "L",
@@ -488,7 +494,6 @@
         その他4: "A3",
         モイトイ: "BL",
       };
-      // CSVから読み込んだbagcatMappingを使用するので、固定のbagcatLabels定義は削除
 
       const typeOptions = [
         "INT",
@@ -652,11 +657,11 @@
         alert("設定を保存しました。");
       });
 
-      // --- 販売アバター検索処理 ---
+      // --- 販売アバター検索の処理 ---
       let uniqueTradeItems = [];
       function logItemCodes() {
         Promise.all([
-          loadBagcatLabels(),
+          loadBagcatLabels(), // CSV読み込み
           fetch("bazzarList.json").then((response) => response.json()),
           fetch("itemCodeSchema.json").then((response) => response.json()),
           fetch("itemAnother.json").then((response) => response.json()),
@@ -665,7 +670,6 @@
             if (Array.isArray(itemSchemaData)) {
               itemSchemaData = itemSchemaData.map(function (entry) {
                 // 正規表現で【から+までをtype、+から】までをparamとして抽出する
-                // param部に「％」があれば取り除く
                 var regex = /^【([^+]+)\+([^】]+)】/;
                 var result = regex.exec(entry.itemName);
                 if (result) {
@@ -676,9 +680,9 @@
                   entry.type = "";
                   entry.param = 0;
                 }
-                // もしCSVに対応するpartsが存在しないならログを出力する
+                // CSVに対応するpartsが存在しなければログ出力する（該当する場合のみ）
                 if (!bagcatMapping[entry.parts]) {
-                  console.log("Processed entry:", entry);
+                  console.log("Processed entry (bagcatMappingなし):", entry);
                 }
                 return entry;
               });
@@ -913,7 +917,6 @@
               listItem.itemCode.toLowerCase() +
               ".gif";
             itemDiv.appendChild(img);
-            // CSVから読み込んだ bagcatMapping を参照して日本語に変換する
             var partsText = bagcatMapping[listItem.parts];
             if (!partsText) {
               console.error(
