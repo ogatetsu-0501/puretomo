@@ -1,127 +1,283 @@
-<!DOCTYPE html> <!-- HTMLドキュメントの始まりだよ -->
-<html lang="ja"> <!-- ページの言語は日本語だよ -->
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8"> <!-- 文字コードをUTF-8にするよ -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 画面に合わせるよ -->
-  <title>アバター管理画面</title> <!-- ブラウザのタブに表示されるタイトルだよ -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>アバター管理画面</title>
   <style>
-    /* --- リセット --- */
-    html, body { height: 100%; margin: 0; padding: 0; } /* 余白をなくすよ */
-    body { font-family: Arial, sans-serif; } /* フォントを設定するよ */
+    /* ==== リセット ==== */
+    html, body { height:100%; margin:0; padding:0; box-sizing:border-box; }
+    *, *::before, *::after { box-sizing:inherit; }
+    body { font-family:'Segoe UI',sans-serif; background:#f2f2f2; color:#333; }
 
-    /* --- ヘッダー --- */
-    header { display: flex; align-items: center; background-color: #4caf50; color: white; padding: 10px; } /* 見た目 */
-    .hamburger { font-size: 24px; cursor: pointer; margin-right: 10px; } /* メニューアイコン */
+    /* ==== ヘッダー ==== */
+    header {
+      display:flex; align-items:center;
+      background:#ffb300; color:#fff;
+      padding:16px 24px; box-shadow:0 2px 4px rgba(0,0,0,0.1);
+    }
+    .hamburger { font-size:24px; cursor:pointer; margin-right:16px; }
+    header h1 { font-size:1.2em; margin:0; }
 
-    /* --- サイドバー --- */
-    .sidebar { position: fixed; top: 0; left: -220px; width: 200px; height: 100vh; background-color: #333; color: white; transition: left 0.3s ease; z-index: 1500; } /* メニュー */
+    /* ==== サイドバー ==== */
+    .sidebar {
+      position:fixed; top:0; left:-260px; /* 完全に隠す */
+      width:240px; height:100vh; padding-top:64px;
+      background:#333; color:#fff;
+      transition:left .3s ease; z-index:1500;
+    }
+    .sidebar ul { list-style:none; margin:0; padding:0; }
+    .sidebar li {
+      padding:12px 16px; margin:8px;
+      border-radius:4px; cursor:pointer;
+      transition:background .2s;
+    }
+    .sidebar li:hover { background:rgba(255,255,255,0.1); }
 
-    /* --- メインコンテナ --- */
-    .main-container { position: relative; width: 100%; height: calc(100vh - 50px); overflow: hidden; transition: margin-left 0.3s ease; } /* 包む */
+    /* ==== メインコンテナ ==== */
+    .main-container {
+      position:relative; width:100%; height:calc(100vh - 64px);
+      overflow:hidden; transition:margin-left .3s ease;
+      padding:24px;
+    }
 
-    /* --- 左右パネル --- */
-    .left-panel, .right-panel { position: absolute; top: 0; width: 100%; height: 100%; transition: transform 0.3s ease; } /* 共通 */
-    .left-panel { transform: translateX(-100%); } /* 隠す */
-    .right-panel { transform: translateX(0); } /* 表示 */
+    /* ==== パネル共通 ==== */
+    .left-panel, .right-panel {
+      position:absolute; top:0; left:0;
+      width:100%; height:100%;
+      background:#fff; border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+      padding:24px; overflow-y:auto;
+      transition:transform .3s ease;
+    }
+    .left-panel { transform:translateX(0); }
+    .right-panel{ transform:translateX(100%); }
 
-    /* --- 矢印ボタン --- */
-    #switchToLeft, #switchToRight { position: fixed; top: 50%; transform: translateY(-50%); z-index: 1600; } /* 共通 */
-    #switchToLeft { left: 0; } /* ← */
-    #switchToRight { right: 0; display: none; } /* → */
+    /* ==== 切替ナビボタン ==== */
+    .nav-btn {
+      position:fixed; top:50%; transform:translateY(-50%);
+      width:48px; height:48px;
+      background:rgba(0,0,0,0.3); border:none; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; z-index:1600; transition:background .2s;
+    }
+    .nav-btn:hover { background:rgba(0,0,0,0.5); }
+    .nav-btn svg { width:24px; height:24px; fill:#fff; }
+    #switchToLeft { left:16px; display:none; }
+    #switchToRight{ right:16px; }
 
-    /* --- テーブル --- */
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; white-space: nowrap; } /* セル */
+    /* ==== フォーム ==== */
+    .form-group { margin-bottom:20px; }
+    .form-group label {
+      display:block; margin-bottom:6px;
+      font-weight:bold; color:#555;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="number"],
+    .form-group select {
+      width:100%; padding:10px 12px;
+      border:1px solid #ccc; border-radius:4px;
+      transition:border-color .2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline:none; border-color:#ffb300;
+    }
+    button {
+      padding:10px 18px; background:#ffb300;
+      color:#fff; border:none; border-radius:4px;
+      cursor:pointer; transition:background .2s;
+      white-space: nowrap; /* 改行させない */
+    }
+    button:hover { background:#e6a100; }
+    button:disabled { background:#ccc; cursor:default; }
 
-    /* ヘッダー行固定 */
-    thead th { position: sticky; top: 0; background-color: #e0e0e0; z-index: 4; } /* 固定 */
-    thead th:first-child { left: 0; z-index: 5; } /* 左上 */
+    /* ==== ポップステータス ==== */
+    .pop-status-group {
+      display:flex; flex-wrap:wrap; gap:8px;
+    }
+    .pop-status-group label {
+      display:flex; align-items:center; justify-content:space-between;
+      background:#ffe082; padding:6px 12px;
+      border-radius:20px; box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      font-size:0.9em; color:#555;
+    }
+    .pop-status-group input {
+      margin-left:8px; accent-color:#ff6f00;
+    }
 
-    /* 最初の列固定 */
-    tbody td:first-child { position: sticky; left: 0; background-color: #f0f0f0; z-index: 2; } /* 固定 */
-    tbody td { z-index: 1; } /* その他 */
+    /* ==== テーブル ==== */
+    .scrollable-table-container {
+      margin-top:24px;
+      max-height: calc(100vh - 200px);
+      overflow-y: auto; overflow-x: auto;
+      background:#fff; border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    }
+    table {
+      width:100%; border-collapse:collapse; border-spacing:0;
+    }
+    thead {
+      position:sticky; top:0;
+      z-index:6; /* ヘッダー行を最前面に */
+      background-color:#fafafa;
+    }
+    th, td {
+      padding:12px 16px; border:1px solid #e0e0e0;
+      background:#fff; white-space: nowrap;
+    }
+    th {
+      padding-right:24px; /* ▼マーク分の余白 */
+    }
+    thead th:first-child,
+    tbody td:first-child {
+      position:sticky; left:0;
+      z-index:7; /* 最前面 */
+    }
+    th.sort-asc::after { content:" ▲"; }
+    th.sort-desc::after{ content:" ▼"; }
 
-    /* ソートインジケータ */
-    th.sort-asc::after { content: " ▲"; } /* 昇順 */
-    th.sort-desc::after { content: " ▼"; } /* 降順 */
+    /* ==== モーダル ==== */
+    #modalWindow {
+      display:none; position:fixed;
+      top:50%; left:50%; transform:translate(-50%,-50%);
+      width:60vw; max-width:60vw;
+      background:#fff; border-radius:8px;
+      padding:24px; z-index:1700;
+      box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
+    #modalContent {
+      display:flex; overflow-x:auto; gap:16px;
+    }
+    .modalItem {
+      flex:0 0 auto; background:#f7f7f7;
+      padding:12px; border-radius:4px; text-align:center;
+    }
+    .modalItem img {
+      max-width:80px; margin-bottom:8px; border-radius:4px;
+    }
+    #closeModal {
+      margin-top:16px; width:100%; background:#e53935;
+    }
 
-    /* スクロール可能 */
-    .scrollable-table-container { overflow: auto; position: relative; max-height: calc(100vh - 50px); width: auto; } /* スクロール */
-
-    /* モーダル */
-    #modalWindow { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 600px; background-color: #fff; border: 1px solid #ccc; padding: 15px; z-index: 1000; box-shadow: 0 0 10px rgba(0,0,0,0.5); } /* ウィンドウ */
-    #modalContent { display: flex; flex-direction: row; overflow-x: auto; } /* 中身 */
-    .modalItem { border: 1px solid #ddd; margin-right: 10px; padding: 5px; text-align: center; } /* アイテム */
-    .modalItem img { max-width: 100px; display: block; margin: 0 auto 5px; } /* 画像 */
-    #closeModal { width: 100%; margin-top: 15px; background-color: #4caf50; color: #fff; border: none; padding: 5px 10px; cursor: pointer; } /* 閉じる */
+    /* ==== レスポンシブ入力切替 ==== */
+    #partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List {
+      display:inline-block; width:calc(100% - 24px);
+    }
+    #partSelect,#type1Select,#type2Select {
+      display:none; width:100%;
+    }
+    @media(min-width:768px){
+      #partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List {
+        display:none;
+      }
+      #partSelect,#type1Select,#type2Select {
+        display:inline-block;
+      }
+    }
   </style>
 </head>
 <body>
-  <header> <!-- ヘッダー -->
-    <div class="hamburger" id="hamburgerBtn">&#9776;</div> <!-- メニュー -->
-    <h1 style="margin:0;font-size:18px;">アバター管理画面</h1> <!-- タイトル -->
+  <header>
+    <div class="hamburger" id="hamburgerBtn">&#9776;</div>
+    <h1>アバター管理画面</h1>
   </header>
 
-  <div id="modalWindow"> <!-- モーダル -->
-    <div id="modalContent"></div> <!-- 詳細 -->
-    <button id="closeModal">閉じる</button> <!-- 閉じるボタン -->
+  <!-- モーダルウィンドウ -->
+  <div id="modalWindow">
+    <div id="modalContent"></div>
+    <button id="closeModal">閉じる</button>
   </div>
 
-  <button id="switchToLeft">←</button> <!-- 左ボタン -->
-  <button id="switchToRight">→</button> <!-- 右ボタン -->
+  <!-- 切替ナビボタン -->
+  <button id="switchToLeft" class="nav-btn" title="前の画面へ">
+    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+  </button>
+  <button id="switchToRight" class="nav-btn" title="次の画面へ">
+    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+  </button>
 
-  <div class="main-container" id="mainContainer"> <!-- メイン箱 -->
-    <div class="sidebar" id="sidebar"> <!-- サイドバー -->
+  <div class="main-container" id="mainContainer">
+    <!-- サイドバー -->
+    <div class="sidebar" id="sidebar">
       <ul>
+        <li data-target="readme">Readme</li>
         <li data-target="avatarForm">所持アバター追加</li>
         <li data-target="settings">設定</li>
         <li data-target="tradeSearch">販売アバター検索</li>
       </ul>
     </div>
 
-    <div class="left-panel" id="leftPanel"> <!-- 左パネル -->
-      <div id="avatarForm"> <!-- フォーム -->
+    <!-- 左パネル -->
+    <div class="left-panel" id="leftPanel">
+      <div id="readme"><h2>Readme</h2></div>
+
+      <div id="avatarForm" style="display:none;">
         <h2>所持アバター追加</h2>
-        <label for="partInput">パーツ（表示名）:</label>
-        <input type="text" id="partInput" list="partsList" placeholder="例: トップス">
-        <datalist id="partsList"></datalist>
-        <br>
-        <label for="type1Input">種類①:</label>
-        <input type="text" id="type1Input" list="type1List" placeholder="例: INT">
-        <datalist id="type1List"></datalist>
-        <br>
-        <label for="type2Input">種類②:</label>
-        <input type="text" id="type2Input" list="type2List" placeholder="（未入力可）" disabled>
-        <datalist id="type2List"></datalist>
-        <br>
-        <label for="valueInput">上昇値:</label>
-        <input type="number" id="valueInput" placeholder="数値を入力">
-        <br>
+        <div class="form-group">
+          <label>パーツ（表示名）:</label>
+          <input type="text" id="partInput" list="partsList" placeholder="例: トップス">
+          <datalist id="partsList"></datalist>
+          <select id="partSelect"></select>
+        </div>
+        <div class="form-group">
+          <label>種類①:</label>
+          <input type="text" id="type1Input" list="type1List" placeholder="例: INT">
+          <datalist id="type1List"></datalist>
+          <select id="type1Select"></select>
+        </div>
+        <div class="form-group">
+          <label>種類②:</label>
+          <input type="text" id="type2Input" list="type2List" placeholder="（未入力可）" disabled>
+          <datalist id="type2List"></datalist>
+          <select id="type2Select"></select>
+        </div>
+        <div class="form-group">
+          <label>上昇値:</label>
+          <input type="number" id="valueInput" placeholder="数値を入力">
+        </div>
         <button id="addButton" disabled>追加</button>
       </div>
 
-      <div id="settings" style="display:none;"> <!-- 設定 -->
+      <div id="settings" style="display:none;">
         <h2>設定</h2>
-        <label for="genderSelect">アバター性別選択:</label>
-        <select id="genderSelect"><option value="F">女</option><option value="M">男</option></select>
-        <br>
-        <label>更新希望ステータス:</label>
-        <div id="updateStatusContainer"></div>
-        <br>
+        <div class="form-group">
+          <label for="genderSelect">アバター性別選択:</label>
+          <select id="genderSelect">
+            <option value="F">女</option>
+            <option value="M">男</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>更新希望ステータス:</label>
+          <div id="updateStatusContainer" class="pop-status-group"></div>
+        </div>
+        <div class="form-group">
+          <label><input type="checkbox" id="showItemsCheckbox"> アイテム列を表示</label>
+        </div>
         <button id="saveSettingsButton">設定を保存</button>
       </div>
 
-      <div id="tradeSearch" style="display:none;"> <!-- 検索 -->
+      <div id="tradeSearch" style="display:none;">
         <h2>販売アバター検索</h2>
+        <button id="reloadTradeButton">再読み込み</button>
         <div id="tradeDataDisplay"><p>データ未読み込み</p></div>
       </div>
     </div>
 
-    <div class="right-panel" id="rightPanel"> <!-- 右パネル -->
+    <!-- 右パネル：所持アバター一覧 -->
+    <div class="right-panel" id="rightPanel">
       <h2>追加されたアバター一覧</h2>
       <div class="scrollable-table-container">
         <table id="avatarTable">
           <thead>
-            <tr><th>販売リンク</th><th>パーツ</th><th>種類①</th><th>種類②</th><th>上昇値</th><th>削除</th></tr>
+            <tr>
+              <th>パーツ</th>
+              <th>種類①</th>
+              <th>種類②</th>
+              <th>上昇値</th>
+              <th>削除</th>
+            </tr>
           </thead>
           <tbody></tbody>
         </table>
@@ -130,261 +286,346 @@
   </div>
 
   <script>
-    // CSV対応表を入れる箱だよ
-    let bagcatMapping = {}, partsMapping = {}, typeOptions = [], avatarList = [], uniqueTradeItems = [];
-    // ソート状態
+    // ここからは既存の JS ロジックです
+    let bagcatMapping = {}, partsMapping = {}, typeOptions = [];
+    let avatarList = [], uniqueTradeItems = [];
     let currentSortColumn = null, currentSortDir = "asc";
+    const sections = ["readme","avatarForm","settings","tradeSearch"];
 
-    // CSV読み込み関数
     function fetchCsv(url) {
-      return fetch(url).then(r => r.text()).then(text =>
-        text.trim().split("\n").map(line => line.split(",").map(c => c.trim()))
-      ).catch(e => { console.error("CSV読み込みエラー",e); return []; });
+      return fetch(url).then(r => r.text())
+        .then(txt => txt.trim().split("\n").map(l => l.split(",").map(c => c.trim())))
+        .catch(e => { console.error("CSV読み込みエラー", e); return []; });
     }
-
-    // bagcat_labels.csv読み込み
     function loadBagcatLabels() {
       return fetchCsv("bagcat_labels.csv").then(rows => {
-        rows.slice(1).forEach(([code,jp]) => {
-          if(!code||!jp) return;
-          if(!(code in bagcatMapping)) bagcatMapping[code]=jp;
-          if(!(jp in partsMapping)) partsMapping[jp]=code;
+        rows.slice(1).forEach(([code, jp]) => {
+          if (!code||!jp) return;
+          bagcatMapping[code] = jp;
+          partsMapping[jp] = code;
         });
       });
     }
-
-    // type_options.csv読み込み
     function loadTypeOptions() {
       return fetchCsv("type_options.csv").then(rows => {
-        typeOptions = rows.slice(1).map(r=>r[0]).filter(t=>t);
+        typeOptions = rows.slice(1).map(r => r[0]).filter(t => t);
       });
     }
-
-    // 初期表示
-    window.addEventListener("load",()=>{
-      Promise.all([loadBagcatLabels(),loadTypeOptions()]).then(()=>{
-        // パネル初期
-        document.getElementById("leftPanel").style.transform="translateX(-100%)";
-        document.getElementById("rightPanel").style.transform="translateX(0)";
-        document.getElementById("switchToLeft").style.display="block";
-        document.getElementById("switchToRight").style.display="none";
-        // datalist作成
-        populatePartsDatalist(); populateType1Datalist();
-        // 既存データ読込
-        let s=localStorage.getItem("avatarList");
-        if(s){ avatarList=JSON.parse(s); renderAvatarTable(); }
-        generateUpdateStatusCheckboxes();
+    function showSection(id) {
+      sections.forEach(sec => {
+        document.getElementById(sec).style.display = (sec===id?"block":"none");
+      });
+      localStorage.setItem("lastSection", id);
+      if (id==="tradeSearch") logItemCodes();
+    }
+    window.addEventListener("load", () => {
+      Promise.all([loadBagcatLabels(), loadTypeOptions()]).then(() => {
+        const last = localStorage.getItem("lastSection")||"readme";
+        showSection(last);
+        document.getElementById("leftPanel").style.transform="translateX(0)";
+        document.getElementById("rightPanel").style.transform="translateX(100%)";
+        document.getElementById("switchToLeft").style.display="none";
+        document.getElementById("switchToRight").style.display="block";
+        populatePartsOptions();
+        populateType1Options();
+        const s=localStorage.getItem("avatarList");
+        if (s) { avatarList=JSON.parse(s); renderAvatarTable(); }
+        generateSettingsUI();
       });
     });
 
-    // datalist パーツ
-    function populatePartsDatalist(){
-      let dl=document.getElementById("partsList"); dl.innerHTML="";
-      Object.keys(partsMapping).forEach(jp=>{
-        let opt=document.createElement("option"); opt.value=jp; dl.appendChild(opt);
-      });
-    }
-    // datalist 種類①
-    function populateType1Datalist(){
-      let dl=document.getElementById("type1List"); dl.innerHTML="";
-      typeOptions.forEach(t=>{ let opt=document.createElement("option"); opt.value=t; dl.appendChild(opt); });
-    }
+    const sidebar=document.getElementById("sidebar"),
+          mainContainer=document.getElementById("mainContainer"),
+          switchToLeft=document.getElementById("switchToLeft"),
+          switchToRight=document.getElementById("switchToRight"),
+          hamburgerBtn=document.getElementById("hamburgerBtn");
 
-    // パネル切替
-    document.getElementById("switchToLeft").addEventListener("click",()=>{
-      document.getElementById("leftPanel").style.transform="translateX(0)";
-      document.getElementById("rightPanel").style.transform="translateX(100%)";
-      document.getElementById("switchToLeft").style.display="none";
-      document.getElementById("switchToRight").style.display="block";
+    hamburgerBtn.addEventListener("click",()=>{
+      if(sidebar.style.left==="0px"){
+        sidebar.style.left="-260px"; mainContainer.style.marginLeft="0"; switchToLeft.style.left="0";
+      } else {
+        sidebar.style.left="0"; mainContainer.style.marginLeft="240px"; switchToLeft.style.left="240px";
+      }
     });
-    document.getElementById("switchToRight").addEventListener("click",()=>{
-      document.getElementById("leftPanel").style.transform="translateX(-100%)";
-      document.getElementById("rightPanel").style.transform="translateX(0)";
-      document.getElementById("switchToLeft").style.display="block";
-      document.getElementById("switchToRight").style.display="none";
-    });
-
-    // サイドバー
-    document.getElementById("hamburgerBtn").addEventListener("click",()=>{
-      let sb=document.getElementById("sidebar"), mc=document.getElementById("mainContainer"), btn=document.getElementById("switchToLeft");
-      if(sb.style.left===""||sb.style.left==="-220px"){ sb.style.left="0"; mc.style.marginLeft="220px"; btn.style.left="220px"; }
-      else{ sb.style.left="-220px"; mc.style.marginLeft="0"; btn.style.left="0"; }
-    });
-
-    // メニュー項目
     document.querySelectorAll(".sidebar li").forEach(li=>{
       li.addEventListener("click",()=>{
-        let t=li.getAttribute("data-target");
-        ["avatarForm","settings","tradeSearch"].forEach(id=>{
-          document.getElementById(id).style.display=(id===t?"block":"none");
-        });
-        document.getElementById("sidebar").style.left="-220px";
-        document.getElementById("mainContainer").style.marginLeft="0";
-        document.getElementById("switchToLeft").style.left="0";
-        if(t==="settings") generateUpdateStatusCheckboxes();
-        if(t==="tradeSearch") logItemCodes();
+        const target=li.getAttribute("data-target");
+        showSection(target);
+        sidebar.style.left="-260px"; mainContainer.style.marginLeft="0"; switchToLeft.style.left="0";
       });
     });
-
-    // フォーム要素
-    let partInput=document.getElementById("partInput"),
-        type1Input=document.getElementById("type1Input"),
-        type2Input=document.getElementById("type2Input"),
-        valueInput=document.getElementById("valueInput"),
-        addButton=document.getElementById("addButton"),
-        avatarTableBody=document.querySelector("#avatarTable tbody");
-
-    // 種類①変更
-    type1Input.addEventListener("change",()=>{ let v=type1Input.value.trim();
-      if(!v){ type2Input.disabled=true; type2Input.value=""; }
-      else{ type2Input.disabled=false; updateType2Datalist(v); }
-      checkInput();
+    switchToRight.addEventListener("click",()=>{
+      document.getElementById("leftPanel").style.transform="translateX(-100%)";
+      document.getElementById("rightPanel").style.transform="translateX(0)";
+      switchToRight.style.display="none"; switchToLeft.style.display="block";
     });
-    // 入力チェック
-    [partInput,type1Input,valueInput].forEach(el=>el.addEventListener("input",checkInput));
-    function checkInput(){
-      let ok=partInput.value.trim()!==""&&type1Input.value.trim()!==""&&valueInput.value.trim()!==""&&!isNaN(valueInput.value);
-      addButton.disabled=!ok;
-    }
-    // 種類②候補
-    function updateType2Datalist(skip){
-      let dl=document.getElementById("type2List"); dl.innerHTML="<option value=''></option>";
-      typeOptions.forEach(o=>{ if(o!==skip) dl.innerHTML+=`<option value="${o}"></option>`; });
-    }
-    // 追加
-    addButton.addEventListener("click",()=>{
-      avatarList.push({ partText:partInput.value.trim(), type1:type1Input.value.trim(), type2:type2Input.value.trim()||"なし", increase:valueInput.value.trim() });
-      localStorage.setItem("avatarList",JSON.stringify(avatarList));
-      renderAvatarTable();
-      partInput.value=""; type1Input.value=""; type2Input.value=""; type2Input.disabled=true; valueInput.value=""; checkInput();
+    switchToLeft.addEventListener("click",()=>{
+      document.getElementById("leftPanel").style.transform="translateX(0)";
+      document.getElementById("rightPanel").style.transform="translateX(100%)";
+      switchToLeft.style.display="none"; switchToRight.style.display="block";
     });
-    // 表描画
-    function renderAvatarTable(){
-      avatarTableBody.innerHTML="";
-      avatarList.forEach((av,i)=>{
-        let tr=document.createElement("tr");
-        ["partText","type1","type2","increase"].forEach(k=>{
-          let td=document.createElement("td"); td.textContent=av[k]; tr.appendChild(td);
-        });
-        let tdDel=document.createElement("td"),btn=document.createElement("button"); btn.textContent="削除";
-        btn.addEventListener("click",()=>{ avatarList.splice(i,1); localStorage.setItem("avatarList",JSON.stringify(avatarList)); renderAvatarTable(); });
-        tdDel.appendChild(btn); tr.appendChild(tdDel); avatarTableBody.appendChild(tr);
+
+    function populatePartsOptions(){
+      const dl=document.getElementById("partsList"), sel=document.getElementById("partSelect");
+      dl.innerHTML=""; sel.innerHTML="<option value=''>選択してください</option>";
+      Object.keys(partsMapping).forEach(jp=>{
+        const o1=document.createElement("option"); o1.value=jp; dl.appendChild(o1);
+        const o2=document.createElement("option"); o2.value=jp; o2.textContent=jp; sel.appendChild(o2);
       });
     }
-
-    // 設定画面
-    function generateUpdateStatusCheckboxes(){
-      let c=document.getElementById("updateStatusContainer"); c.innerHTML="";
-      let saved=JSON.parse(localStorage.getItem("updateStatus")||"[]");
+    function populateType1Options(){
+      const dl=document.getElementById("type1List"), sel=document.getElementById("type1Select");
+      dl.innerHTML=""; sel.innerHTML="<option value=''>選択してください</option>";
       typeOptions.forEach(t=>{
-        let cb=document.createElement("input"); cb.type="checkbox"; cb.id="status_"+t; cb.value=t;
-        if(saved.includes(t)) cb.checked=true;
-        let label=document.createElement("label"); label.htmlFor=cb.id; label.textContent=t;
-        c.appendChild(cb); c.appendChild(label);
+        const o1=document.createElement("option"); o1.value=t; dl.appendChild(o1);
+        const o2=document.createElement("option"); o2.value=t; o2.textContent=t; sel.appendChild(o2);
       });
+    }
+    function updateType2Options(skip){
+      const dl=document.getElementById("type2List"), sel=document.getElementById("type2Select");
+      dl.innerHTML="<option value=''></option>"; sel.innerHTML="<option value=''>選択してください</option>";
+      typeOptions.forEach(t=>{ if(t!==skip){
+        dl.innerHTML+=`<option value="${t}"></option>`;
+        sel.innerHTML+=`<option value="${t}">${t}</option>`;
+      }});
+    }
+
+    function generateSettingsUI(){
+      const savedGender=localStorage.getItem("avatarGender");
+      if(savedGender) document.getElementById("genderSelect").value=savedGender;
+      const container=document.getElementById("updateStatusContainer");
+      container.innerHTML="";
+      const savedStatuses=JSON.parse(localStorage.getItem("updateStatus")||"[]");
+      typeOptions.forEach(t=>{
+        const cb=document.createElement("input");
+        cb.type="checkbox"; cb.id="status_"+t; cb.value=t;
+        if(savedStatuses.includes(t)) cb.checked=true;
+        const lbl=document.createElement("label");
+        lbl.htmlFor=cb.id; lbl.textContent=t;
+        lbl.insertBefore(cb, lbl.firstChild);
+        container.appendChild(lbl);
+      });
+      const stored=localStorage.getItem("showItems");
+      const showItems = stored!==null?JSON.parse(stored):(window.innerWidth>=768);
+      document.getElementById("showItemsCheckbox").checked=showItems;
     }
     document.getElementById("saveSettingsButton").addEventListener("click",()=>{
-      let g=document.getElementById("genderSelect").value;
+      const g=document.getElementById("genderSelect").value;
       localStorage.setItem("avatarGender",g);
-      let chk=Array.from(document.querySelectorAll("#updateStatusContainer input:checked")).map(x=>x.value);
-      localStorage.setItem("updateStatus",JSON.stringify(chk));
+      const checked=Array.from(document.querySelectorAll("#updateStatusContainer input:checked")).map(cb=>cb.value);
+      localStorage.setItem("updateStatus",JSON.stringify(checked));
+      const showItems=document.getElementById("showItemsCheckbox").checked;
+      localStorage.setItem("showItems",JSON.stringify(showItems));
       alert("設定を保存しました。");
     });
 
+    const partInput=document.getElementById("partInput"),
+          partSelect=document.getElementById("partSelect"),
+          type1Input=document.getElementById("type1Input"),
+          type1Select=document.getElementById("type1Select"),
+          type2Input=document.getElementById("type2Input"),
+          type2Select=document.getElementById("type2Select"),
+          valueInput=document.getElementById("valueInput"),
+          addButton=document.getElementById("addButton"),
+          avatarTableBody=document.querySelector("#avatarTable tbody");
+
+    function checkInput(){
+      const p=partInput.value.trim()||partSelect.value.trim();
+      const t1=type1Input.value.trim()||type1Select.value.trim();
+      addButton.disabled=!(p!==""&&t1!==""&&valueInput.value.trim()!==""&&!isNaN(valueInput.value));
+    }
+    [partInput,partSelect,type1Input,type1Select,type2Input,type2Select,valueInput]
+      .forEach(el=>el.addEventListener("input",checkInput));
+
+    type1Input.addEventListener("change",()=>{
+      const v=type1Input.value.trim();
+      type2Input.disabled=!v; type2Select.disabled=!v;
+      type2Input.value=""; type2Select.value="";
+      updateType2Options(v); checkInput();
+    });
+    type1Select.addEventListener("change",()=>{
+      const v=type1Select.value.trim();
+      type2Input.disabled=!v; type2Select.disabled=!v;
+      type2Input.value=""; type2Select.value="";
+      updateType2Options(v); checkInput();
+    });
+
+    addButton.addEventListener("click",()=>{
+      const p=partInput.value.trim()||partSelect.value.trim();
+      const t1=type1Input.value.trim()||type1Select.value.trim();
+      const t2=type2Input.value.trim()||type2Select.value.trim()||"なし";
+      avatarList.push({ partText:p, type1:t1, type2:t2, increase:valueInput.value.trim() });
+      localStorage.setItem("avatarList",JSON.stringify(avatarList));
+      renderAvatarTable();
+      partInput.value=""; partSelect.value="";
+      type1Input.value=""; type1Select.value="";
+      type2Input.value=""; type2Select.value=""; type2Input.disabled=true; type2Select.disabled=true;
+      valueInput.value=""; checkInput();
+    });
+
+    function renderAvatarTable(){
+      avatarTableBody.innerHTML="";
+      avatarList.forEach((av,i)=>{
+        const tr=document.createElement("tr");
+        ["partText","type1","type2","increase"].forEach(key=>{
+          const td=document.createElement("td");
+          td.textContent=av[key];
+          tr.appendChild(td);
+        });
+        const tdDel=document.createElement("td");
+        const btn=document.createElement("button");
+        btn.textContent="削除";
+        btn.addEventListener("click",()=>{
+          avatarList.splice(i,1);
+          localStorage.setItem("avatarList",JSON.stringify(avatarList));
+          renderAvatarTable();
+        });
+        tdDel.appendChild(btn);
+        tr.appendChild(tdDel);
+        avatarTableBody.appendChild(tr);
+      });
+    }
+
     // 販売アバター検索
+    document.getElementById("reloadTradeButton").addEventListener("click", logItemCodes);
+
     function logItemCodes(){
-      Promise.all([ loadBagcatLabels(), fetch("bazzarList.json").then(r=>r.json()), fetch("itemCodeSchema.json").then(r=>r.json()), fetch("itemAnother.json").then(r=>r.json()) ])
-      .then(([ ,bData,schema,another ])=>{
-        let regex=/^【([^+]+)\+([^】]+)】/;
+      Promise.all([
+        loadBagcatLabels(),
+        fetch("bazzarList.json").then(r=>r.json()),
+        fetch("itemCodeSchema.json").then(r=>r.json()),
+        fetch("itemAnother.json").then(r=>r.json())
+      ]).then(([ ,bData,schema,another ])=>{
+        const regex=/^【([^+]+)\+([^】]+)】/;
         schema.forEach(e=>{
-          let m=regex.exec(e.itemName);
+          const m=regex.exec(e.itemName);
           e.type=m?m[1]:""; e.param=m?parseInt(m[2].replace(/％/g,""),10):0;
         });
-        let combined=schema.concat(another);
-        uniqueTradeItems=[]; let seen={};
-        bData.bazzarList.forEach(it=>{ if(!seen[it.bazaarId]){ seen[it.bazaarId]=true; uniqueTradeItems.push(it);} });
+        const combined=schema.concat(another);
+        uniqueTradeItems=[]; const seen={};
+        bData.bazzarList.forEach(it=>{
+          if(!seen[it.bazaarId]){ seen[it.bazaarId]=true; uniqueTradeItems.push(it); }
+        });
         uniqueTradeItems.forEach(it=>{
           if(Array.isArray(it.listingItems)){
             it.listingItems=it.listingItems.map(code=>{
-              let m=combined.find(x=>x.itemCode===code)||{};
-              return{ itemCode:code,itemName:m.itemName||"",parts:m.parts||"",itemGender:m.itemGender||"",type:m.type||"",param:m.param||0 };
+              const m=combined.find(x=>x.itemCode===code)||{};
+              return {
+                itemCode:code,
+                itemName:m.itemName||"",
+                parts:m.parts||"",
+                itemGender:m.itemGender||"",
+                type:m.type||"",
+                param:m.param||0
+              };
             });
           }
         });
         uniqueTradeItems.forEach(it=>{
           it.listingItems.forEach(li=>{
-            let jp=bagcatMapping[li.parts]||li.parts;
-            let av=avatarList.find(x=>x.type1===li.type&&x.partText===jp);
-            let d=li.param; if(av){ d=li.param-Number(av.increase); if(d<0)d=0;} li.diff=d;
+            const jp=bagcatMapping[li.parts]||li.parts;
+            const av=avatarList.find(x=>x.type1===li.type&&x.partText===jp);
+            let d=li.param;
+            if(av){ d=li.param-Number(av.increase); if(d<0)d=0; }
+            li.diff=d;
           });
         });
-        uniqueTradeItems.forEach(it=>{ let sums={}; it.listingItems.forEach(li=>{ sums[li.type]=Math.max(sums[li.type]||0,li.diff); }); it.typeSums=sums; });
-        let gender=localStorage.getItem("avatarGender");
-        let filtered=uniqueTradeItems.filter(it=>!gender||!it.listingItems.some(li=>li.itemGender===(gender==="F"?"M":"F")));
-        let saved=JSON.parse(localStorage.getItem("updateStatus")||"[]");
-        let displayTypes=saved.sort((a,b)=>typeOptions.indexOf(a)-typeOptions.indexOf(b));
-        let html="<div class='scrollable-table-container'><table><thead><tr><th>販売リンク</th><th>締め切り日時</th><th>ハンコイン</th>";
-        displayTypes.forEach(t=>html+=`<th>${t}<br>(HC/差分)</th>`);
+        uniqueTradeItems.forEach(it=>{
+          const sums={};
+          it.listingItems.forEach(li=>{
+            sums[li.type]=Math.max(sums[li.type]||0,li.diff);
+          });
+          it.typeSums=sums;
+        });
+        const gender=localStorage.getItem("avatarGender");
+        const filtered=uniqueTradeItems.filter(it=>{
+          if(!gender)return true;
+          return !it.listingItems.some(li=>li.itemGender===(gender==="F"?"M":"F"));
+        });
+        const savedTypes=JSON.parse(localStorage.getItem("updateStatus")||"[]");
+        const displayTypes=savedTypes.sort((a,b)=>typeOptions.indexOf(a)-typeOptions.indexOf(b));
+        const stored=localStorage.getItem("showItems");
+        const showItems=stored!==null?JSON.parse(stored):(window.innerWidth>=768);
+        const isPC=window.innerWidth>=768;
+        const maxItems=(isPC&&showItems)?Math.max(...filtered.map(it=>it.listingItems.length)):0;
+
+        let html="<div class='scrollable-table-container'><table><thead><tr>"
+          +"<th>販売リンク</th><th>締め切り日時</th><th>ハンコイン</th>";
+        displayTypes.forEach(t=>{ html+=`<th>${t}<br>(HC/差分)</th>`; });
+        if(maxItems>0){
+          for(let i=0;i<maxItems;i++) html+=`<th>アイテム${i+1}</th>`;
+        }
         html+="<th>詳細</th></tr></thead><tbody>";
         filtered.forEach(it=>{
-          let end=(it.sellEndDate||"").replace(" ","<br>");
-          let hc=Number(it.hancoin)||0;
+          const end=(it.sellEndDate||"").replace(" ","<br>");
+          const hc=Number(it.hancoin)||0;
           html+="<tr>";
           html+=`<td><button onclick="openLinkInNewTab('${it.bazaarId}')">販売リンク</button></td>`;
           html+=`<td>${end}</td><td>${hc}</td>`;
           displayTypes.forEach(t=>{
-            let sum=it.typeSums[t]||0;
-            let ratio=sum?(hc/sum).toFixed(2):"0";
+            const sum=it.typeSums[t]||0;
+            const ratio=sum?(hc/sum).toFixed(2):"0";
             html+=`<td>${ratio}</td>`;
           });
+          if(maxItems>0){
+            for(let j=0;j<maxItems;j++){
+              if(j<it.listingItems.length){
+                const li=it.listingItems[j];
+                const jp=bagcatMapping[li.parts]||li.parts;
+                html+=`<td>${jp}<br>${li.type}+${li.param}</td>`;
+              } else html+="<td></td>";
+            }
+          }
           html+=`<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td>`;
           html+="</tr>";
         });
         html+="</tbody></table></div>";
         document.getElementById("tradeDataDisplay").innerHTML=html;
-        let tbl=document.querySelector("#tradeDataDisplay table");
-        tbl.querySelectorAll("thead th").forEach((cell,i)=>cell.addEventListener("click",()=>sortTableByColumn(tbl,i)));
+        const tbl=document.querySelector("#tradeDataDisplay table");
+        if(tbl) tbl.querySelectorAll("thead th").forEach((cell,i)=>cell.addEventListener("click",()=>sortTableByColumn(tbl,i)));
       }).catch(e=>console.error("販売アバター検索エラー:",e));
     }
-
-    // リンク新規タブ
     function openLinkInNewTab(id){
       window.open(`https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${id}`,"_blank");
     }
-    // モーダル表示
     function showModal(id){
-      let c=document.getElementById("modalContent"); c.innerHTML="";
-      let it=uniqueTradeItems.find(x=>x.bazaarId===id); if(!it)return;
+      const c=document.getElementById("modalContent"); c.innerHTML="";
+      const it=uniqueTradeItems.find(x=>x.bazaarId===id); if(!it)return;
       it.listingItems.forEach(li=>{
-        let div=document.createElement("div"); div.className="modalItem";
-        let img=document.createElement("img"); img.src=`https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`; div.appendChild(img);
-        let jp=bagcatMapping[li.parts]||li.parts;
-        let p1=document.createElement("p"); p1.textContent=`${jp} / 差分:${li.type}+${li.diff}`; div.appendChild(p1);
-        let p2=document.createElement("p"); p2.textContent=li.itemName; div.appendChild(p2);
+        const div=document.createElement("div"); div.className="modalItem";
+        const img=document.createElement("img"); img.src=`https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`;
+        div.appendChild(img);
+        const jp=bagcatMapping[li.parts]||li.parts;
+        const p1=document.createElement("p"); p1.textContent=`${jp} / 差分:${li.type}+${li.diff}`; div.appendChild(p1);
+        const p2=document.createElement("p"); p2.textContent=li.itemName; div.appendChild(p2);
         c.appendChild(div);
       });
       document.getElementById("modalWindow").style.display="block";
     }
-    // テーブルソート
     function sortTableByColumn(table,colIndex){
-      let tbody=table.querySelector("tbody"), rows=Array.from(tbody.querySelectorAll("tr")), ths=table.querySelectorAll("thead th");
+      const tbody=table.querySelector("tbody"), rows=Array.from(tbody.querySelectorAll("tr"));
+      const ths=table.querySelectorAll("thead th");
       ths.forEach(th=>th.classList.remove("sort-asc","sort-desc"));
-      if(currentSortColumn===colIndex) currentSortDir=(currentSortDir==="asc"?"desc":"asc"); else{currentSortColumn=colIndex;currentSortDir="asc";}
+      if(currentSortColumn===colIndex) currentSortDir=(currentSortDir==="asc"?"desc":"asc");
+      else{ currentSortColumn=colIndex; currentSortDir="asc"; }
       ths[colIndex].classList.add(currentSortDir==="asc"?"sort-asc":"sort-desc");
-      let isRatio=ths[colIndex].textContent.includes("(HC/差分)");
+      const isRatio=ths[colIndex].textContent.includes("(HC/差分)");
       rows.sort((a,b)=>{
-        let ta=a.children[colIndex].textContent.trim(), tb=b.children[colIndex].textContent.trim(), na=parseFloat(ta), nb=parseFloat(tb);
+        const ta=a.children[colIndex].textContent.trim(), tb=b.children[colIndex].textContent.trim();
+        const na=parseFloat(ta), nb=parseFloat(tb);
         let va,vb;
         if(!isNaN(na)&&!isNaN(nb)){
-          if(isRatio&&currentSortDir==="asc"){va=na===0?Infinity:na;vb=nb===0?Infinity:nb;}else{va=na;vb=nb;}
-        }else{va=ta;vb=tb;}
-        let cmp=(typeof va==="number"&&typeof vb==="number"?va-vb:String(va).localeCompare(String(vb)));
+          if(isRatio&&currentSortDir==="asc"){ va=na===0?Infinity:na; vb=nb===0?Infinity:nb; }
+          else{ va=na; vb=nb; }
+        } else { va=ta; vb=tb; }
+        const cmp=(typeof va==="number"&&typeof vb==="number"?va-vb:String(va).localeCompare(String(vb)));
         return currentSortDir==="asc"?cmp:-cmp;
       });
       rows.forEach(r=>tbody.appendChild(r));
     }
-    // モーダル閉じる
-    document.getElementById("closeModal").addEventListener("click",()=>document.getElementById("modalWindow").style.display="none");
+    document.getElementById("closeModal").addEventListener("click",()=>{
+      document.getElementById("modalWindow").style.display="none";
+    });
   </script>
 </body>
 </html>

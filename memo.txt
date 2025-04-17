@@ -1,0 +1,446 @@
+  <script>
+    // 必要なグローバル変数
+    let bagcatMapping = {}, partsMapping = {}, typeOptions = [];
+    let avatarList = [], uniqueTradeItems = [];
+    let currentSortColumn = null, currentSortDir = "asc";
+    const sections = ["readme","avatarForm","settings","tradeSearch"];
+
+    // CSV 読み込みユーティリティ
+    function fetchCsv(url) {
+      return fetch(url).then(r => r.text())
+        .then(txt => txt.trim().split("\n").map(l => l.split(",").map(c => c.trim())))
+        .catch(e => { console.error("CSV読み込みエラー", e); return []; });
+    }
+
+    // bagcat_labels.csv 読み込み
+    function loadBagcatLabels() {
+      return fetchCsv("bagcat_labels.csv").then(rows => {
+        rows.slice(1).forEach(([code, jp]) => {
+          if (!code || !jp) return;
+          bagcatMapping[code] = jp;
+          partsMapping[jp] = code;
+        });
+      });
+    }
+
+    // type_options.csv 読み込み
+    function loadTypeOptions() {
+      return fetchCsv("type_options.csv").then(rows => {
+        typeOptions = rows.slice(1).map(r => r[0]).filter(t => t);
+      });
+    }
+
+    // セクション表示切替
+    function showSection(id) {
+      sections.forEach(sec => {
+        document.getElementById(sec).style.display = (sec === id ? "block" : "none");
+      });
+      localStorage.setItem("lastSection", id);
+      if (id === "tradeSearch") logItemCodes();
+    }
+
+    // 各種 UI 初期化
+    window.addEventListener("load", () => {
+      Promise.all([loadBagcatLabels(), loadTypeOptions()]).then(() => {
+        // 最後に選択されたセクション、なければ Readme
+        const last = localStorage.getItem("lastSection") || "readme";
+        showSection(last);
+
+        // パネル状態初期
+        document.getElementById("leftPanel").style.transform = "translateX(0)";
+        document.getElementById("rightPanel").style.transform = "translateX(100%)";
+        document.getElementById("switchToLeft").style.display = "none";
+        document.getElementById("switchToRight").style.display = "block";
+
+        // 入力 UI 準備
+        populatePartsOptions();
+        populateType1Options();
+
+        // 所持アバター読み込み
+        const s = localStorage.getItem("avatarList");
+        if (s) {
+          avatarList = JSON.parse(s);
+          renderAvatarTable();
+        }
+
+        // 設定 UI 初期化
+        generateSettingsUI();
+      });
+    });
+
+    // サイドバー開閉
+    const sidebar       = document.getElementById("sidebar");
+    const mainContainer = document.getElementById("mainContainer");
+    const switchToLeft  = document.getElementById("switchToLeft");
+    const switchToRight = document.getElementById("switchToRight");
+    const hamburgerBtn  = document.getElementById("hamburgerBtn");
+
+    hamburgerBtn.addEventListener("click", () => {
+      if (sidebar.style.left === "0px") {
+        sidebar.style.left = "-220px";
+        mainContainer.style.marginLeft = "0";
+        switchToLeft.style.left = "0";
+      } else {
+        sidebar.style.left = "0";
+        mainContainer.style.marginLeft = "220px";
+        switchToLeft.style.left = "220px";
+      }
+    });
+
+    // サイドバー項目クリック → セクション切替＋閉じる
+    document.querySelectorAll(".sidebar li").forEach(li => {
+      li.addEventListener("click", () => {
+        const target = li.getAttribute("data-target");
+        showSection(target);
+        sidebar.style.left = "-220px";
+        mainContainer.style.marginLeft = "0";
+        switchToLeft.style.left = "0";
+      });
+    });
+
+    // 矢印ボタン
+    switchToRight.addEventListener("click", () => {
+      document.getElementById("leftPanel").style.transform  = "translateX(-100%)";
+      document.getElementById("rightPanel").style.transform = "translateX(0)";
+      switchToRight.style.display = "none";
+      switchToLeft.style.display  = "block";
+    });
+    switchToLeft.addEventListener("click", () => {
+      document.getElementById("leftPanel").style.transform  = "translateX(0)";
+      document.getElementById("rightPanel").style.transform = "translateX(100%)";
+      switchToLeft.style.display  = "none";
+      switchToRight.style.display = "block";
+    });
+
+    // 入力 UI 準備関数
+    function populatePartsOptions() {
+      const dl = document.getElementById("partsList"), sel = document.getElementById("partSelect");
+      dl.innerHTML = ""; sel.innerHTML = "<option value=''>選択してください</option>";
+      Object.keys(partsMapping).forEach(jp => {
+        const o1 = document.createElement("option"); o1.value = jp; dl.appendChild(o1);
+        const o2 = document.createElement("option"); o2.value = jp; o2.textContent = jp; sel.appendChild(o2);
+      });
+    }
+    function populateType1Options() {
+      const dl = document.getElementById("type1List"), sel = document.getElementById("type1Select");
+      dl.innerHTML = ""; sel.innerHTML = "<option value=''>選択してください</option>";
+      typeOptions.forEach(t => {
+        const o1 = document.createElement("option"); o1.value = t; dl.appendChild(o1);
+        const o2 = document.createElement("option"); o2.value = t; o2.textContent = t; sel.appendChild(o2);
+      });
+    }
+    function updateType2Options(skip) {
+      const dl = document.getElementById("type2List"), sel = document.getElementById("type2Select");
+      dl.innerHTML = "<option value=''></option>";
+      sel.innerHTML = "<option value=''>選択してください</option>";
+      typeOptions.forEach(t => {
+        if (t !== skip) {
+          dl.innerHTML += `<option value="${t}"></option>`;
+          sel.innerHTML += `<option value="${t}">${t}</option>`;
+        }
+      });
+    }
+
+    // 設定画面 UI 初期化
+    function generateSettingsUI() {
+      const savedGender = localStorage.getItem("avatarGender");
+      if (savedGender) document.getElementById("genderSelect").value = savedGender;
+      const container = document.getElementById("updateStatusContainer");
+      container.innerHTML = "";
+      const savedStatuses = JSON.parse(localStorage.getItem("updateStatus") || "[]");
+      typeOptions.forEach(t => {
+        const cb = document.createElement("input"); cb.type = "checkbox"; cb.id = "status_"+t; cb.value = t;
+        if (savedStatuses.includes(t)) cb.checked = true;
+        const lbl = document.createElement("label"); lbl.htmlFor = cb.id; lbl.textContent = t;
+        container.appendChild(cb); container.appendChild(lbl);
+      });
+      const stored = localStorage.getItem("showItems");
+      const showItems = stored !== null ? JSON.parse(stored) : (window.innerWidth >= 768);
+      document.getElementById("showItemsCheckbox").checked = showItems;
+    }
+
+    // 設定保存
+    document.getElementById("saveSettingsButton").addEventListener("click", () => {
+      const g = document.getElementById("genderSelect").value;
+      localStorage.setItem("avatarGender", g);
+      const checked = Array.from(document.querySelectorAll("#updateStatusContainer input:checked"))
+                           .map(cb => cb.value);
+      localStorage.setItem("updateStatus", JSON.stringify(checked));
+      const showItems = document.getElementById("showItemsCheckbox").checked;
+      localStorage.setItem("showItems", JSON.stringify(showItems));
+      alert("設定を保存しました。");
+    });
+
+    // 所持アバター追加フォーム制御
+    const partInput    = document.getElementById("partInput");
+    const partSelect   = document.getElementById("partSelect");
+    const type1Input   = document.getElementById("type1Input");
+    const type1Select  = document.getElementById("type1Select");
+    const type2Input   = document.getElementById("type2Input");
+    const type2Select  = document.getElementById("type2Select");
+    const valueInput   = document.getElementById("valueInput");
+    const addButton    = document.getElementById("addButton");
+    const avatarTableBody = document.querySelector("#avatarTable tbody");
+
+    function checkInput() {
+      const p = partInput.value.trim() || partSelect.value.trim();
+      const t1 = type1Input.value.trim() || type1Select.value.trim();
+      addButton.disabled = !(p!=="" && t1!=="" && valueInput.value.trim()!=="" && !isNaN(valueInput.value));
+    }
+
+    [partInput, partSelect, type1Input, type1Select, type2Input, type2Select, valueInput]
+      .forEach(el => el.addEventListener("input", checkInput));
+
+    type1Input.addEventListener("change", () => {
+      const v = type1Input.value.trim();
+      type2Input.disabled = !v; type2Select.disabled = !v;
+      type2Input.value = ""; type2Select.value = "";
+      updateType2Options(v); checkInput();
+    });
+    type1Select.addEventListener("change", () => {  
+      const v = type1Select.value.trim();
+      type2Input.disabled = !v; type2Select.disabled = !v;
+      type2Input.value = ""; type2Select.value = "";
+      updateType2Options(v); checkInput();
+    });
+
+    addButton.addEventListener("click", () => {
+      const p  = partInput.value.trim() || partSelect.value.trim();
+      const t1 = type1Input.value.trim() || type1Select.value.trim();
+      const t2 = type2Input.value.trim() || type2Select.value.trim() || "なし";
+      avatarList.push({ partText: p, type1: t1, type2: t2, increase: valueInput.value.trim() });
+      localStorage.setItem("avatarList", JSON.stringify(avatarList));
+      renderAvatarTable();
+      // リセット
+      partInput.value = ""; partSelect.value = "";
+      type1Input.value = ""; type1Select.value = "";
+      type2Input.value = ""; type2Select.value = ""; type2Input.disabled = true; type2Select.disabled = true;
+      valueInput.value = ""; checkInput();
+    });
+
+    function renderAvatarTable() {
+      avatarTableBody.innerHTML = "";
+      avatarList.forEach((av, i) => {
+        const tr = document.createElement("tr");
+        ["partText","type1","type2","increase"].forEach(key => {
+          const td = document.createElement("td");
+          td.textContent = av[key];
+          tr.appendChild(td);
+        });
+        const tdDel = document.createElement("td");
+        const btn   = document.createElement("button");
+        btn.textContent = "削除";
+        btn.addEventListener("click", () => {
+          avatarList.splice(i, 1);
+          localStorage.setItem("avatarList", JSON.stringify(avatarList));
+          renderAvatarTable();
+        });
+        tdDel.appendChild(btn);
+        tr.appendChild(tdDel);
+        avatarTableBody.appendChild(tr);
+      });
+    }
+
+    // 販売アバター検索
+    function logItemCodes() {
+      Promise.all([
+        loadBagcatLabels(),
+        fetch("bazzarList.json").then(r => r.json()),
+        fetch("itemCodeSchema.json").then(r => r.json()),
+        fetch("itemAnother.json").then(r => r.json())
+      ]).then(([ , bData, schema, another ]) => {
+        const regex = /^【([^+]+)\+([^】]+)】/;
+        schema.forEach(e => {
+          const m = regex.exec(e.itemName);
+          e.type  = m ? m[1] : "";
+          e.param = m ? parseInt(m[2].replace(/％/g, ""), 10) : 0;
+        });
+        const combined = schema.concat(another);
+
+        uniqueTradeItems = [];
+        const seen = {};
+        bData.bazzarList.forEach(it => {
+          if (!seen[it.bazaarId]) {
+            seen[it.bazaarId] = true;
+            uniqueTradeItems.push(it);
+          }
+        });
+
+        uniqueTradeItems.forEach(it => {
+          if (Array.isArray(it.listingItems)) {
+            it.listingItems = it.listingItems.map(code => {
+              const m = combined.find(x => x.itemCode === code) || {};
+              return {
+                itemCode:   code,
+                itemName:   m.itemName   || "",
+                parts:      m.parts      || "",
+                itemGender: m.itemGender || "",
+                type:       m.type       || "",
+                param:      m.param      || 0
+              };
+            });
+          }
+        });
+
+        uniqueTradeItems.forEach(it => {
+          it.listingItems.forEach(li => {
+            const jp = bagcatMapping[li.parts] || li.parts;
+            const av = avatarList.find(x => x.type1 === li.type && x.partText === jp);
+            let d = li.param;
+            if (av) {
+              d = li.param - Number(av.increase);
+              if (d < 0) d = 0;
+            }
+            li.diff = d;
+          });
+        });
+
+        uniqueTradeItems.forEach(it => {
+          const sums = {};
+          it.listingItems.forEach(li => {
+            sums[li.type] = Math.max(sums[li.type] || 0, li.diff);
+          });
+          it.typeSums = sums;
+        });
+
+        const gender = localStorage.getItem("avatarGender");
+        const filtered = uniqueTradeItems.filter(it => {
+          if (!gender) return true;
+          return !it.listingItems.some(li => li.itemGender === (gender === "F" ? "M" : "F"));
+        });
+
+        const savedTypes = JSON.parse(localStorage.getItem("updateStatus") || "[]");
+        const displayTypes = savedTypes.sort((a, b) =>
+          typeOptions.indexOf(a) - typeOptions.indexOf(b)
+        );
+
+        const stored = localStorage.getItem("showItems");
+        const showItems = stored !== null
+          ? JSON.parse(stored)
+          : (window.innerWidth >= 768);
+
+        const isPC = window.innerWidth >= 768;
+        const maxItems = (isPC && showItems)
+          ? Math.max(...filtered.map(it => it.listingItems.length))
+          : 0;
+
+        let html = "<div class='scrollable-table-container'><table><thead><tr>"
+          + "<th>販売リンク</th><th>締め切り日時</th><th>ハンコイン</th>";
+        displayTypes.forEach(t => {
+          html += `<th>${t}<br>(HC/差分)</th>`;
+        });
+        if (maxItems > 0) {
+          for (let i = 0; i < maxItems; i++) {
+            html += `<th>アイテム${i+1}</th>`;
+          }
+        }
+        html += "<th>詳細</th></tr></thead><tbody>";
+
+        filtered.forEach(it => {
+          const end = (it.sellEndDate || "").replace(" ", "<br>");
+          const hc  = Number(it.hancoin) || 0;
+          html += "<tr>";
+          html += `<td><button onclick="openLinkInNewTab('${it.bazaarId}')">販売リンク</button></td>`;
+          html += `<td>${end}</td><td>${hc}</td>`;
+          displayTypes.forEach(t => {
+            const sum = it.typeSums[t] || 0;
+            const ratio = sum ? (hc / sum).toFixed(2) : "0";
+            html += `<td>${ratio}</td>`;
+          });
+          if (maxItems > 0) {
+            for (let j = 0; j < maxItems; j++) {
+              if (j < it.listingItems.length) {
+                const li = it.listingItems[j];
+                const jp = bagcatMapping[li.parts] || li.parts;
+                html += `<td>${jp}<br>${li.type}+${li.param}</td>`;
+              } else {
+                html += "<td></td>";
+              }
+            }
+          }
+          html += `<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td>`;
+          html += "</tr>";
+        });
+
+        html += "</tbody></table></div>";
+        document.getElementById("tradeDataDisplay").innerHTML = html;
+
+        const tbl = document.querySelector("#tradeDataDisplay table");
+        if (tbl) {
+          tbl.querySelectorAll("thead th").forEach((cell, i) => {
+            cell.addEventListener("click", () => sortTableByColumn(tbl, i));
+          });
+        }
+      }).catch(e => console.error("販売アバター検索エラー:", e));
+    }
+
+    function openLinkInNewTab(id) {
+      window.open(`https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${id}`, "_blank");
+    }
+
+    function showModal(id) {
+      const c = document.getElementById("modalContent");
+      c.innerHTML = "";
+      const it = uniqueTradeItems.find(x => x.bazaarId === id);
+      if (!it) return;
+      it.listingItems.forEach(li => {
+        const div = document.createElement("div");
+        div.className = "modalItem";
+        const img = document.createElement("img");
+        img.src = `https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`;
+        div.appendChild(img);
+        const jp = bagcatMapping[li.parts] || li.parts;
+        const p1 = document.createElement("p");
+        p1.textContent = `${jp} / 差分:${li.type}+${li.diff}`;
+        div.appendChild(p1);
+        const p2 = document.createElement("p");
+        p2.textContent = li.itemName;
+        div.appendChild(p2);
+        c.appendChild(div);
+      });
+      document.getElementById("modalWindow").style.display = "block";
+    }
+
+    function sortTableByColumn(table, colIndex) {
+      const tbody = table.querySelector("tbody");
+      const rows = Array.from(tbody.querySelectorAll("tr"));
+      const ths = table.querySelectorAll("thead th");
+      ths.forEach(th => th.classList.remove("sort-asc", "sort-desc"));
+      if (currentSortColumn === colIndex) {
+        currentSortDir = (currentSortDir === "asc" ? "desc" : "asc");
+      } else {
+        currentSortColumn = colIndex;
+        currentSortDir = "asc";
+      }
+      ths[colIndex].classList.add(currentSortDir === "asc" ? "sort-asc" : "sort-desc");
+      const isRatio = ths[colIndex].textContent.includes("(HC/差分)");
+      rows.sort((a, b) => {
+        const ta = a.children[colIndex].textContent.trim();
+        const tb = b.children[colIndex].textContent.trim();
+        const na = parseFloat(ta);
+        const nb = parseFloat(tb);
+        let va, vb;
+        if (!isNaN(na) && !isNaN(nb)) {
+          if (isRatio && currentSortDir === "asc") {
+            va = na === 0 ? Infinity : na;
+            vb = nb === 0 ? Infinity : nb;
+          } else {
+            va = na;
+            vb = nb;
+          }
+        } else {
+          va = ta;
+          vb = tb;
+        }
+        const cmp = (typeof va === "number" && typeof vb === "number")
+          ? va - vb
+          : String(va).localeCompare(String(vb));
+        return currentSortDir === "asc" ? cmp : -cmp;
+      });
+      rows.forEach(r => tbody.appendChild(r));
+    }
+
+    document.getElementById("closeModal").addEventListener("click", () => {
+      document.getElementById("modalWindow").style.display = "none";
+    });
+  </script>
