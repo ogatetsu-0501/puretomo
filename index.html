@@ -1,969 +1,390 @@
-<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <!-- 文字コードはUTF-8にするよ -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- 画面サイズに合わせるよ -->
-    <title>アバター管理画面 - 完全版</title>
-    <!-- ページタイトル -->
-    <style>
-      /* ----- 全体の基本設定 ----- */
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family: Arial, sans-serif;
-      }
+<!DOCTYPE html> <!-- HTMLドキュメントの始まりだよ -->
+<html lang="ja"> <!-- ページの言語は日本語だよ -->
+<head>
+  <meta charset="UTF-8"> <!-- 文字コードをUTF-8にするよ -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 画面に合わせるよ -->
+  <title>アバター管理画面</title> <!-- ブラウザのタブに表示されるタイトルだよ -->
+  <style>
+    /* --- リセット --- */
+    html, body { height: 100%; margin: 0; padding: 0; } /* 余白をなくすよ */
+    body { font-family: Arial, sans-serif; } /* フォントを設定するよ */
 
-      /* ----- ヘッダー ----- */
-      header {
-        display: flex;
-        align-items: center;
-        background-color: #4caf50;
-        color: white;
-        padding: 10px;
-      }
-      .hamburger {
-        font-size: 24px;
-        cursor: pointer;
-        margin-right: 10px;
-      }
+    /* --- ヘッダー --- */
+    header { display: flex; align-items: center; background-color: #4caf50; color: white; padding: 10px; } /* 見た目 */
+    .hamburger { font-size: 24px; cursor: pointer; margin-right: 10px; } /* メニューアイコン */
 
-      /* ----- サイドバー ----- */
-      .sidebar {
-        position: fixed;
-        top: 0;
-        left: -220px;
-        width: 200px;
-        height: 100vh;
-        background-color: #333;
-        color: white;
-        transition: left 0.3s ease;
-        z-index: 1500;
-      }
+    /* --- サイドバー --- */
+    .sidebar { position: fixed; top: 0; left: -220px; width: 200px; height: 100vh; background-color: #333; color: white; transition: left 0.3s ease; z-index: 1500; } /* メニュー */
 
-      /* ----- メインエリア ----- */
-      .main-container {
-        position: relative;
-        width: 100%;
-        height: calc(100vh - 50px);
-        overflow: hidden;
-        transition: margin-left 0.3s ease;
-      }
+    /* --- メインコンテナ --- */
+    .main-container { position: relative; width: 100%; height: calc(100vh - 50px); overflow: hidden; transition: margin-left 0.3s ease; } /* 包む */
 
-      /* ----- 左右パネル ----- */
-      .left-panel,
-      .right-panel {
-        position: absolute;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        transition: transform 0.3s ease;
-      }
-      .left-panel {
-        transform: translateX(-100%);
-      }
-      .right-panel {
-        transform: translateX(0);
-      }
+    /* --- 左右パネル --- */
+    .left-panel, .right-panel { position: absolute; top: 0; width: 100%; height: 100%; transition: transform 0.3s ease; } /* 共通 */
+    .left-panel { transform: translateX(-100%); } /* 隠す */
+    .right-panel { transform: translateX(0); } /* 表示 */
 
-      /* ----- 矢印ボタン ----- */
-      #switchToLeft,
-      #switchToRight {
-        position: fixed;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 1600;
-      }
-      #switchToLeft {
-        left: 0;
-      }
-      #switchToRight {
-        right: 0;
-        display: none;
-      }
+    /* --- 矢印ボタン --- */
+    #switchToLeft, #switchToRight { position: fixed; top: 50%; transform: translateY(-50%); z-index: 1600; } /* 共通 */
+    #switchToLeft { left: 0; } /* ← */
+    #switchToRight { right: 0; display: none; } /* → */
 
-      /* ----- テーブル設定 ----- */
-      th,
-      td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: center;
-        white-space: nowrap;
-      }
-      /* ヘッダー行全体は固定し、z-index:4に */
-      thead th {
-        position: sticky;
-        top: 0;
-        background-color: #e0e0e0;
-        z-index: 4;
-      }
-      /* 左上セル (1,1) をさらに上位に、z-index:5 として水平位置も固定 */
-      thead th:first-child {
-        left: 0;
-        z-index: 5;
-      }
-      /* 本体の最初の列（データ部分）は固定、z-index:2に */
-      tbody td:first-child {
-        position: sticky;
-        left: 0;
-        background-color: #f0f0f0;
-        z-index: 2;
-      }
-      /* その他のセルはデフォルトで z-index:1 */
-      tbody td {
-        z-index: 1;
-      }
+    /* --- テーブル --- */
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; white-space: nowrap; } /* セル */
 
-      /* ----- スクロール可能なテーブルコンテナ ----- */
-      .scrollable-table-container {
-        overflow: auto;
-        position: relative;
-        max-height: calc(100vh - 50px);
-        width: auto;
-      }
-      table {
-        border-collapse: collapse;
-        table-layout: auto;
-        width: auto;
-        max-width: 100%;
-      }
+    /* ヘッダー行固定 */
+    thead th { position: sticky; top: 0; background-color: #e0e0e0; z-index: 4; } /* 固定 */
+    thead th:first-child { left: 0; z-index: 5; } /* 左上 */
 
-      /* ----- 更新希望ステータス ----- */
-      .update-status-group {
-        display: flex;
-        flex-wrap: wrap;
-      }
-      .update-status-group label {
-        margin-right: 10px;
-      }
+    /* 最初の列固定 */
+    tbody td:first-child { position: sticky; left: 0; background-color: #f0f0f0; z-index: 2; } /* 固定 */
+    tbody td { z-index: 1; } /* その他 */
 
-      /* ----- モーダルウィンドウ ----- */
-      #modalWindow {
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80%;
-        max-width: 600px;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        padding: 15px;
-        z-index: 1000;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      }
-      #modalContent {
-        display: flex;
-        flex-direction: row;
-        overflow-x: auto;
-      }
-      .modalItem {
-        border: 1px solid #ddd;
-        margin-right: 10px;
-        padding: 5px;
-        text-align: center;
-      }
-      .modalItem img {
-        max-width: 100px;
-        display: block;
-        margin: 0 auto 5px;
-      }
-      #closeModal {
-        width: 100%;
-        margin-top: 15px;
-        background-color: #4caf50;
-        color: #fff;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <div class="hamburger" id="hamburgerBtn">&#9776;</div>
-      <h1 style="margin: 0; font-size: 18px">アバター管理画面</h1>
-    </header>
+    /* ソートインジケータ */
+    th.sort-asc::after { content: " ▲"; } /* 昇順 */
+    th.sort-desc::after { content: " ▼"; } /* 降順 */
 
-    <!-- モーダルウィンドウ -->
-    <div id="modalWindow">
-      <div id="modalContent">
-        <!-- モーダルに詳細表示する内容 -->
-      </div>
-      <button id="closeModal">閉じる</button>
+    /* スクロール可能 */
+    .scrollable-table-container { overflow: auto; position: relative; max-height: calc(100vh - 50px); width: auto; } /* スクロール */
+
+    /* モーダル */
+    #modalWindow { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 600px; background-color: #fff; border: 1px solid #ccc; padding: 15px; z-index: 1000; box-shadow: 0 0 10px rgba(0,0,0,0.5); } /* ウィンドウ */
+    #modalContent { display: flex; flex-direction: row; overflow-x: auto; } /* 中身 */
+    .modalItem { border: 1px solid #ddd; margin-right: 10px; padding: 5px; text-align: center; } /* アイテム */
+    .modalItem img { max-width: 100px; display: block; margin: 0 auto 5px; } /* 画像 */
+    #closeModal { width: 100%; margin-top: 15px; background-color: #4caf50; color: #fff; border: none; padding: 5px 10px; cursor: pointer; } /* 閉じる */
+  </style>
+</head>
+<body>
+  <header> <!-- ヘッダー -->
+    <div class="hamburger" id="hamburgerBtn">&#9776;</div> <!-- メニュー -->
+    <h1 style="margin:0;font-size:18px;">アバター管理画面</h1> <!-- タイトル -->
+  </header>
+
+  <div id="modalWindow"> <!-- モーダル -->
+    <div id="modalContent"></div> <!-- 詳細 -->
+    <button id="closeModal">閉じる</button> <!-- 閉じるボタン -->
+  </div>
+
+  <button id="switchToLeft">←</button> <!-- 左ボタン -->
+  <button id="switchToRight">→</button> <!-- 右ボタン -->
+
+  <div class="main-container" id="mainContainer"> <!-- メイン箱 -->
+    <div class="sidebar" id="sidebar"> <!-- サイドバー -->
+      <ul>
+        <li data-target="avatarForm">所持アバター追加</li>
+        <li data-target="settings">設定</li>
+        <li data-target="tradeSearch">販売アバター検索</li>
+      </ul>
     </div>
 
-    <button id="switchToLeft">←</button>
-    <button id="switchToRight" style="display: none">→</button>
-
-    <div class="main-container" id="mainContainer">
-      <div class="sidebar" id="sidebar">
-        <ul>
-          <li data-target="avatarForm">所持アバター追加</li>
-          <li data-target="settings">設定</li>
-          <li data-target="tradeSearch">販売アバター検索</li>
-        </ul>
-      </div>
-      <div class="left-panel" id="leftPanel">
-        <div id="avatarForm">
-          <h2>所持アバター追加</h2>
-          <div class="form-group">
-            <label for="partInput">パーツ（表示名）:</label>
-            <input
-              type="text"
-              id="partInput"
-              list="partsList"
-              autocomplete="on"
-              placeholder="例: トップス"
-            />
-            <datalist id="partsList">
-              <option value="トップス"></option>
-              <option value="ボトムス"></option>
-              <option value="ワンピース"></option>
-              <option value="ヘアスタイル"></option>
-              <option value="フェイス"></option>
-              <option value="背景"></option>
-              <option value="アウター"></option>
-              <option value="セット衣装1"></option>
-              <option value="セット衣装2"></option>
-              <option value="帽子"></option>
-              <option value="めがね"></option>
-              <option value="アクセ1"></option>
-              <option value="アクセ2"></option>
-              <option value="雑貨1"></option>
-              <option value="雑貨2"></option>
-              <option value="ペット1"></option>
-              <option value="ペット2"></option>
-              <option value="ペット3"></option>
-              <option value="ペット4"></option>
-              <option value="エフェクト"></option>
-              <option value="その他1"></option>
-              <option value="その他2"></option>
-              <option value="その他3"></option>
-              <option value="その他4"></option>
-              <option value="モイトイ"></option>
-            </datalist>
-          </div>
-          <div class="form-group">
-            <label for="type1Input">種類①:</label>
-            <input
-              type="text"
-              id="type1Input"
-              list="type1List"
-              autocomplete="on"
-              placeholder="例: INT"
-            />
-            <datalist id="type1List">
-              <option value="INT"></option>
-              <option value="ALL"></option>
-              <option value="HPR"></option>
-              <option value="SP"></option>
-              <option value="PET"></option>
-              <option value="HP"></option>
-              <option value="SPR"></option>
-              <option value="LUK"></option>
-              <option value="ATK"></option>
-              <option value="EXP"></option>
-              <option value="MAT"></option>
-              <option value="POW"></option>
-              <option value="VIT"></option>
-              <option value="SPD"></option>
-            </datalist>
-          </div>
-          <div class="form-group">
-            <label for="type2Input">種類②:</label>
-            <input
-              type="text"
-              id="type2Input"
-              list="type2List"
-              autocomplete="on"
-              placeholder="（未入力でも可）"
-              disabled
-            />
-            <datalist id="type2List">
-              <option value="INT"></option>
-              <option value="ALL"></option>
-              <option value="HPR"></option>
-              <option value="SP"></option>
-              <option value="PET"></option>
-              <option value="HP"></option>
-              <option value="SPR"></option>
-              <option value="LUK"></option>
-              <option value="ATK"></option>
-              <option value="EXP"></option>
-              <option value="MAT"></option>
-              <option value="POW"></option>
-              <option value="VIT"></option>
-              <option value="SPD"></option>
-            </datalist>
-          </div>
-          <div class="form-group">
-            <label for="valueInput">上昇値:</label>
-            <input
-              type="number"
-              id="valueInput"
-              placeholder="数値を入力してください"
-            />
-          </div>
-          <button id="addButton" disabled>追加</button>
-        </div>
-
-        <div id="settings" style="display: none">
-          <h2>設定</h2>
-          <div class="form-group">
-            <label for="genderSelect">アバター性別選択:</label>
-            <select id="genderSelect">
-              <option value="F">女</option>
-              <option value="M">男</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>更新希望ステータス:</label>
-            <div id="updateStatusContainer" class="update-status-group"></div>
-          </div>
-          <button id="saveSettingsButton">設定を保存</button>
-        </div>
-
-        <div id="tradeSearch" style="display: none">
-          <h2>販売アバター検索</h2>
-          <div id="tradeDataDisplay">
-            <p>データ未読み込み</p>
-          </div>
-        </div>
+    <div class="left-panel" id="leftPanel"> <!-- 左パネル -->
+      <div id="avatarForm"> <!-- フォーム -->
+        <h2>所持アバター追加</h2>
+        <label for="partInput">パーツ（表示名）:</label>
+        <input type="text" id="partInput" list="partsList" placeholder="例: トップス">
+        <datalist id="partsList"></datalist>
+        <br>
+        <label for="type1Input">種類①:</label>
+        <input type="text" id="type1Input" list="type1List" placeholder="例: INT">
+        <datalist id="type1List"></datalist>
+        <br>
+        <label for="type2Input">種類②:</label>
+        <input type="text" id="type2Input" list="type2List" placeholder="（未入力可）" disabled>
+        <datalist id="type2List"></datalist>
+        <br>
+        <label for="valueInput">上昇値:</label>
+        <input type="number" id="valueInput" placeholder="数値を入力">
+        <br>
+        <button id="addButton" disabled>追加</button>
       </div>
 
-      <div class="right-panel" id="rightPanel">
-        <h2>追加されたアバター一覧</h2>
-        <div class="scrollable-table-container">
-          <table id="avatarTable">
-            <thead>
-              <tr>
-                <th>販売リンク</th>
-                <th>パーツ</th>
-                <th>種類①</th>
-                <th>種類②</th>
-                <th>上昇値</th>
-                <th>削除</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+      <div id="settings" style="display:none;"> <!-- 設定 -->
+        <h2>設定</h2>
+        <label for="genderSelect">アバター性別選択:</label>
+        <select id="genderSelect"><option value="F">女</option><option value="M">男</option></select>
+        <br>
+        <label>更新希望ステータス:</label>
+        <div id="updateStatusContainer"></div>
+        <br>
+        <button id="saveSettingsButton">設定を保存</button>
+      </div>
+
+      <div id="tradeSearch" style="display:none;"> <!-- 検索 -->
+        <h2>販売アバター検索</h2>
+        <div id="tradeDataDisplay"><p>データ未読み込み</p></div>
       </div>
     </div>
 
-    <script>
-      // グローバル変数 bagcatMapping にCSVの対応表を格納する
-      let bagcatMapping = {};
+    <div class="right-panel" id="rightPanel"> <!-- 右パネル -->
+      <h2>追加されたアバター一覧</h2>
+      <div class="scrollable-table-container">
+        <table id="avatarTable">
+          <thead>
+            <tr><th>販売リンク</th><th>パーツ</th><th>種類①</th><th>種類②</th><th>上昇値</th><th>削除</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-      // CSV (bagcat_labels.csv) を読み込み、bagcatMapping を作成する関数
-      function loadBagcatLabels() {
-        return fetch("bagcat_labels.csv")
-          .then((response) => response.text())
-          .then((text) => {
-            const lines = text.split("\n");
-            // ヘッダーはスキップ
-            for (let i = 1; i < lines.length; i++) {
-              const line = lines[i].trim();
-              if (line) {
-                const parts = line.split(",");
-                if (parts.length >= 2) {
-                  const key = parts[0].trim(); // CSVのパーツコード
-                  const value = parts[1].trim(); // CSVの日本語名称
-                  bagcatMapping[key] = value;
-                }
-              }
-            }
-          })
-          .catch((error) => {
-            console.error("CSV読み込みエラー:", error);
-          });
-      }
+  <script>
+    // CSV対応表を入れる箱だよ
+    let bagcatMapping = {}, partsMapping = {}, typeOptions = [], avatarList = [], uniqueTradeItems = [];
+    // ソート状態
+    let currentSortColumn = null, currentSortDir = "asc";
 
-      // --- 画面切替と初期設定 ---
-      let currentView = "right";
-      const mainContainer = document.getElementById("mainContainer");
-      const leftPanel = document.getElementById("leftPanel");
-      const rightPanel = document.getElementById("rightPanel");
-      const switchToLeftBtn = document.getElementById("switchToLeft");
-      const switchToRightBtn = document.getElementById("switchToRight");
-      window.addEventListener("load", function () {
-        currentView = "right";
-        leftPanel.style.transform = "translateX(-100%)";
-        rightPanel.style.transform = "translateX(0)";
-        mainContainer.style.marginLeft = "0";
-        switchToLeftBtn.style.display = "block";
-        switchToRightBtn.style.display = "none";
-        loadBagcatLabels(); // CSV読み込み
+    // CSV読み込み関数
+    function fetchCsv(url) {
+      return fetch(url).then(r => r.text()).then(text =>
+        text.trim().split("\n").map(line => line.split(",").map(c => c.trim()))
+      ).catch(e => { console.error("CSV読み込みエラー",e); return []; });
+    }
+
+    // bagcat_labels.csv読み込み
+    function loadBagcatLabels() {
+      return fetchCsv("bagcat_labels.csv").then(rows => {
+        rows.slice(1).forEach(([code,jp]) => {
+          if(!code||!jp) return;
+          if(!(code in bagcatMapping)) bagcatMapping[code]=jp;
+          if(!(jp in partsMapping)) partsMapping[jp]=code;
+        });
       });
-      function switchToLeftView() {
-        currentView = "left";
-        leftPanel.style.transform = "translateX(0)";
-        rightPanel.style.transform = "translateX(100%)";
-        switchToLeftBtn.style.display = "none";
-        switchToRightBtn.style.display = "block";
-      }
-      function switchToRightView() {
-        currentView = "right";
-        leftPanel.style.transform = "translateX(-100%)";
-        rightPanel.style.transform = "translateX(0)";
-        switchToLeftBtn.style.display = "block";
-        switchToRightBtn.style.display = "none";
-      }
-      switchToLeftBtn.addEventListener("click", switchToLeftView);
-      switchToRightBtn.addEventListener("click", switchToRightView);
+    }
 
-      // --- サイドバーの処理 ---
-      const hamburgerBtn = document.getElementById("hamburgerBtn");
-      const sidebar = document.getElementById("sidebar");
-      hamburgerBtn.addEventListener("click", function () {
-        if (sidebar.style.left === "" || sidebar.style.left === "-220px") {
-          sidebar.style.left = "0";
-          mainContainer.style.marginLeft = "220px";
-          switchToLeftBtn.style.left = "220px";
-        } else {
-          sidebar.style.left = "-220px";
-          mainContainer.style.marginLeft = "0";
-          switchToLeftBtn.style.left = "0";
-        }
+    // type_options.csv読み込み
+    function loadTypeOptions() {
+      return fetchCsv("type_options.csv").then(rows => {
+        typeOptions = rows.slice(1).map(r=>r[0]).filter(t=>t);
       });
+    }
 
-      // --- サイドバー項目選択 ---
-      const sidebarItems = document.querySelectorAll(".sidebar li");
-      const avatarFormDiv = document.getElementById("avatarForm");
-      const settingsDiv = document.getElementById("settings");
-      const tradeSearchDiv = document.getElementById("tradeSearch");
-      sidebarItems.forEach(function (item) {
-        item.addEventListener("click", function () {
-          const target = item.getAttribute("data-target");
-          sidebar.style.left = "-220px";
-          mainContainer.style.marginLeft = "0";
-          switchToLeftBtn.style.left = "0";
-          if (target === "avatarForm") {
-            avatarFormDiv.style.display = "block";
-            settingsDiv.style.display = "none";
-            tradeSearchDiv.style.display = "none";
-          } else if (target === "settings") {
-            avatarFormDiv.style.display = "none";
-            settingsDiv.style.display = "block";
-            tradeSearchDiv.style.display = "none";
-            const savedGender = localStorage.getItem("avatarGender");
-            if (savedGender) {
-              document.getElementById("genderSelect").value = savedGender;
-            }
-            generateUpdateStatusCheckboxes();
-          } else if (target === "tradeSearch") {
-            avatarFormDiv.style.display = "none";
-            settingsDiv.style.display = "none";
-            tradeSearchDiv.style.display = "block";
-            logItemCodes();
+    // 初期表示
+    window.addEventListener("load",()=>{
+      Promise.all([loadBagcatLabels(),loadTypeOptions()]).then(()=>{
+        // パネル初期
+        document.getElementById("leftPanel").style.transform="translateX(-100%)";
+        document.getElementById("rightPanel").style.transform="translateX(0)";
+        document.getElementById("switchToLeft").style.display="block";
+        document.getElementById("switchToRight").style.display="none";
+        // datalist作成
+        populatePartsDatalist(); populateType1Datalist();
+        // 既存データ読込
+        let s=localStorage.getItem("avatarList");
+        if(s){ avatarList=JSON.parse(s); renderAvatarTable(); }
+        generateUpdateStatusCheckboxes();
+      });
+    });
+
+    // datalist パーツ
+    function populatePartsDatalist(){
+      let dl=document.getElementById("partsList"); dl.innerHTML="";
+      Object.keys(partsMapping).forEach(jp=>{
+        let opt=document.createElement("option"); opt.value=jp; dl.appendChild(opt);
+      });
+    }
+    // datalist 種類①
+    function populateType1Datalist(){
+      let dl=document.getElementById("type1List"); dl.innerHTML="";
+      typeOptions.forEach(t=>{ let opt=document.createElement("option"); opt.value=t; dl.appendChild(opt); });
+    }
+
+    // パネル切替
+    document.getElementById("switchToLeft").addEventListener("click",()=>{
+      document.getElementById("leftPanel").style.transform="translateX(0)";
+      document.getElementById("rightPanel").style.transform="translateX(100%)";
+      document.getElementById("switchToLeft").style.display="none";
+      document.getElementById("switchToRight").style.display="block";
+    });
+    document.getElementById("switchToRight").addEventListener("click",()=>{
+      document.getElementById("leftPanel").style.transform="translateX(-100%)";
+      document.getElementById("rightPanel").style.transform="translateX(0)";
+      document.getElementById("switchToLeft").style.display="block";
+      document.getElementById("switchToRight").style.display="none";
+    });
+
+    // サイドバー
+    document.getElementById("hamburgerBtn").addEventListener("click",()=>{
+      let sb=document.getElementById("sidebar"), mc=document.getElementById("mainContainer"), btn=document.getElementById("switchToLeft");
+      if(sb.style.left===""||sb.style.left==="-220px"){ sb.style.left="0"; mc.style.marginLeft="220px"; btn.style.left="220px"; }
+      else{ sb.style.left="-220px"; mc.style.marginLeft="0"; btn.style.left="0"; }
+    });
+
+    // メニュー項目
+    document.querySelectorAll(".sidebar li").forEach(li=>{
+      li.addEventListener("click",()=>{
+        let t=li.getAttribute("data-target");
+        ["avatarForm","settings","tradeSearch"].forEach(id=>{
+          document.getElementById(id).style.display=(id===t?"block":"none");
+        });
+        document.getElementById("sidebar").style.left="-220px";
+        document.getElementById("mainContainer").style.marginLeft="0";
+        document.getElementById("switchToLeft").style.left="0";
+        if(t==="settings") generateUpdateStatusCheckboxes();
+        if(t==="tradeSearch") logItemCodes();
+      });
+    });
+
+    // フォーム要素
+    let partInput=document.getElementById("partInput"),
+        type1Input=document.getElementById("type1Input"),
+        type2Input=document.getElementById("type2Input"),
+        valueInput=document.getElementById("valueInput"),
+        addButton=document.getElementById("addButton"),
+        avatarTableBody=document.querySelector("#avatarTable tbody");
+
+    // 種類①変更
+    type1Input.addEventListener("change",()=>{ let v=type1Input.value.trim();
+      if(!v){ type2Input.disabled=true; type2Input.value=""; }
+      else{ type2Input.disabled=false; updateType2Datalist(v); }
+      checkInput();
+    });
+    // 入力チェック
+    [partInput,type1Input,valueInput].forEach(el=>el.addEventListener("input",checkInput));
+    function checkInput(){
+      let ok=partInput.value.trim()!==""&&type1Input.value.trim()!==""&&valueInput.value.trim()!==""&&!isNaN(valueInput.value);
+      addButton.disabled=!ok;
+    }
+    // 種類②候補
+    function updateType2Datalist(skip){
+      let dl=document.getElementById("type2List"); dl.innerHTML="<option value=''></option>";
+      typeOptions.forEach(o=>{ if(o!==skip) dl.innerHTML+=`<option value="${o}"></option>`; });
+    }
+    // 追加
+    addButton.addEventListener("click",()=>{
+      avatarList.push({ partText:partInput.value.trim(), type1:type1Input.value.trim(), type2:type2Input.value.trim()||"なし", increase:valueInput.value.trim() });
+      localStorage.setItem("avatarList",JSON.stringify(avatarList));
+      renderAvatarTable();
+      partInput.value=""; type1Input.value=""; type2Input.value=""; type2Input.disabled=true; valueInput.value=""; checkInput();
+    });
+    // 表描画
+    function renderAvatarTable(){
+      avatarTableBody.innerHTML="";
+      avatarList.forEach((av,i)=>{
+        let tr=document.createElement("tr");
+        ["partText","type1","type2","increase"].forEach(k=>{
+          let td=document.createElement("td"); td.textContent=av[k]; tr.appendChild(td);
+        });
+        let tdDel=document.createElement("td"),btn=document.createElement("button"); btn.textContent="削除";
+        btn.addEventListener("click",()=>{ avatarList.splice(i,1); localStorage.setItem("avatarList",JSON.stringify(avatarList)); renderAvatarTable(); });
+        tdDel.appendChild(btn); tr.appendChild(tdDel); avatarTableBody.appendChild(tr);
+      });
+    }
+
+    // 設定画面
+    function generateUpdateStatusCheckboxes(){
+      let c=document.getElementById("updateStatusContainer"); c.innerHTML="";
+      let saved=JSON.parse(localStorage.getItem("updateStatus")||"[]");
+      typeOptions.forEach(t=>{
+        let cb=document.createElement("input"); cb.type="checkbox"; cb.id="status_"+t; cb.value=t;
+        if(saved.includes(t)) cb.checked=true;
+        let label=document.createElement("label"); label.htmlFor=cb.id; label.textContent=t;
+        c.appendChild(cb); c.appendChild(label);
+      });
+    }
+    document.getElementById("saveSettingsButton").addEventListener("click",()=>{
+      let g=document.getElementById("genderSelect").value;
+      localStorage.setItem("avatarGender",g);
+      let chk=Array.from(document.querySelectorAll("#updateStatusContainer input:checked")).map(x=>x.value);
+      localStorage.setItem("updateStatus",JSON.stringify(chk));
+      alert("設定を保存しました。");
+    });
+
+    // 販売アバター検索
+    function logItemCodes(){
+      Promise.all([ loadBagcatLabels(), fetch("bazzarList.json").then(r=>r.json()), fetch("itemCodeSchema.json").then(r=>r.json()), fetch("itemAnother.json").then(r=>r.json()) ])
+      .then(([ ,bData,schema,another ])=>{
+        let regex=/^【([^+]+)\+([^】]+)】/;
+        schema.forEach(e=>{
+          let m=regex.exec(e.itemName);
+          e.type=m?m[1]:""; e.param=m?parseInt(m[2].replace(/％/g,""),10):0;
+        });
+        let combined=schema.concat(another);
+        uniqueTradeItems=[]; let seen={};
+        bData.bazzarList.forEach(it=>{ if(!seen[it.bazaarId]){ seen[it.bazaarId]=true; uniqueTradeItems.push(it);} });
+        uniqueTradeItems.forEach(it=>{
+          if(Array.isArray(it.listingItems)){
+            it.listingItems=it.listingItems.map(code=>{
+              let m=combined.find(x=>x.itemCode===code)||{};
+              return{ itemCode:code,itemName:m.itemName||"",parts:m.parts||"",itemGender:m.itemGender||"",type:m.type||"",param:m.param||0 };
+            });
           }
         });
-      });
-
-      // --- 所持アバター追加フォーム ---
-      const partsMapping = {
-        トップス: "H",
-        ボトムス: "L",
-        ワンピース: "HL",
-        ヘアスタイル: "P",
-        フェイス: "F",
-        背景: "A4",
-        アウター: "CT",
-        セット衣装1: "SA",
-        セット衣装2: "SB",
-        帽子: "AE",
-        めがね: "AD",
-        アクセ1: "AF",
-        アクセ2: "B2",
-        雑貨1: "B1",
-        雑貨2: "B3",
-        ペット1: "E1",
-        ペット2: "E2",
-        ペット3: "E3",
-        ペット4: "E4",
-        エフェクト: "AA",
-        その他1: "AB",
-        その他2: "A1",
-        その他3: "A2",
-        その他4: "A3",
-        モイトイ: "BL",
-      };
-
-      const typeOptions = [
-        "INT",
-        "ALL",
-        "HPR",
-        "SP",
-        "PET",
-        "HP",
-        "SPR",
-        "LUK",
-        "ATK",
-        "EXP",
-        "MAT",
-        "POW",
-        "VIT",
-        "SPD",
-      ];
-      let avatarList = [];
-      window.addEventListener("load", function () {
-        const storedData = localStorage.getItem("avatarList");
-        if (storedData) {
-          avatarList = JSON.parse(storedData);
-          renderAvatarTable();
-        }
-      });
-      const partInput = document.getElementById("partInput");
-      const type1Input = document.getElementById("type1Input");
-      const type2Input = document.getElementById("type2Input");
-      const valueInput = document.getElementById("valueInput");
-      const addButton = document.getElementById("addButton");
-      const avatarTableBody = document.querySelector("#avatarTable tbody");
-      type1Input.addEventListener("change", function () {
-        const selectedType1 = type1Input.value.trim();
-        if (selectedType1 === "") {
-          type2Input.disabled = true;
-          type2Input.value = "";
-        } else {
-          type2Input.disabled = false;
-          updateType2Datalist(selectedType1);
-        }
-        checkInput();
-      });
-      partInput.addEventListener("input", checkInput);
-      type1Input.addEventListener("input", checkInput);
-      valueInput.addEventListener("input", checkInput);
-      function checkInput() {
-        const isPartEntered = partInput.value.trim() !== "";
-        const isType1Entered = type1Input.value.trim() !== "";
-        const isValueEntered =
-          valueInput.value.trim() !== "" && !isNaN(valueInput.value);
-        addButton.disabled = !(
-          isPartEntered &&
-          isType1Entered &&
-          isValueEntered
-        );
-      }
-      function updateType2Datalist(selectedType1) {
-        const type2Datalist = document.getElementById("type2List");
-        type2Datalist.innerHTML = "";
-        const emptyOption = document.createElement("option");
-        emptyOption.value = "";
-        type2Datalist.appendChild(emptyOption);
-        typeOptions.forEach(function (option) {
-          if (option !== selectedType1) {
-            const opt = document.createElement("option");
-            opt.value = option;
-            type2Datalist.appendChild(opt);
-          }
-        });
-      }
-      addButton.addEventListener("click", function () {
-        const newAvatar = {
-          partText: partInput.value.trim(),
-          type1: type1Input.value.trim(),
-          type2:
-            type2Input.value.trim() === "" ? "なし" : type2Input.value.trim(),
-          increase: valueInput.value.trim(),
-        };
-        avatarList.push(newAvatar);
-        renderAvatarTable();
-        localStorage.setItem("avatarList", JSON.stringify(avatarList));
-        partInput.value = "";
-        type1Input.value = "";
-        type2Input.value = "";
-        type2Input.disabled = true;
-        valueInput.value = "";
-        checkInput();
-      });
-      function renderAvatarTable() {
-        avatarTableBody.innerHTML = "";
-        avatarList.forEach(function (avatar, index) {
-          const row = document.createElement("tr");
-          const tdPart = document.createElement("td");
-          tdPart.textContent = avatar.partText;
-          row.appendChild(tdPart);
-          const tdType1 = document.createElement("td");
-          tdType1.textContent = avatar.type1;
-          row.appendChild(tdType1);
-          const tdType2 = document.createElement("td");
-          tdType2.textContent = avatar.type2;
-          row.appendChild(tdType2);
-          const tdInc = document.createElement("td");
-          tdInc.textContent = avatar.increase;
-          row.appendChild(tdInc);
-          const tdDel = document.createElement("td");
-          const btnDel = document.createElement("button");
-          btnDel.textContent = "削除";
-          btnDel.addEventListener("click", function () {
-            avatarList.splice(index, 1);
-            renderAvatarTable();
-            localStorage.setItem("avatarList", JSON.stringify(avatarList));
-          });
-          tdDel.appendChild(btnDel);
-          row.appendChild(tdDel);
-          avatarTableBody.appendChild(row);
-        });
-      }
-
-      // --- 設定画面 ---
-      const saveSettingsButton = document.getElementById("saveSettingsButton");
-      const genderSelect = document.getElementById("genderSelect");
-      const updateStatusContainer = document.getElementById(
-        "updateStatusContainer"
-      );
-      const updateStatusOptions = typeOptions;
-      function generateUpdateStatusCheckboxes() {
-        updateStatusContainer.innerHTML = "";
-        let savedStatus = localStorage.getItem("updateStatus");
-        if (savedStatus) {
-          savedStatus = JSON.parse(savedStatus);
-        } else {
-          savedStatus = [];
-        }
-        updateStatusOptions.forEach(function (status) {
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.id = "status_" + status;
-          checkbox.value = status;
-          if (savedStatus.includes(status)) {
-            checkbox.checked = true;
-          }
-          const label = document.createElement("label");
-          label.htmlFor = "status_" + status;
-          label.textContent = status;
-          updateStatusContainer.appendChild(checkbox);
-          updateStatusContainer.appendChild(label);
-        });
-      }
-      saveSettingsButton.addEventListener("click", function () {
-        localStorage.setItem("avatarGender", genderSelect.value);
-        const checkboxes = updateStatusContainer.querySelectorAll(
-          'input[type="checkbox"]'
-        );
-        const selectedStatuses = [];
-        checkboxes.forEach(function (chk) {
-          if (chk.checked) {
-            selectedStatuses.push(chk.value);
-          }
-        });
-        localStorage.setItem("updateStatus", JSON.stringify(selectedStatuses));
-        alert("設定を保存しました。");
-      });
-
-      // --- 販売アバター検索の処理 ---
-      let uniqueTradeItems = [];
-      function logItemCodes() {
-        Promise.all([
-          loadBagcatLabels(), // CSV読み込み
-          fetch("bazzarList.json").then((response) => response.json()),
-          fetch("itemCodeSchema.json").then((response) => response.json()),
-          fetch("itemAnother.json").then((response) => response.json()),
-        ])
-          .then(function ([, bazzarData, itemSchemaData, itemAnotherData]) {
-            if (Array.isArray(itemSchemaData)) {
-              itemSchemaData = itemSchemaData.map(function (entry) {
-                // 正規表現で【から+までをtype、+から】までをparamとして抽出する
-                var regex = /^【([^+]+)\+([^】]+)】/;
-                var result = regex.exec(entry.itemName);
-                if (result) {
-                  entry.type = result[1];
-                  let paramStr = result[2].replace(/％/g, "");
-                  entry.param = parseInt(paramStr, 10);
-                } else {
-                  entry.type = "";
-                  entry.param = 0;
-                }
-                // CSVに対応するpartsが存在しなければログ出力する（該当する場合のみ）
-                if (!bagcatMapping[entry.parts]) {
-                  console.log("Processed entry (bagcatMappingなし):", entry);
-                }
-                return entry;
-              });
-            }
-
-            var combinedItems = [];
-            if (Array.isArray(itemSchemaData)) {
-              combinedItems = combinedItems.concat(itemSchemaData);
-            }
-            if (Array.isArray(itemAnotherData)) {
-              combinedItems = combinedItems.concat(itemAnotherData);
-            }
-
-            var seenBazaarIds = {};
-            uniqueTradeItems = [];
-            bazzarData.bazzarList.forEach(function (item) {
-              if (!seenBazaarIds[item.bazaarId]) {
-                uniqueTradeItems.push(item);
-                seenBazaarIds[item.bazaarId] = true;
-              }
-            });
-
-            uniqueTradeItems.forEach(function (item) {
-              if (Array.isArray(item.listingItems)) {
-                item.listingItems = item.listingItems.map(function (itemCode) {
-                  var match = combinedItems.find(function (entry) {
-                    return entry.itemCode === itemCode;
-                  });
-                  if (match) {
-                    return {
-                      itemCode: itemCode,
-                      itemName: match.itemName,
-                      parts: match.parts,
-                      itemGender: match.itemGender,
-                      type: match.type,
-                      param: match.param,
-                    };
-                  } else {
-                    return {
-                      itemCode: itemCode,
-                      itemName: "",
-                      parts: "",
-                      itemGender: "",
-                      type: "",
-                      param: 0,
-                    };
-                  }
-                });
-              }
-            });
-
-            uniqueTradeItems.forEach(function (item) {
-              if (Array.isArray(item.listingItems)) {
-                item.listingItems.forEach(function (listItem) {
-                  var matchingAvatar = avatarList.find(function (avatar) {
-                    return (
-                      avatar.type1 === listItem.type &&
-                      partsMapping[avatar.partText] === listItem.parts
-                    );
-                  });
-                  var diff = 0;
-                  if (matchingAvatar) {
-                    diff = listItem.param - Number(matchingAvatar.increase);
-                    if (diff < 0) diff = 0;
-                  } else {
-                    diff = listItem.param;
-                  }
-                  listItem.diff = diff;
-                });
-              }
-            });
-
-            uniqueTradeItems.forEach(function (item) {
-              if (
-                Array.isArray(item.listingItems) &&
-                item.listingItems.length > 0
-              ) {
-                var uniqueDiffs = {};
-                item.listingItems.forEach(function (listItem) {
-                  var key = listItem.type + "_" + listItem.parts;
-                  if (uniqueDiffs[key] === undefined) {
-                    uniqueDiffs[key] = listItem.diff;
-                  } else {
-                    if (listItem.diff > uniqueDiffs[key]) {
-                      uniqueDiffs[key] = listItem.diff;
-                    }
-                  }
-                });
-                item.typeSums = {};
-                for (var key in uniqueDiffs) {
-                  if (uniqueDiffs.hasOwnProperty(key)) {
-                    var t = key.split("_")[0];
-                    if (!item.typeSums[t]) {
-                      item.typeSums[t] = 0;
-                    }
-                    item.typeSums[t] += uniqueDiffs[key];
-                  }
-                }
-              }
-            });
-
-            var selectedGender = localStorage.getItem("avatarGender");
-            var filteredTradeItems = uniqueTradeItems.filter(function (item) {
-              if (!item.listingItems || !Array.isArray(item.listingItems))
-                return true;
-              if (selectedGender === "F") {
-                return !item.listingItems.some(function (listItem) {
-                  return listItem.itemGender === "M";
-                });
-              } else if (selectedGender === "M") {
-                return !item.listingItems.some(function (listItem) {
-                  return listItem.itemGender === "F";
-                });
-              }
-              return true;
-            });
-
-            var savedUpdateStatus = localStorage.getItem("updateStatus");
-            var selectedTypes = [];
-            if (savedUpdateStatus) {
-              selectedTypes = JSON.parse(savedUpdateStatus);
-            }
-            var displayTypes = selectedTypes.slice().sort(function (a, b) {
-              var idxA = typeOptions.indexOf(a);
-              var idxB = typeOptions.indexOf(b);
-              return idxA - idxB;
-            });
-
-            var tableHTML = "<div class='scrollable-table-container'>";
-            tableHTML += "<table style='border-collapse: collapse;'>";
-            tableHTML += "<thead><tr>";
-            tableHTML +=
-              "<th style='border: 1px solid #ccc; padding: 8px;'>販売リンク</th>";
-            tableHTML +=
-              "<th style='border: 1px solid #ccc; padding: 8px;'>締め切り日時</th>";
-            tableHTML +=
-              "<th style='border: 1px solid #ccc; padding: 8px;'>ハンコイン</th>";
-            displayTypes.forEach(function (t) {
-              tableHTML +=
-                "<th style='border: 1px solid #ccc; padding: 8px;'>" +
-                t +
-                "<br>(ハンコイン/差分)</th>";
-            });
-            tableHTML +=
-              "<th style='border: 1px solid #ccc; padding: 8px;'>詳細</th>";
-            tableHTML += "</tr></thead>";
-            tableHTML += "<tbody>";
-            filteredTradeItems.forEach(function (item) {
-              var sellEndDate = item.sellEndDate || "";
-              if (sellEndDate.indexOf(" ") !== -1) {
-                sellEndDate = sellEndDate.split(" ").join("<br>");
-              }
-              var hancoin = Number(item.hancoin) || 0;
-              tableHTML += "<tr>";
-              tableHTML +=
-                "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='openLinkInNewTab(\"" +
-                item.bazaarId +
-                "\")'>販売リンク</button></td>";
-              tableHTML +=
-                "<td style='border: 1px solid #ccc; padding: 8px;'>" +
-                sellEndDate +
-                "</td>";
-              tableHTML +=
-                "<td style='border: 1px solid #ccc; padding: 8px;'>" +
-                hancoin +
-                "</td>";
-              displayTypes.forEach(function (t) {
-                var sumDiff =
-                  item.typeSums && item.typeSums[t] ? item.typeSums[t] : 0;
-                var ratio =
-                  sumDiff !== 0 ? (hancoin / sumDiff).toFixed(2) : "0";
-                tableHTML +=
-                  "<td style='border: 1px solid #ccc; padding: 8px;'>" +
-                  ratio +
-                  "</td>";
-              });
-              tableHTML +=
-                "<td style='border: 1px solid #ccc; padding: 8px;'><button onclick='showModal(\"" +
-                item.bazaarId +
-                "\")'>詳細</button></td>";
-              tableHTML += "</tr>";
-            });
-            tableHTML += "</tbody></table>";
-            tableHTML += "</div>";
-            document.getElementById("tradeDataDisplay").innerHTML = tableHTML;
-
-            var tradeTable = document.querySelector(
-              "#tradeDataDisplay .scrollable-table-container table"
-            );
-            if (tradeTable) {
-              var tradeHeaderCells = tradeTable.querySelectorAll("thead th");
-              tradeHeaderCells.forEach(function (cell, index) {
-                cell.addEventListener("click", function () {
-                  sortTableByColumn(tradeTable, index);
-                });
-              });
-            }
-          })
-          .catch(function (error) {
-            console.error("【DEBUG】エラー発生:", error);
-          });
-      }
-
-      function openLinkInNewTab(bazaarId) {
-        const url =
-          "https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=" +
-          bazaarId;
-        window.open(url, "_blank");
-      }
-
-      // --- モーダルウィンドウ ---
-      const modalWindow = document.getElementById("modalWindow");
-      const modalContent = document.getElementById("modalContent");
-      const closeModalBtn = document.getElementById("closeModal");
-      closeModalBtn.addEventListener("click", function () {
-        modalWindow.style.display = "none";
-        modalContent.innerHTML = "";
-      });
-      function showModal(bazaarId) {
-        var item = uniqueTradeItems.find(function (itm) {
-          return itm.bazaarId === bazaarId;
-        });
-        if (!item) return;
-        modalContent.innerHTML = "";
-        if (Array.isArray(item.listingItems)) {
-          item.listingItems.forEach(function (listItem) {
-            var itemDiv = document.createElement("div");
-            itemDiv.className = "modalItem";
-            var img = document.createElement("img");
-            img.src =
-              "https://puretomo-image.hange.jp/disp/" +
-              listItem.itemCode.toLowerCase() +
-              ".gif";
-            itemDiv.appendChild(img);
-            var partsText = bagcatMapping[listItem.parts];
-            if (!partsText) {
-              console.error(
-                "Mapping not found for parts code:",
-                listItem.parts
-              );
-              partsText = listItem.parts;
-            }
-            var diffText = listItem.type + "+" + listItem.diff;
-            var infoP = document.createElement("p");
-            infoP.textContent = partsText + " / 差分: " + diffText;
-            itemDiv.appendChild(infoP);
-            var nameP = document.createElement("p");
-            nameP.textContent = listItem.itemName;
-            itemDiv.appendChild(nameP);
-            modalContent.appendChild(itemDiv);
-          });
-        }
-        modalWindow.style.display = "block";
-      }
-
-      function sortTableByColumn(table, colIndex) {
-        var tbody = table.querySelector("tbody");
-        var rows = Array.from(tbody.querySelectorAll("tr"));
-        rows.sort(function (rowA, rowB) {
-          var cellA = rowA.children[colIndex];
-          var cellB = rowB.children[colIndex];
-          var numA = parseFloat(cellA.textContent);
-          var numB = parseFloat(cellB.textContent);
-          var sortA = isNaN(numA) || numA === 0 ? Infinity : numA;
-          var sortB = isNaN(numB) || numB === 0 ? Infinity : numB;
-          return sortA - sortB;
-        });
-        rows.forEach(function (row) {
-          tbody.appendChild(row);
-        });
-      }
-
-      var avatarTable = document.getElementById("avatarTable");
-      if (avatarTable) {
-        var avatarHeaderCells = avatarTable.querySelectorAll("thead th");
-        avatarHeaderCells.forEach(function (cell, index) {
-          cell.addEventListener("click", function () {
-            sortTableByColumn(avatarTable, index);
+        uniqueTradeItems.forEach(it=>{
+          it.listingItems.forEach(li=>{
+            let jp=bagcatMapping[li.parts]||li.parts;
+            let av=avatarList.find(x=>x.type1===li.type&&x.partText===jp);
+            let d=li.param; if(av){ d=li.param-Number(av.increase); if(d<0)d=0;} li.diff=d;
           });
         });
-      }
-    </script>
-  </body>
+        uniqueTradeItems.forEach(it=>{ let sums={}; it.listingItems.forEach(li=>{ sums[li.type]=Math.max(sums[li.type]||0,li.diff); }); it.typeSums=sums; });
+        let gender=localStorage.getItem("avatarGender");
+        let filtered=uniqueTradeItems.filter(it=>!gender||!it.listingItems.some(li=>li.itemGender===(gender==="F"?"M":"F")));
+        let saved=JSON.parse(localStorage.getItem("updateStatus")||"[]");
+        let displayTypes=saved.sort((a,b)=>typeOptions.indexOf(a)-typeOptions.indexOf(b));
+        let html="<div class='scrollable-table-container'><table><thead><tr><th>販売リンク</th><th>締め切り日時</th><th>ハンコイン</th>";
+        displayTypes.forEach(t=>html+=`<th>${t}<br>(HC/差分)</th>`);
+        html+="<th>詳細</th></tr></thead><tbody>";
+        filtered.forEach(it=>{
+          let end=(it.sellEndDate||"").replace(" ","<br>");
+          let hc=Number(it.hancoin)||0;
+          html+="<tr>";
+          html+=`<td><button onclick="openLinkInNewTab('${it.bazaarId}')">販売リンク</button></td>`;
+          html+=`<td>${end}</td><td>${hc}</td>`;
+          displayTypes.forEach(t=>{
+            let sum=it.typeSums[t]||0;
+            let ratio=sum?(hc/sum).toFixed(2):"0";
+            html+=`<td>${ratio}</td>`;
+          });
+          html+=`<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td>`;
+          html+="</tr>";
+        });
+        html+="</tbody></table></div>";
+        document.getElementById("tradeDataDisplay").innerHTML=html;
+        let tbl=document.querySelector("#tradeDataDisplay table");
+        tbl.querySelectorAll("thead th").forEach((cell,i)=>cell.addEventListener("click",()=>sortTableByColumn(tbl,i)));
+      }).catch(e=>console.error("販売アバター検索エラー:",e));
+    }
+
+    // リンク新規タブ
+    function openLinkInNewTab(id){
+      window.open(`https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${id}`,"_blank");
+    }
+    // モーダル表示
+    function showModal(id){
+      let c=document.getElementById("modalContent"); c.innerHTML="";
+      let it=uniqueTradeItems.find(x=>x.bazaarId===id); if(!it)return;
+      it.listingItems.forEach(li=>{
+        let div=document.createElement("div"); div.className="modalItem";
+        let img=document.createElement("img"); img.src=`https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`; div.appendChild(img);
+        let jp=bagcatMapping[li.parts]||li.parts;
+        let p1=document.createElement("p"); p1.textContent=`${jp} / 差分:${li.type}+${li.diff}`; div.appendChild(p1);
+        let p2=document.createElement("p"); p2.textContent=li.itemName; div.appendChild(p2);
+        c.appendChild(div);
+      });
+      document.getElementById("modalWindow").style.display="block";
+    }
+    // テーブルソート
+    function sortTableByColumn(table,colIndex){
+      let tbody=table.querySelector("tbody"), rows=Array.from(tbody.querySelectorAll("tr")), ths=table.querySelectorAll("thead th");
+      ths.forEach(th=>th.classList.remove("sort-asc","sort-desc"));
+      if(currentSortColumn===colIndex) currentSortDir=(currentSortDir==="asc"?"desc":"asc"); else{currentSortColumn=colIndex;currentSortDir="asc";}
+      ths[colIndex].classList.add(currentSortDir==="asc"?"sort-asc":"sort-desc");
+      let isRatio=ths[colIndex].textContent.includes("(HC/差分)");
+      rows.sort((a,b)=>{
+        let ta=a.children[colIndex].textContent.trim(), tb=b.children[colIndex].textContent.trim(), na=parseFloat(ta), nb=parseFloat(tb);
+        let va,vb;
+        if(!isNaN(na)&&!isNaN(nb)){
+          if(isRatio&&currentSortDir==="asc"){va=na===0?Infinity:na;vb=nb===0?Infinity:nb;}else{va=na;vb=nb;}
+        }else{va=ta;vb=tb;}
+        let cmp=(typeof va==="number"&&typeof vb==="number"?va-vb:String(va).localeCompare(String(vb)));
+        return currentSortDir==="asc"?cmp:-cmp;
+      });
+      rows.forEach(r=>tbody.appendChild(r));
+    }
+    // モーダル閉じる
+    document.getElementById("closeModal").addEventListener("click",()=>document.getElementById("modalWindow").style.display="none");
+  </script>
+</body>
 </html>
