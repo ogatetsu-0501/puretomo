@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>アバター管理画面</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -62,8 +62,12 @@
     <button id="closeModal">閉じる</button>
   </div>
 
-  <button id="switchToLeft" class="nav-btn"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
-  <button id="switchToRight" class="nav-btn"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
+  <button id="switchToLeft" class="nav-btn">
+    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+  </button>
+  <button id="switchToRight" class="nav-btn">
+    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+  </button>
 
   <div class="main-container" id="mainContainer">
     <div class="sidebar" id="sidebar">
@@ -132,8 +136,9 @@
       <div id="historyGraph" style="display:none">
         <h2>履歴グラフ</h2>
         <div class="history-controls">
-          <select id="historyParamSelect"><option>選択してください</option></select>
-          <select id="historyPartSelect"><option>選択してください</option></select>
+          <select id="historyParamSelect"><option value="">パラメータを選択</option></select>
+          <select id="historyValueSelect"><option value="">上昇値を選択</option></select>
+          <select id="historyTypeSelect"><option value="">種類を選択</option></select>
           <button id="drawHistoryBtn">グラフ表示</button>
         </div>
         <canvas id="historyChart"></canvas>
@@ -152,16 +157,35 @@
   </div>
 
   <script>
-    let bagcatMapping={},typeOptions=[],avatarList=[],uniqueTradeItems=[],historyData={},sections=["readme","avatarForm","settings","tradeSearch","historyGraph"];
-    function fetchCsv(u){return fetch(u).then(r=>r.text()).then(t=>t.trim().split("\n").map(l=>l.split(","))).catch(()=>[]);}
-    function loadBagcatLabels(){return fetchCsv("bagcat_labels.csv").then(r=>{r.slice(1).forEach(c=>bagcatMapping[c[0]]=c[1]);});}
-    function loadTypeOptions(){return fetchCsv("type_options.csv").then(r=>{typeOptions=r.slice(1).map(r2=>r2[0]);});}
-    function showSection(id){sections.forEach(s=>document.getElementById(s).style.display=s===id?"block":"none");localStorage.setItem("lastSection",id);if(id==="tradeSearch")loadTrade();}
+    let bagcatMapping={},typeOptions=[],avatarList=[],historyData={},itemCodeMap={};
+    const sections=["readme","avatarForm","settings","tradeSearch","historyGraph"];
+    function showSection(id){
+      sections.forEach(s=>document.getElementById(s).style.display=s===id?"block":"none");
+      localStorage.setItem("lastSection",id);
+      if(id==="tradeSearch") loadTrade();
+      if(id==="settings") generateUpdateStatusCheckboxes();
+    }
     window.addEventListener("load",()=>{
-      Promise.all([loadBagcatLabels(),loadTypeOptions()]).then(()=>{
-        let ls=localStorage.getItem("lastSection")||"readme";showSection(ls);
-        let s=localStorage.getItem("avatarList");if(s){avatarList=JSON.parse(s);renderAvatarTable();}
-        fetch("buzzerHistory.json").then(r=>r.json()).then(d=>{historyData=d;populateHistoryParams();});
+      Object.assign(bagcatMapping,{
+        "H":"トップス","L":"ボトムス","HL":"ワンピース","P":"ヘアスタイル","F":"フェイス",
+        "A4":"背景","CT":"アウター","SA":"セット衣装1","SB":"セット衣装2","AE":"帽子",
+        "AD":"めがね","AF":"アクセ1","B2":"アクセ2","B1":"雑貨1","B3":"雑貨2",
+        "E1":"ペット1","E2":"ペット2","E3":"ペット3","E4":"ペット4","AA":"エフェクト",
+        "AB":"その他1","A1":"その他2","A2":"その他3","A3":"その他4","BL":"モイトイ"
+      });
+      typeOptions=["INT","ALL","HPR","SP","PET","HP","SPR","LUK","ATK","EXP","MAT","POW","VIT","SPD"];
+      let last=localStorage.getItem("lastSection")||"readme";
+      showSection(last);
+      let s=localStorage.getItem("avatarList");
+      if(s){avatarList=JSON.parse(s);renderAvatarTable();}
+      fetch("buzzerHistory.json").then(r=>r.json()).then(d=>{historyData=d;populateHistoryParams();});
+      fetch("itemCodeSchema.json").then(r=>r.json()).then(a=>{
+        fetch("itemAnother.json").then(r=>r.json()).then(b=>{
+          a.concat(b).forEach(o=>{
+            let m=o.itemName.match(/^【([^+]+)\+(\d+)%?】/);
+            itemCodeMap[o.itemCode]={...o,type:m?m[1]:"",param:m?parseInt(m[2],10):0};
+          });
+        });
       });
     });
     document.getElementById("hamburgerBtn").addEventListener("click",()=>{
@@ -173,17 +197,13 @@
     document.getElementById("switchToLeft").addEventListener("click",()=>{document.querySelector(".left-panel").style.transform="translateX(0)";document.querySelector(".right-panel").style.transform="translateX(100%)";document.getElementById("switchToLeft").style.display="none";document.getElementById("switchToRight").style.display="block";});
     document.getElementById("switchToRight").addEventListener("click",()=>{document.querySelector(".left-panel").style.transform="translateX(-100%)";document.querySelector(".right-panel").style.transform="translateX(0)";document.getElementById("switchToLeft").style.display="block";document.getElementById("switchToRight").style.display="none";});
 
-    const partsMapping={ "トップス":"H","ボトムス":"L","ワンピース":"HL","ヘアスタイル":"P","フェイス":"F","背景":"A4","アウター":"CT","セット衣装1":"SA","セット衣装2":"SB","帽子":"AE","めがね":"AD","アクセ1":"AF","アクセ2":"B2","雑貨1":"B1","雑貨2":"B3","ペット1":"E1","ペット2":"E2","ペット3":"E3","ペット4":"E4","エフェクト":"AA","その他1":"AB","その他2":"A1","その他3":"A2","その他4":"A3","モイトイ":"BL"};
-    window.addEventListener("load",()=>{
-      let s=localStorage.getItem("avatarList");if(s){avatarList=JSON.parse(s);renderAvatarTable();}
-    });
     const partInput=document.getElementById("partInput"),type1Input=document.getElementById("type1Input"),type2Input=document.getElementById("type2Input"),valueInput=document.getElementById("valueInput"),addButton=document.getElementById("addButton"),avatarTableBody=document.querySelector("#avatarTable tbody");
     document.getElementById("partSelect").addEventListener("change",e=>{partInput.value=e.target.value;checkInput();});
     document.getElementById("type1Select").addEventListener("change",e=>{type1Input.value=e.target.value;type2Input.disabled=!e.target.value;updateType2Datalist(e.target.value);checkInput();});
     document.getElementById("type2Select").addEventListener("change",e=>{type2Input.value=e.target.value;checkInput();});
     partInput.addEventListener("input",checkInput);type1Input.addEventListener("input",checkInput);valueInput.addEventListener("input",checkInput);
     function checkInput(){addButton.disabled=!(partInput.value.trim()&&type1Input.value.trim()&&valueInput.value.trim()&&!isNaN(valueInput.value));}
-    function updateType2Datalist(v){let dl=document.getElementById("type2List");dl.innerHTML="";let sel=document.getElementById("type2Select");sel.innerHTML="";let opt0=document.createElement("option");opt0.value="";sel.appendChild(opt0);typeOptions.forEach(o=>{if(o!==v){let dopt=document.createElement("option");dopt.value=o;dl.appendChild(dopt);let sopt=document.createElement("option");sopt.value=o;sel.appendChild(sopt);}});}
+    function updateType2Datalist(v){let dl=document.getElementById("type2List");dl.innerHTML="";let sel=document.getElementById("type2Select");sel.innerHTML="";let o0=document.createElement("option");o0.value="";sel.appendChild(o0);typeOptions.forEach(o=>{if(o!==v){let d=document.createElement("option");d.value=o;dl.appendChild(d);let s=document.createElement("option");s.value=o;sel.appendChild(s);}});}
     addButton.addEventListener("click",()=>{
       let na={partText:partInput.value.trim(),type1:type1Input.value.trim(),type2:type2Input.value.trim()||"なし",increase:valueInput.value.trim()};
       avatarList.push(na);localStorage.setItem("avatarList",JSON.stringify(avatarList));renderAvatarTable();partInput.value=type1Input.value=type2Input.value=valueInput.value="";type2Input.disabled=true;checkInput();
@@ -203,88 +223,102 @@
       let uc=JSON.parse(localStorage.getItem("updateStatus")||"[]"),cnt=document.getElementById("updateStatusContainer");cnt.innerHTML="";
       typeOptions.forEach(t=>{let cb=document.createElement("input");cb.type="checkbox";cb.id="status_"+t;cb.value=t;cb.checked=uc.includes(t);let lb=document.createElement("label");lb.htmlFor=cb.id;lb.textContent=t;lb.appendChild(cb);cnt.appendChild(lb);});
     }
-    document.querySelector('[data-target="settings"]').addEventListener("click",generateUpdateStatusCheckboxes);
 
     document.getElementById("reloadTrade").addEventListener("click",loadTrade);
     function loadTrade(){
-      fetch("bazzarList.json").then(r=>r.json()).then(data=>{
-        let items=data.bazzarList,ms=JSON.parse(localStorage.getItem("updateStatus")||"[]"),gd=localStorage.getItem("avatarGender");
-        let rows="";
-        let cols=["販売リンク","締め切り日時","ハンコイン",...ms.map(t=>" "+t)];
-        rows+="<thead><tr>"+cols.map((c,i)=>"<th"+(i>2?` data-type="${ms[i-3]}"`:"")+">"+c+"</th>").join("")+"<th>詳細</th></tr></thead><tbody>";
-        items.forEach(it=>{
-          let sellEnd=it.sellEndDate.replace(" ","<br>"),hc=it.hancoin;
-          rows+="<tr>";
-          rows+=`<td><button onclick="window.open('https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${it.bazaarId}','','')">販売リンク</button></td>`;
-          rows+=`<td>${sellEnd}</td><td>${hc}</td>`;
-          ms.forEach(type=>{
-            let sum=0;
-            it.listingItems.forEach(ic=>{
-              let m=itemCodeMap[ic];
-              if(m&&m.type===type){
-                let p=m.param;sum+=p;
-              }
+      fetch("bazzarList.json")
+        .then(r=>{if(!r.ok) throw new Error("HTTP "+r.status); return r.json()})
+        .then(data=>{
+          const items=Array.isArray(data)?data:data.bazzarList;
+          const ms=JSON.parse(localStorage.getItem("updateStatus")||"[]");
+          let cols=["販売リンク","締め切り日時","ハンコイン",...ms.map(t=>t),"詳細"];
+          let html="<table><thead><tr>"+cols.map((c,i)=>i<3?`<th>${c}</th>`:`<th data-type="${ms[i-3]}">${c}</th>`).join("")+"</tr></thead><tbody>";
+          items.forEach(it=>{
+            let sellEnd=it.sellEndDate.replace(" ","<br>");
+            html+="<tr>";
+            html+=`<td><button onclick="window.open('https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${it.bazaarId}')">販売リンク</button></td>`;
+            html+=`<td>${sellEnd}</td><td>${it.hancoin}</td>`;
+            ms.forEach(type=>{
+              let sum=0;
+              it.listingItems.forEach(ic=>{
+                let m=itemCodeMap[ic];
+                if(m&&m.type===type){sum+=m.param;}
+              });
+              let v=sum? (it.hancoin/sum).toFixed(2):0;
+              html+=`<td>${v}</td>`;
             });
-            let v=sum? (hc/sum).toFixed(2):0;
-            rows+=`<td>${v}</td>`;
+            html+=`<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td></tr>`;
           });
-          rows+=`<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td>`;
-          rows+="</tr>";
-        });
-        rows+="</tbody>";
-        document.getElementById("tradeDataDisplay").innerHTML=`<div class="scrollable-table-container"><table>${rows}</table></div>`;
-        document.querySelectorAll("#tradeDataDisplay th[data-type]").forEach(th=>th.addEventListener("click",()=>{
-          sortTable(th.cellIndex,th.dataset.type);
-        }));
-      });
+          html+="</tbody></table>";
+          document.getElementById("tradeDataDisplay").innerHTML=`<div class="scrollable-table-container">${html}</div>`;
+          document.querySelectorAll("#tradeDataDisplay th[data-type]").forEach(th=>th.addEventListener("click",()=>sortTradeTable(th.cellIndex)));
+        })
+        .catch(e=>{document.getElementById("tradeDataDisplay").innerHTML=`<p>データ読み込み失敗: ${e.message}</p>`;});
     }
-    let itemCodeMap={};
-    Promise.all([fetch("itemCodeSchema.json").then(r=>r.json()),fetch("itemAnother.json").then(r=>r.json())]).then(([a,b])=>{
-      a.concat(b).forEach(o=>{
-        let m=o.itemName.match(/^【([^+]+)\+(\d+)%?】/);
-        itemCodeMap[o.itemCode]={...o,type:m?m[1]:"",param:m?parseInt(m[2],10):0};
-      });
-    });
-
-    function sortTable(ci,type){
-      let tb=document.querySelector("#tradeDataDisplay table tbody"),rows=Array.from(tb.rows);
-      rows.sort((r1,r2)=>{
-        let v1=parseFloat(r1.cells[ci].textContent)||Infinity;
-        let v2=parseFloat(r2.cells[ci].textContent)||Infinity;
+    function sortTradeTable(ci){
+      let tb=document.querySelector("#tradeDataDisplay table tbody");
+      Array.from(tb.rows).sort((a,b)=>{
+        let v1=parseFloat(a.cells[ci].textContent)||Infinity;
+        let v2=parseFloat(b.cells[ci].textContent)||Infinity;
         return v1-v2;
-      });
-      rows.forEach(r=>tb.appendChild(r));
+      }).forEach(r=>tb.appendChild(r));
     }
 
     document.getElementById("historyParamSelect").addEventListener("change",()=>{
-      let p=document.getElementById("historyParamSelect").value,sel=document.getElementById("historyPartSelect");
-      sel.innerHTML="<option>選択してください</option>";
+      let p=document.getElementById("historyParamSelect").value;
+      let valSel=document.getElementById("historyValueSelect"),typeSel=document.getElementById("historyTypeSelect");
+      valSel.innerHTML="<option value=''>上昇値を選択</option>";
+      typeSel.innerHTML="<option value=''>種類を選択</option>";
       if(!p) return;
-      let ps=new Set();
-      Object.values(historyData[p]).forEach(l=>Object.keys(l).forEach(c=>ps.add(c)));
-      ps.forEach(c=>{let o=document.createElement("option");o.value=c;o.textContent=(bagcatMapping[c]||c)+"("+c+")";sel.appendChild(o);});
+      Object.keys(historyData[p]).sort((a,b)=>a-b).forEach(v=>{
+        let o=document.createElement("option");o.value=v;o.textContent=v;valSel.appendChild(o);
+      });
+    });
+
+    document.getElementById("historyValueSelect").addEventListener("change",()=>{
+      let p=document.getElementById("historyParamSelect").value;
+      let v=document.getElementById("historyValueSelect").value;
+      let typeSel=document.getElementById("historyTypeSelect");
+      typeSel.innerHTML="<option value=''>種類を選択</option>";
+      if(!p||!v) return;
+      Object.keys(historyData[p][v]).forEach(t=>{
+        let o=document.createElement("option");o.value=t;o.textContent=bagcatMapping[t]||t;typeSel.appendChild(o);
+      });
     });
 
     function populateHistoryParams(){
       let sel=document.getElementById("historyParamSelect");
-      sel.innerHTML="<option>選択してください</option>";
-      Object.keys(historyData).forEach(p=>{let o=document.createElement("option");o.value=p;o.textContent=p;sel.appendChild(o);});
+      sel.innerHTML="<option value=''>パラメータを選択</option>";
+      Object.keys(historyData).forEach(p=>{
+        let o=document.createElement("option");o.value=p;o.textContent=p;sel.appendChild(o);
+      });
     }
 
     let historyChart=null;
     document.getElementById("drawHistoryBtn").addEventListener("click",()=>{
-      let p=document.getElementById("historyParamSelect").value,c=document.getElementById("historyPartSelect").value;
-      if(!p||!c) return;
-      let levels=Object.keys(historyData[p]).sort((a,b)=>a-b),datasets=[];
-      levels.forEach(l=>{
-        let s=historyData[p][l][c];if(!s) return;
-        let times=Object.keys(s).sort(),labels=times.map(t=>new Date(t).toLocaleTimeString()),values=times.map(t=>s[t]);
-        datasets.push({label:l,data:values,fill:false});
-      });
+      let p=document.getElementById("historyParamSelect").value;
+      let v=document.getElementById("historyValueSelect").value;
+      let t=document.getElementById("historyTypeSelect").value;
+      if(!p||!v||!t) return;
+      let series=historyData[p][v][t];
+      let times=Object.keys(series).sort();
+      let labels=times.map(x=>new Date(x).toLocaleTimeString());
+      let data=times.map(x=>series[x]);
       if(historyChart) historyChart.destroy();
       let ctx=document.getElementById("historyChart").getContext("2d");
-      historyChart=new Chart(ctx,{type:'line',data:{labels:datasets.length?datasets[0].data.map((_,i)=>new Date(Object.keys(historyData[p][levels[0]][c]).sort()[i]).toLocaleTimeString()):[],datasets:datasets},options:{responsive:true,plugins:{legend:{position:'top'},title:{display:true,text:p+"("+ (bagcatMapping[c]||c)+")履歴"}},scales:{x:{title:{display:true,text:'時間'}},y:{title:{display:true,text:'ハンコイン'},beginAtZero:true}}}});
+      historyChart=new Chart(ctx,{
+        type:"line",
+        data:{labels,datasets:[{label:`${p} ${v} ${bagcatMapping[t]||t}`,data,fill:false}]},
+        options:{responsive:true,scales:{x:{title:{display:true,text:"時間"}},y:{title:{display:true,text:"ハンコイン"},beginAtZero:true}}}
+      });
     });
+
+    function showModal(id){
+      let items=historyData; // placeholder
+      document.getElementById("modalWindow").style.display="block";
+    }
+    document.getElementById("closeModal").addEventListener("click",()=>{document.getElementById("modalWindow").style.display="none";});
+
   </script>
 </body>
 </html>
