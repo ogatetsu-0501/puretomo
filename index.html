@@ -2,11 +2,53 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>アバター管理画面</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    /*（省略せず前回と同様の CSS をここに貼り付け）*/
-    /* ... */
+    html,body{height:100%;margin:0;padding:0;box-sizing:border-box;}
+    *,*::before,*::after{box-sizing:inherit;}
+    body{font-family:Arial,sans-serif;background:#f2f2f2;color:#333;}
+    header{display:flex;align-items:center;background:#4caf50;color:#fff;padding:10px;box-shadow:0 2px 4px rgba(0,0,0,0.1);}
+    .hamburger{font-size:24px;cursor:pointer;margin-right:10px;}
+    header h1{margin:0;font-size:18px;}
+    .sidebar{position:fixed;top:0;left:-220px;width:200px;height:100vh;background:#333;color:#fff;transition:left .3s;z-index:1500;padding-top:50px;}
+    .sidebar ul{list-style:none;padding:0;margin:0;}
+    .sidebar li{padding:10px 16px;cursor:pointer;}
+    .sidebar li:hover{background:rgba(255,255,255,0.1);}
+    .main-container{position:relative;width:100%;height:calc(100vh - 50px);overflow:hidden;transition:margin-left .3s;padding:10px;}
+    .left-panel,.right-panel{position:absolute;top:0;left:0;width:100%;height:100%;background:#fff;border-radius:8px;padding:16px;overflow-y:auto;transition:transform .3s;}
+    .left-panel{transform:translateX(0);}
+    .right-panel{transform:translateX(100%);}
+    .nav-btn{position:fixed;top:50%;transform:translateY(-50%);width:40px;height:40px;background:rgba(0,0,0,.3);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:1600;}
+    #switchToLeft{left:10px;display:none;}
+    #switchToRight{right:10px;}
+    .form-group{margin-bottom:16px;}
+    .form-group label{display:block;margin-bottom:4px;font-weight:bold;}
+    .form-group input[type="text"],.form-group input[type="number"],.form-group select{width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;}
+    button{padding:8px 16px;background:#4caf50;color:#fff;border:none;border-radius:4px;cursor:pointer;white-space:nowrap;}
+    button:disabled{background:#ccc;cursor:default;}
+    .pop-status-group{display:flex;flex-wrap:wrap;gap:8px;}
+    .pop-status-group label{display:flex;align-items:center;gap:4px;background:#ffe082;padding:4px 8px;border-radius:20px;}
+    .pop-status-group input{accent-color:#ff6f00;}
+    .scrollable-table-container{overflow:auto;max-height:calc(100vh - 200px);background:#fff;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+    table{width:100%;border-collapse:collapse;}
+    thead{position:sticky;top:0;z-index:6;background:#fafafa;}
+    thead th{padding:12px 16px;border:1px solid #e0e0e0;white-space:nowrap;padding-right:24px;}
+    thead th:first-child{position:sticky;left:0;z-index:8;}
+    tbody td{padding:12px 16px;border:1px solid #e0e0e0;background:#fff;}
+    tbody td:first-child{position:sticky;left:0;z-index:7;background:#fff;}
+    th.sort-asc::after{content:" ▲";}
+    th.sort-desc::after{content:" ▼";}
+    #modalWindow{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:60vw;max-width:60vw;background:#fff;padding:24px;z-index:1700;box-shadow:0 4px 12px rgba(0,0,0,.2);border-radius:8px;}
+    #modalContent{display:flex;overflow-x:auto;gap:16px;}
+    .modalItem{flex:0 0 auto;background:#f7f7f7;padding:12px;border-radius:4px;text-align:center;}
+    .modalItem img{max-width:80px;margin-bottom:8px;border-radius:4px;}
+    #closeModal{margin-top:16px;width:100%;background:#e53935;}
+    #historyGraph canvas{width:100%!important;height:400px!important;}
+    .history-controls{display:flex;gap:12px;align-items:flex-end;margin-bottom:16px;}
+    @media(max-width:767px){.main-container{padding:12px;} .left-panel,.right-panel{padding:12px;border-radius:0;} .form-group{margin-bottom:12px;} .scrollable-table-container{margin-top:12px;}}
+    @media(min-width:768px){#partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List{display:none;} #partSelect,#type1Select,#type2Select{display:inline-block;width:100%;}}
   </style>
 </head>
 <body>
@@ -15,15 +57,13 @@
     <h1>アバター管理画面</h1>
   </header>
 
-  <!-- モーダル -->
   <div id="modalWindow">
     <div id="modalContent"></div>
     <button id="closeModal">閉じる</button>
   </div>
 
-  <!-- 切替ボタン -->
-  <button id="switchToLeft" class="nav-btn">←</button>
-  <button id="switchToRight" class="nav-btn">→</button>
+  <button id="switchToLeft" class="nav-btn"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
+  <button id="switchToRight" class="nav-btn"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
 
   <div class="main-container" id="mainContainer">
     <div class="sidebar" id="sidebar">
@@ -32,6 +72,7 @@
         <li data-target="avatarForm">所持アバター追加</li>
         <li data-target="settings">設定</li>
         <li data-target="tradeSearch">販売アバター検索</li>
+        <li data-target="historyGraph">履歴グラフ</li>
       </ul>
     </div>
 
@@ -39,17 +80,63 @@
       <div id="readme"><h2>Readme</h2></div>
 
       <div id="avatarForm" style="display:none">
-        <!-- フォーム部分（省略せず前回と同様） -->
+        <h2>所持アバター追加</h2>
+        <div class="form-group">
+          <label>パーツ:</label>
+          <input type="text" id="partInput" list="partsList" placeholder="例: トップス">
+          <datalist id="partsList">
+            <option value="トップス"><option value="ボトムス"><option value="ワンピース"><option value="ヘアスタイル"><option value="フェイス"><option value="背景"><option value="アウター"><option value="セット衣装1"><option value="セット衣装2"><option value="帽子"><option value="めがね"><option value="アクセ1"><option value="アクセ2"><option value="雑貨1"><option value="雑貨2"><option value="ペット1"><option value="ペット2"><option value="ペット3"><option value="ペット4"><option value="エフェクト"><option value="その他1"><option value="その他2"><option value="その他3"><option value="その他4"><option value="モイトイ">
+          </datalist>
+          <select id="partSelect"></select>
+        </div>
+        <div class="form-group">
+          <label>種類①:</label>
+          <input type="text" id="type1Input" list="type1List" placeholder="例: INT">
+          <datalist id="type1List">
+            <option value="INT"><option value="ALL"><option value="HPR"><option value="SP"><option value="PET"><option value="HP"><option value="SPR"><option value="LUK"><option value="ATK"><option value="EXP"><option value="MAT"><option value="POW"><option value="VIT"><option value="SPD">
+          </datalist>
+          <select id="type1Select"></select>
+        </div>
+        <div class="form-group">
+          <label>種類②:</label>
+          <input type="text" id="type2Input" list="type2List" placeholder="（未入力可）" disabled>
+          <datalist id="type2List"></datalist>
+          <select id="type2Select"></select>
+        </div>
+        <div class="form-group">
+          <label>上昇値:</label>
+          <input type="number" id="valueInput" placeholder="数値を入力">
+        </div>
+        <button id="addButton" disabled>追加</button>
       </div>
 
       <div id="settings" style="display:none">
-        <!-- 設定部分（省略せず前回と同様） -->
+        <h2>設定</h2>
+        <div class="form-group">
+          <label>アバター性別:</label>
+          <select id="genderSelect"><option value="F">女</option><option value="M">男</option></select>
+        </div>
+        <div class="form-group">
+          <label>更新希望ステータス:</label>
+          <div id="updateStatusContainer" class="pop-status-group"></div>
+        </div>
+        <button id="saveSettingsButton">設定を保存</button>
       </div>
 
       <div id="tradeSearch" style="display:none">
         <h2>販売アバター検索</h2>
-        <button id="reloadTradeButton">再読み込み</button>
+        <button id="reloadTrade">再読み込み</button>
         <div id="tradeDataDisplay"><p>データ未読み込み</p></div>
+      </div>
+
+      <div id="historyGraph" style="display:none">
+        <h2>履歴グラフ</h2>
+        <div class="history-controls">
+          <select id="historyParamSelect"><option>選択してください</option></select>
+          <select id="historyPartSelect"><option>選択してください</option></select>
+          <button id="drawHistoryBtn">グラフ表示</button>
+        </div>
+        <canvas id="historyChart"></canvas>
       </div>
     </div>
 
@@ -57,11 +144,7 @@
       <h2>追加されたアバター一覧</h2>
       <div class="scrollable-table-container">
         <table id="avatarTable">
-          <thead>
-            <tr>
-              <th>パーツ</th><th>種類①</th><th>種類②</th><th>上昇値</th><th>削除</th>
-            </tr>
-          </thead>
+          <thead><tr><th>パーツ</th><th>種類①</th><th>種類②</th><th>上昇値</th><th>削除</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -69,80 +152,139 @@
   </div>
 
   <script>
-    // 前半のユーティリティ関数やフォーム制御は省略せずそのまま
+    let bagcatMapping={},typeOptions=[],avatarList=[],uniqueTradeItems=[],historyData={},sections=["readme","avatarForm","settings","tradeSearch","historyGraph"];
+    function fetchCsv(u){return fetch(u).then(r=>r.text()).then(t=>t.trim().split("\n").map(l=>l.split(","))).catch(()=>[]);}
+    function loadBagcatLabels(){return fetchCsv("bagcat_labels.csv").then(r=>{r.slice(1).forEach(c=>bagcatMapping[c[0]]=c[1]);});}
+    function loadTypeOptions(){return fetchCsv("type_options.csv").then(r=>{typeOptions=r.slice(1).map(r2=>r2[0]);});}
+    function showSection(id){sections.forEach(s=>document.getElementById(s).style.display=s===id?"block":"none");localStorage.setItem("lastSection",id);if(id==="tradeSearch")loadTrade();}
+    window.addEventListener("load",()=>{
+      Promise.all([loadBagcatLabels(),loadTypeOptions()]).then(()=>{
+        let ls=localStorage.getItem("lastSection")||"readme";showSection(ls);
+        let s=localStorage.getItem("avatarList");if(s){avatarList=JSON.parse(s);renderAvatarTable();}
+        fetch("buzzerHistory.json").then(r=>r.json()).then(d=>{historyData=d;populateHistoryParams();});
+      });
+    });
+    document.getElementById("hamburgerBtn").addEventListener("click",()=>{
+      let sb=document.getElementById("sidebar"),mc=document.getElementById("mainContainer");
+      if(sb.style.left===""||sb.style.left==="-220px"){sb.style.left="0";mc.style.marginLeft="220px";document.getElementById("switchToLeft").style.left="220px";}
+      else{sb.style.left="-220px";mc.style.marginLeft="0";document.getElementById("switchToLeft").style.left="0";}
+    });
+    document.querySelectorAll(".sidebar li").forEach(li=>li.addEventListener("click",()=>{showSection(li.dataset.target);document.getElementById("sidebar").style.left="-220px";document.getElementById("mainContainer").style.marginLeft="0";}));
+    document.getElementById("switchToLeft").addEventListener("click",()=>{document.querySelector(".left-panel").style.transform="translateX(0)";document.querySelector(".right-panel").style.transform="translateX(100%)";document.getElementById("switchToLeft").style.display="none";document.getElementById("switchToRight").style.display="block";});
+    document.getElementById("switchToRight").addEventListener("click",()=>{document.querySelector(".left-panel").style.transform="translateX(-100%)";document.querySelector(".right-panel").style.transform="translateX(0)";document.getElementById("switchToLeft").style.display="block";document.getElementById("switchToRight").style.display="none";});
 
-    // --- 販売アバター検索部分だけ修正 ---
-    document.getElementById("reloadTradeButton").addEventListener("click", logItemCodes);
-    function logItemCodes() {
-      Promise.all([
-        loadBagcatLabels(),
-        fetch("bazzarList.json").then(r => r.json()),        // ← ここで配列が返る
-        fetch("itemCodeSchema.json").then(r => r.json()),
-        fetch("itemAnother.json").then(r => r.json())
-      ]).then(([ , bDataArray, schema, another ]) => {
-        // schema に type/param を追加
-        const regex = /^【([^+]+)\+([^】]+)】/;
-        schema.forEach(e => {
-          const m = regex.exec(e.itemName);
-          e.type  = m ? m[1] : "";
-          e.param = m ? parseInt(m[2].replace(/％/g,""),10) : 0;
-        });
-        const combined = schema.concat(another);
-
-        // bDataArray は直接配列なので bDataArray.forEach
-        uniqueTradeItems = [];
-        const seenBazaar = {};
-        bDataArray.forEach(item => {
-          if (!seenBazaar[item.bazaarId]) {
-            seenBazaar[item.bazaarId] = true;
-            uniqueTradeItems.push(item);
-          }
-        });
-
-        // listingItems を詳細オブジェクトに置き換え、diff/typeSums を計算省略せずそのまま
-        uniqueTradeItems.forEach(it => {
-          // item.listingItems をオブジェクト配列にマッピング
-          it.listingItems = it.listingItems.map(code => {
-            const info = combined.find(x => x.itemCode === code) || {};
-            return {
-              itemCode:   code,
-              itemName:   info.itemName || "",
-              parts:      info.parts    || "",
-              itemGender: info.itemGender || "",
-              type:       info.type     || "",
-              param:      info.param    || 0
-            };
-          });
-          // diff と uniqueDiffs, typeSums の計算（前回と同じロジック）
-          it.listingItems.forEach(li => {
-            const jp = bagcatMapping[li.parts] || li.parts;
-            const av = avatarList.find(x => x.type1===li.type && x.partText===jp);
-            let d = li.param;
-            if (av) {
-              d = li.param - Number(av.increase);
-              if (d < 0) d = 0;
-            }
-            li.diff = d;
-          });
-          const uniqueDiffs = {};
-          it.listingItems.forEach(li => {
-            const key = li.type + "_" + li.parts;
-            if (uniqueDiffs[key] === undefined || li.diff > uniqueDiffs[key]) {
-              uniqueDiffs[key] = li.diff;
-            }
-          });
-          it.typeSums = {};
-          Object.keys(uniqueDiffs).forEach(key => {
-            const t = key.split("_")[0];
-            it.typeSums[t] = (it.typeSums[t]||0) + uniqueDiffs[key];
-          });
-        });
-
-        // フィルタ・テーブル生成も前回通り
-        // ...
-      }).catch(e => console.error("販売アバター検索エラー:", e));
+    const partsMapping={ "トップス":"H","ボトムス":"L","ワンピース":"HL","ヘアスタイル":"P","フェイス":"F","背景":"A4","アウター":"CT","セット衣装1":"SA","セット衣装2":"SB","帽子":"AE","めがね":"AD","アクセ1":"AF","アクセ2":"B2","雑貨1":"B1","雑貨2":"B3","ペット1":"E1","ペット2":"E2","ペット3":"E3","ペット4":"E4","エフェクト":"AA","その他1":"AB","その他2":"A1","その他3":"A2","その他4":"A3","モイトイ":"BL"};
+    window.addEventListener("load",()=>{
+      let s=localStorage.getItem("avatarList");if(s){avatarList=JSON.parse(s);renderAvatarTable();}
+    });
+    const partInput=document.getElementById("partInput"),type1Input=document.getElementById("type1Input"),type2Input=document.getElementById("type2Input"),valueInput=document.getElementById("valueInput"),addButton=document.getElementById("addButton"),avatarTableBody=document.querySelector("#avatarTable tbody");
+    document.getElementById("partSelect").addEventListener("change",e=>{partInput.value=e.target.value;checkInput();});
+    document.getElementById("type1Select").addEventListener("change",e=>{type1Input.value=e.target.value;type2Input.disabled=!e.target.value;updateType2Datalist(e.target.value);checkInput();});
+    document.getElementById("type2Select").addEventListener("change",e=>{type2Input.value=e.target.value;checkInput();});
+    partInput.addEventListener("input",checkInput);type1Input.addEventListener("input",checkInput);valueInput.addEventListener("input",checkInput);
+    function checkInput(){addButton.disabled=!(partInput.value.trim()&&type1Input.value.trim()&&valueInput.value.trim()&&!isNaN(valueInput.value));}
+    function updateType2Datalist(v){let dl=document.getElementById("type2List");dl.innerHTML="";let sel=document.getElementById("type2Select");sel.innerHTML="";let opt0=document.createElement("option");opt0.value="";sel.appendChild(opt0);typeOptions.forEach(o=>{if(o!==v){let dopt=document.createElement("option");dopt.value=o;dl.appendChild(dopt);let sopt=document.createElement("option");sopt.value=o;sel.appendChild(sopt);}});}
+    addButton.addEventListener("click",()=>{
+      let na={partText:partInput.value.trim(),type1:type1Input.value.trim(),type2:type2Input.value.trim()||"なし",increase:valueInput.value.trim()};
+      avatarList.push(na);localStorage.setItem("avatarList",JSON.stringify(avatarList));renderAvatarTable();partInput.value=type1Input.value=type2Input.value=valueInput.value="";type2Input.disabled=true;checkInput();
+    });
+    function renderAvatarTable(){
+      avatarTableBody.innerHTML="";
+      avatarList.forEach((a,i)=>{let r=document.createElement("tr"),c1=document.createElement("td");c1.textContent=a.partText;r.appendChild(c1);let c2=document.createElement("td");c2.textContent=a.type1;r.appendChild(c2);let c3=document.createElement("td");c3.textContent=a.type2;r.appendChild(c3);let c4=document.createElement("td");c4.textContent=a.increase;r.appendChild(c4);let c5=document.createElement("td"),b=document.createElement("button");b.textContent="削除";b.addEventListener("click",()=>{avatarList.splice(i,1);localStorage.setItem("avatarList",JSON.stringify(avatarList));renderAvatarTable();});c5.appendChild(b);r.appendChild(c5);avatarTableBody.appendChild(r);});
     }
-    // 他の関数（openLinkInNewTab, showModal, sortTableByColumn etc.）も省略せず前回と同様に記述
+
+    document.getElementById("saveSettingsButton").addEventListener("click",()=>{
+      localStorage.setItem("avatarGender",document.getElementById("genderSelect").value);
+      let ss=Array.from(document.querySelectorAll("#updateStatusContainer input")).filter(i=>i.checked).map(i=>i.value);
+      localStorage.setItem("updateStatus",JSON.stringify(ss));
+      alert("設定を保存しました。");
+    });
+    function generateUpdateStatusCheckboxes(){
+      let uc=JSON.parse(localStorage.getItem("updateStatus")||"[]"),cnt=document.getElementById("updateStatusContainer");cnt.innerHTML="";
+      typeOptions.forEach(t=>{let cb=document.createElement("input");cb.type="checkbox";cb.id="status_"+t;cb.value=t;cb.checked=uc.includes(t);let lb=document.createElement("label");lb.htmlFor=cb.id;lb.textContent=t;lb.appendChild(cb);cnt.appendChild(lb);});
+    }
+    document.querySelector('[data-target="settings"]').addEventListener("click",generateUpdateStatusCheckboxes);
+
+    document.getElementById("reloadTrade").addEventListener("click",loadTrade);
+    function loadTrade(){
+      fetch("bazzarList.json").then(r=>r.json()).then(data=>{
+        let items=data.bazzarList,ms=JSON.parse(localStorage.getItem("updateStatus")||"[]"),gd=localStorage.getItem("avatarGender");
+        let rows="";
+        let cols=["販売リンク","締め切り日時","ハンコイン",...ms.map(t=>" "+t)];
+        rows+="<thead><tr>"+cols.map((c,i)=>"<th"+(i>2?` data-type="${ms[i-3]}"`:"")+">"+c+"</th>").join("")+"<th>詳細</th></tr></thead><tbody>";
+        items.forEach(it=>{
+          let sellEnd=it.sellEndDate.replace(" ","<br>"),hc=it.hancoin;
+          rows+="<tr>";
+          rows+=`<td><button onclick="window.open('https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${it.bazaarId}','','')">販売リンク</button></td>`;
+          rows+=`<td>${sellEnd}</td><td>${hc}</td>`;
+          ms.forEach(type=>{
+            let sum=0;
+            it.listingItems.forEach(ic=>{
+              let m=itemCodeMap[ic];
+              if(m&&m.type===type){
+                let p=m.param;sum+=p;
+              }
+            });
+            let v=sum? (hc/sum).toFixed(2):0;
+            rows+=`<td>${v}</td>`;
+          });
+          rows+=`<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td>`;
+          rows+="</tr>";
+        });
+        rows+="</tbody>";
+        document.getElementById("tradeDataDisplay").innerHTML=`<div class="scrollable-table-container"><table>${rows}</table></div>`;
+        document.querySelectorAll("#tradeDataDisplay th[data-type]").forEach(th=>th.addEventListener("click",()=>{
+          sortTable(th.cellIndex,th.dataset.type);
+        }));
+      });
+    }
+    let itemCodeMap={};
+    Promise.all([fetch("itemCodeSchema.json").then(r=>r.json()),fetch("itemAnother.json").then(r=>r.json())]).then(([a,b])=>{
+      a.concat(b).forEach(o=>{
+        let m=o.itemName.match(/^【([^+]+)\+(\d+)%?】/);
+        itemCodeMap[o.itemCode]={...o,type:m?m[1]:"",param:m?parseInt(m[2],10):0};
+      });
+    });
+
+    function sortTable(ci,type){
+      let tb=document.querySelector("#tradeDataDisplay table tbody"),rows=Array.from(tb.rows);
+      rows.sort((r1,r2)=>{
+        let v1=parseFloat(r1.cells[ci].textContent)||Infinity;
+        let v2=parseFloat(r2.cells[ci].textContent)||Infinity;
+        return v1-v2;
+      });
+      rows.forEach(r=>tb.appendChild(r));
+    }
+
+    document.getElementById("historyParamSelect").addEventListener("change",()=>{
+      let p=document.getElementById("historyParamSelect").value,sel=document.getElementById("historyPartSelect");
+      sel.innerHTML="<option>選択してください</option>";
+      if(!p) return;
+      let ps=new Set();
+      Object.values(historyData[p]).forEach(l=>Object.keys(l).forEach(c=>ps.add(c)));
+      ps.forEach(c=>{let o=document.createElement("option");o.value=c;o.textContent=(bagcatMapping[c]||c)+"("+c+")";sel.appendChild(o);});
+    });
+
+    function populateHistoryParams(){
+      let sel=document.getElementById("historyParamSelect");
+      sel.innerHTML="<option>選択してください</option>";
+      Object.keys(historyData).forEach(p=>{let o=document.createElement("option");o.value=p;o.textContent=p;sel.appendChild(o);});
+    }
+
+    let historyChart=null;
+    document.getElementById("drawHistoryBtn").addEventListener("click",()=>{
+      let p=document.getElementById("historyParamSelect").value,c=document.getElementById("historyPartSelect").value;
+      if(!p||!c) return;
+      let levels=Object.keys(historyData[p]).sort((a,b)=>a-b),datasets=[];
+      levels.forEach(l=>{
+        let s=historyData[p][l][c];if(!s) return;
+        let times=Object.keys(s).sort(),labels=times.map(t=>new Date(t).toLocaleTimeString()),values=times.map(t=>s[t]);
+        datasets.push({label:l,data:values,fill:false});
+      });
+      if(historyChart) historyChart.destroy();
+      let ctx=document.getElementById("historyChart").getContext("2d");
+      historyChart=new Chart(ctx,{type:'line',data:{labels:datasets.length?datasets[0].data.map((_,i)=>new Date(Object.keys(historyData[p][levels[0]][c]).sort()[i]).toLocaleTimeString()):[],datasets:datasets},options:{responsive:true,plugins:{legend:{position:'top'},title:{display:true,text:p+"("+ (bagcatMapping[c]||c)+")履歴"}},scales:{x:{title:{display:true,text:'時間'}},y:{title:{display:true,text:'ハンコイン'},beginAtZero:true}}}});
+    });
   </script>
 </body>
 </html>
