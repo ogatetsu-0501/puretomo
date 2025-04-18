@@ -48,7 +48,10 @@
     #historyGraph canvas{width:100%!important;height:400px!important;}
     .history-controls{display:flex;gap:12px;align-items:flex-end;margin-bottom:16px;}
     @media(max-width:767px){.main-container{padding:12px;} .left-panel,.right-panel{padding:12px;border-radius:0;} .form-group{margin-bottom:12px;} .scrollable-table-container{margin-top:12px;}}
-    @media(min-width:768px){#partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List{display:none;} #partSelect,#type1Select,#type2Select{display:inline-block;width:100%;}}
+    @media(min-width:768px){
+      #partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List{display:none;}
+      #partSelect,#type1Select,#type2Select{display:inline-block;width:100%;}
+    }
   </style>
 </head>
 <body>
@@ -138,7 +141,6 @@
         <div class="history-controls">
           <select id="historyParamSelect"><option value="">パラメータを選択</option></select>
           <select id="historyValueSelect"><option value="">上昇値を選択</option></select>
-          <select id="historyTypeSelect"><option value="">種類を選択</option></select>
           <button id="drawHistoryBtn">グラフ表示</button>
         </div>
         <canvas id="historyChart"></canvas>
@@ -157,7 +159,8 @@
   </div>
 
   <script>
-    let bagcatMapping={},typeOptions=[],avatarList=[],historyData={},itemCodeMap={};
+    let bagcatMapping={}, typeOptions=[], avatarList=[], historyData={}, itemCodeMap={}, tradeItems=[];
+
     const sections=["readme","avatarForm","settings","tradeSearch","historyGraph"];
     function showSection(id){
       sections.forEach(s=>document.getElementById(s).style.display=s===id?"block":"none");
@@ -165,6 +168,7 @@
       if(id==="tradeSearch") loadTrade();
       if(id==="settings") generateUpdateStatusCheckboxes();
     }
+
     window.addEventListener("load",()=>{
       Object.assign(bagcatMapping,{
         "H":"トップス","L":"ボトムス","HL":"ワンピース","P":"ヘアスタイル","F":"フェイス",
@@ -174,11 +178,23 @@
         "AB":"その他1","A1":"その他2","A2":"その他3","A3":"その他4","BL":"モイトイ"
       });
       typeOptions=["INT","ALL","HPR","SP","PET","HP","SPR","LUK","ATK","EXP","MAT","POW","VIT","SPD"];
+
+      // プルダウン初期化
+      const partSelect=document.getElementById("partSelect");
+      Object.values(bagcatMapping).forEach(jp=>{
+        let o=document.createElement("option");o.value=jp;o.textContent=jp;partSelect.appendChild(o);
+      });
+      const t1s=document.getElementById("type1Select");
+      typeOptions.forEach(t=>{let o=document.createElement("option");o.value=t;o.textContent=t;t1s.appendChild(o);});
+
       let last=localStorage.getItem("lastSection")||"readme";
       showSection(last);
+
       let s=localStorage.getItem("avatarList");
       if(s){avatarList=JSON.parse(s);renderAvatarTable();}
+
       fetch("buzzerHistory.json").then(r=>r.json()).then(d=>{historyData=d;populateHistoryParams();});
+
       fetch("itemCodeSchema.json").then(r=>r.json()).then(a=>{
         fetch("itemAnother.json").then(r=>r.json()).then(b=>{
           a.concat(b).forEach(o=>{
@@ -188,52 +204,127 @@
         });
       });
     });
+
     document.getElementById("hamburgerBtn").addEventListener("click",()=>{
       let sb=document.getElementById("sidebar"),mc=document.getElementById("mainContainer");
-      if(sb.style.left===""||sb.style.left==="-220px"){sb.style.left="0";mc.style.marginLeft="220px";document.getElementById("switchToLeft").style.left="220px";}
-      else{sb.style.left="-220px";mc.style.marginLeft="0";document.getElementById("switchToLeft").style.left="0";}
+      if(sb.style.left===""||sb.style.left==="-220px"){
+        sb.style.left="0"; mc.style.marginLeft="220px"; document.getElementById("switchToLeft").style.left="220px";
+      } else {
+        sb.style.left="-220px"; mc.style.marginLeft="0"; document.getElementById("switchToLeft").style.left="0";
+      }
     });
-    document.querySelectorAll(".sidebar li").forEach(li=>li.addEventListener("click",()=>{showSection(li.dataset.target);document.getElementById("sidebar").style.left="-220px";document.getElementById("mainContainer").style.marginLeft="0";}));
-    document.getElementById("switchToLeft").addEventListener("click",()=>{document.querySelector(".left-panel").style.transform="translateX(0)";document.querySelector(".right-panel").style.transform="translateX(100%)";document.getElementById("switchToLeft").style.display="none";document.getElementById("switchToRight").style.display="block";});
-    document.getElementById("switchToRight").addEventListener("click",()=>{document.querySelector(".left-panel").style.transform="translateX(-100%)";document.querySelector(".right-panel").style.transform="translateX(0)";document.getElementById("switchToLeft").style.display="block";document.getElementById("switchToRight").style.display="none";});
 
-    const partInput=document.getElementById("partInput"),type1Input=document.getElementById("type1Input"),type2Input=document.getElementById("type2Input"),valueInput=document.getElementById("valueInput"),addButton=document.getElementById("addButton"),avatarTableBody=document.querySelector("#avatarTable tbody");
-    document.getElementById("partSelect").addEventListener("change",e=>{partInput.value=e.target.value;checkInput();});
-    document.getElementById("type1Select").addEventListener("change",e=>{type1Input.value=e.target.value;type2Input.disabled=!e.target.value;updateType2Datalist(e.target.value);checkInput();});
-    document.getElementById("type2Select").addEventListener("change",e=>{type2Input.value=e.target.value;checkInput();});
-    partInput.addEventListener("input",checkInput);type1Input.addEventListener("input",checkInput);valueInput.addEventListener("input",checkInput);
-    function checkInput(){addButton.disabled=!(partInput.value.trim()&&type1Input.value.trim()&&valueInput.value.trim()&&!isNaN(valueInput.value));}
-    function updateType2Datalist(v){let dl=document.getElementById("type2List");dl.innerHTML="";let sel=document.getElementById("type2Select");sel.innerHTML="";let o0=document.createElement("option");o0.value="";sel.appendChild(o0);typeOptions.forEach(o=>{if(o!==v){let d=document.createElement("option");d.value=o;dl.appendChild(d);let s=document.createElement("option");s.value=o;sel.appendChild(s);}});}
-    addButton.addEventListener("click",()=>{
-      let na={partText:partInput.value.trim(),type1:type1Input.value.trim(),type2:type2Input.value.trim()||"なし",increase:valueInput.value.trim()};
-      avatarList.push(na);localStorage.setItem("avatarList",JSON.stringify(avatarList));renderAvatarTable();partInput.value=type1Input.value=type2Input.value=valueInput.value="";type2Input.disabled=true;checkInput();
+    document.querySelectorAll(".sidebar li").forEach(li=>li.addEventListener("click",()=>{
+      showSection(li.dataset.target);
+      document.getElementById("sidebar").style.left="-220px";
+      document.getElementById("mainContainer").style.marginLeft="0";
+    }));
+
+    document.getElementById("switchToLeft").addEventListener("click",()=>{
+      document.querySelector(".left-panel").style.transform="translateX(0)";
+      document.querySelector(".right-panel").style.transform="translateX(100%)";
+      document.getElementById("switchToLeft").style.display="none";
+      document.getElementById("switchToRight").style.display="block";
     });
-    function renderAvatarTable(){
-      avatarTableBody.innerHTML="";
-      avatarList.forEach((a,i)=>{let r=document.createElement("tr"),c1=document.createElement("td");c1.textContent=a.partText;r.appendChild(c1);let c2=document.createElement("td");c2.textContent=a.type1;r.appendChild(c2);let c3=document.createElement("td");c3.textContent=a.type2;r.appendChild(c3);let c4=document.createElement("td");c4.textContent=a.increase;r.appendChild(c4);let c5=document.createElement("td"),b=document.createElement("button");b.textContent="削除";b.addEventListener("click",()=>{avatarList.splice(i,1);localStorage.setItem("avatarList",JSON.stringify(avatarList));renderAvatarTable();});c5.appendChild(b);r.appendChild(c5);avatarTableBody.appendChild(r);});
+
+    document.getElementById("switchToRight").addEventListener("click",()=>{
+      document.querySelector(".left-panel").style.transform="translateX(-100%)";
+      document.querySelector(".right-panel").style.transform="translateX(0)";
+      document.getElementById("switchToLeft").style.display="block";
+      document.getElementById("switchToRight").style.display="none";
+    });
+
+    // --- アバター追加フォーム ---
+    const partInput=document.getElementById("partInput"),
+          type1Input=document.getElementById("type1Input"),
+          type2Input=document.getElementById("type2Input"),
+          valueInput=document.getElementById("valueInput"),
+          addButton=document.getElementById("addButton"),
+          avatarTableBody=document.querySelector("#avatarTable tbody");
+
+    document.getElementById("partSelect").addEventListener("change",e=>{partInput.value=e.target.value;checkInput();});
+    document.getElementById("type1Select").addEventListener("change",e=>{
+      type1Input.value=e.target.value;
+      type2Input.disabled=!e.target.value;
+      updateType2Datalist(e.target.value);
+      checkInput();
+    });
+    document.getElementById("type2Select").addEventListener("change",e=>{type2Input.value=e.target.value;checkInput();});
+
+    [partInput,type1Input,valueInput].forEach(el=>el.addEventListener("input",checkInput));
+    function checkInput(){
+      addButton.disabled = !(partInput.value.trim() && type1Input.value.trim() && valueInput.value.trim() && !isNaN(valueInput.value));
+    }
+    function updateType2Datalist(v){
+      let dl=document.getElementById("type2List"), sel=document.getElementById("type2Select");
+      dl.innerHTML=""; sel.innerHTML="";
+      let emptyOpt=document.createElement("option");emptyOpt.value=""; sel.appendChild(emptyOpt);
+      typeOptions.forEach(o=>{ if(o!==v){
+        let d=document.createElement("option"); d.value=o; dl.appendChild(d);
+        let s=document.createElement("option"); s.value=o; sel.appendChild(s);
+      }});
     }
 
+    addButton.addEventListener("click",()=>{
+      let na={partText:partInput.value.trim(),type1:type1Input.value.trim(),type2:type2Input.value.trim()||"なし",increase:valueInput.value.trim()};
+      avatarList.push(na);
+      localStorage.setItem("avatarList",JSON.stringify(avatarList));
+      renderAvatarTable();
+      [partInput,type1Input,type2Input,valueInput].forEach(i=>i.value="");
+      type2Input.disabled=true;
+      checkInput();
+    });
+
+    function renderAvatarTable(){
+      avatarTableBody.innerHTML="";
+      avatarList.forEach((a,i)=>{
+        let r=document.createElement("tr");
+        ["partText","type1","type2","increase"].forEach(k=>{
+          let td=document.createElement("td"); td.textContent=a[k]; r.appendChild(td);
+        });
+        let td=document.createElement("td"),btn=document.createElement("button");
+        btn.textContent="削除"; btn.addEventListener("click",()=>{
+          avatarList.splice(i,1);
+          localStorage.setItem("avatarList",JSON.stringify(avatarList));
+          renderAvatarTable();
+        });
+        td.appendChild(btn); r.appendChild(td);
+        avatarTableBody.appendChild(r);
+      });
+    }
+
+    // --- 設定 ---
     document.getElementById("saveSettingsButton").addEventListener("click",()=>{
       localStorage.setItem("avatarGender",document.getElementById("genderSelect").value);
-      let ss=Array.from(document.querySelectorAll("#updateStatusContainer input")).filter(i=>i.checked).map(i=>i.value);
+      let ss=Array.from(document.querySelectorAll("#updateStatusContainer input"))
+                 .filter(i=>i.checked).map(i=>i.value);
       localStorage.setItem("updateStatus",JSON.stringify(ss));
       alert("設定を保存しました。");
     });
     function generateUpdateStatusCheckboxes(){
-      let uc=JSON.parse(localStorage.getItem("updateStatus")||"[]"),cnt=document.getElementById("updateStatusContainer");cnt.innerHTML="";
-      typeOptions.forEach(t=>{let cb=document.createElement("input");cb.type="checkbox";cb.id="status_"+t;cb.value=t;cb.checked=uc.includes(t);let lb=document.createElement("label");lb.htmlFor=cb.id;lb.textContent=t;lb.appendChild(cb);cnt.appendChild(lb);});
+      let uc=JSON.parse(localStorage.getItem("updateStatus")||"[]"),
+          cnt=document.getElementById("updateStatusContainer");
+      cnt.innerHTML="";
+      typeOptions.forEach(t=>{
+        let cb=document.createElement("input"); cb.type="checkbox"; cb.id="status_"+t; cb.value=t; cb.checked=uc.includes(t);
+        let lb=document.createElement("label"); lb.htmlFor=cb.id; lb.textContent=t; lb.appendChild(cb);
+        cnt.appendChild(lb);
+      });
     }
 
+    // --- 販売アバター検索 ---
     document.getElementById("reloadTrade").addEventListener("click",loadTrade);
     function loadTrade(){
       fetch("bazzarList.json")
-        .then(r=>{if(!r.ok) throw new Error("HTTP "+r.status); return r.json()})
+        .then(r=>{ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
         .then(data=>{
-          const items=Array.isArray(data)?data:data.bazzarList;
+          tradeItems = Array.isArray(data)?data:data.bazzarList;
           const ms=JSON.parse(localStorage.getItem("updateStatus")||"[]");
-          let cols=["販売リンク","締め切り日時","ハンコイン",...ms.map(t=>t),"詳細"];
-          let html="<table><thead><tr>"+cols.map((c,i)=>i<3?`<th>${c}</th>`:`<th data-type="${ms[i-3]}">${c}</th>`).join("")+"</tr></thead><tbody>";
-          items.forEach(it=>{
+          let cols=["販売リンク","締め切り日時","ハンコイン",...ms,"詳細"];
+          let html="<table><thead><tr>"+cols.map((c,i)=>
+            i<3?`<th>${c}</th>`:`<th data-type="${ms[i-3]}">${c}</th>`
+          ).join("")+"</tr></thead><tbody>";
+          tradeItems.forEach(it=>{
             let sellEnd=it.sellEndDate.replace(" ","<br>");
             html+="<tr>";
             html+=`<td><button onclick="window.open('https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${it.bazaarId}')">販売リンク</button></td>`;
@@ -242,7 +333,7 @@
               let sum=0;
               it.listingItems.forEach(ic=>{
                 let m=itemCodeMap[ic];
-                if(m&&m.type===type){sum+=m.param;}
+                if(m&&m.type===type) sum+=m.param;
               });
               let v=sum? (it.hancoin/sum).toFixed(2):0;
               html+=`<td>${v}</td>`;
@@ -250,11 +341,18 @@
             html+=`<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td></tr>`;
           });
           html+="</tbody></table>";
-          document.getElementById("tradeDataDisplay").innerHTML=`<div class="scrollable-table-container">${html}</div>`;
-          document.querySelectorAll("#tradeDataDisplay th[data-type]").forEach(th=>th.addEventListener("click",()=>sortTradeTable(th.cellIndex)));
+          document.getElementById("tradeDataDisplay").innerHTML=
+            `<div class="scrollable-table-container">${html}</div>`;
+          document.querySelectorAll("#tradeDataDisplay th[data-type]").forEach(th=>
+            th.addEventListener("click",()=>sortTradeTable(th.cellIndex))
+          );
         })
-        .catch(e=>{document.getElementById("tradeDataDisplay").innerHTML=`<p>データ読み込み失敗: ${e.message}</p>`;});
+        .catch(e=>{
+          document.getElementById("tradeDataDisplay").innerHTML=
+            `<p>データ読み込み失敗: ${e.message}</p>`;
+        });
     }
+
     function sortTradeTable(ci){
       let tb=document.querySelector("#tradeDataDisplay table tbody");
       Array.from(tb.rows).sort((a,b)=>{
@@ -264,61 +362,81 @@
       }).forEach(r=>tb.appendChild(r));
     }
 
-    document.getElementById("historyParamSelect").addEventListener("change",()=>{
-      let p=document.getElementById("historyParamSelect").value;
-      let valSel=document.getElementById("historyValueSelect"),typeSel=document.getElementById("historyTypeSelect");
-      valSel.innerHTML="<option value=''>上昇値を選択</option>";
-      typeSel.innerHTML="<option value=''>種類を選択</option>";
-      if(!p) return;
-      Object.keys(historyData[p]).sort((a,b)=>a-b).forEach(v=>{
-        let o=document.createElement("option");o.value=v;o.textContent=v;valSel.appendChild(o);
+    // --- モーダル詳細表示 ---
+    function showModal(id){
+      let it=tradeItems.find(x=>x.bazaarId===id);
+      if(!it) return;
+      let mc=document.getElementById("modalContent");
+      mc.innerHTML="";
+      it.listingItems.forEach(ic=>{
+        let info=itemCodeMap[ic];
+        let div=document.createElement("div"); div.className="modalItem";
+        let img=document.createElement("img");
+        img.src=`https://puretomo-image.hange.jp/disp/${ic.toLowerCase()}.gif`;
+        div.appendChild(img);
+        if(info){
+          let p1=document.createElement("p");
+          let partJP=bagcatMapping[info.parts]||info.parts;
+          p1.textContent=`${partJP} / ${info.type}+${info.param}`;
+          div.appendChild(p1);
+          let p2=document.createElement("p");
+          p2.textContent=info.itemName;
+          div.appendChild(p2);
+        }
+        mc.appendChild(div);
       });
+      document.getElementById("modalWindow").style.display="block";
+    }
+    document.getElementById("closeModal").addEventListener("click",()=>{
+      document.getElementById("modalWindow").style.display="none";
     });
 
-    document.getElementById("historyValueSelect").addEventListener("change",()=>{
-      let p=document.getElementById("historyParamSelect").value;
-      let v=document.getElementById("historyValueSelect").value;
-      let typeSel=document.getElementById("historyTypeSelect");
-      typeSel.innerHTML="<option value=''>種類を選択</option>";
-      if(!p||!v) return;
-      Object.keys(historyData[p][v]).forEach(t=>{
-        let o=document.createElement("option");o.value=t;o.textContent=bagcatMapping[t]||t;typeSel.appendChild(o);
-      });
-    });
-
+    // --- 履歴グラフ ---
     function populateHistoryParams(){
       let sel=document.getElementById("historyParamSelect");
       sel.innerHTML="<option value=''>パラメータを選択</option>";
       Object.keys(historyData).forEach(p=>{
-        let o=document.createElement("option");o.value=p;o.textContent=p;sel.appendChild(o);
+        let o=document.createElement("option"); o.value=p; o.textContent=p;
+        sel.appendChild(o);
       });
     }
-
+    document.getElementById("historyParamSelect").addEventListener("change",()=>{
+      let p=document.getElementById("historyParamSelect").value;
+      let valSel=document.getElementById("historyValueSelect");
+      valSel.innerHTML="<option value=''>上昇値を選択</option>";
+      if(!p) return;
+      Object.keys(historyData[p]).sort((a,b)=>a-b).forEach(v=>{
+        let o=document.createElement("option"); o.value=v; o.textContent=v;
+        valSel.appendChild(o);
+      });
+    });
     let historyChart=null;
     document.getElementById("drawHistoryBtn").addEventListener("click",()=>{
       let p=document.getElementById("historyParamSelect").value;
       let v=document.getElementById("historyValueSelect").value;
-      let t=document.getElementById("historyTypeSelect").value;
-      if(!p||!v||!t) return;
-      let series=historyData[p][v][t];
-      let times=Object.keys(series).sort();
-      let labels=times.map(x=>new Date(x).toLocaleTimeString());
-      let data=times.map(x=>series[x]);
+      if(!p||!v) return;
+      let dataSeries=historyData[p][v];
+      let times=Object.keys(dataSeries[Object.keys(dataSeries)[0]]).sort();
+      let labels=times.map(t=>new Date(t).toLocaleTimeString());
+      let datasets=Object.entries(dataSeries).map(([t, series])=>({
+        label:bagcatMapping[t]||t,
+        data:times.map(time=>series[time]),
+        fill:false
+      }));
       if(historyChart) historyChart.destroy();
-      let ctx=document.getElementById("historyChart").getContext("2d");
+      const ctx=document.getElementById("historyChart").getContext("2d");
       historyChart=new Chart(ctx,{
         type:"line",
-        data:{labels,datasets:[{label:`${p} ${v} ${bagcatMapping[t]||t}`,data,fill:false}]},
-        options:{responsive:true,scales:{x:{title:{display:true,text:"時間"}},y:{title:{display:true,text:"ハンコイン"},beginAtZero:true}}}
+        data:{labels,datasets},
+        options:{
+          responsive:true,
+          scales:{
+            x:{title:{display:true,text:"時間"}},
+            y:{title:{display:true,text:"ハンコイン"},beginAtZero:true}
+          }
+        }
       });
     });
-
-    function showModal(id){
-      let items=historyData; // placeholder
-      document.getElementById("modalWindow").style.display="block";
-    }
-    document.getElementById("closeModal").addEventListener("click",()=>{document.getElementById("modalWindow").style.display="none";});
-
   </script>
 </body>
 </html>
