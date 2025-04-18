@@ -1,746 +1,1121 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>アバター管理画面</title>
-  <style>
-    html, body { height:100%; margin:0; padding:0; box-sizing:border-box; }
-    *, *::before, *::after { box-sizing:inherit; }
-    body { font-family:'Segoe UI',sans-serif; background:#f2f2f2; color:#333; }
-
-    /* ヘッダー */
-    header { display:flex; align-items:center; background:#ffb300; color:#fff; padding:16px 24px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
-    .hamburger { font-size:24px; cursor:pointer; margin-right:16px; }
-    header h1 { font-size:1.2em; margin:0; }
-
-    /* サイドバー */
-    .sidebar { position:fixed; top:0; left:-260px; width:240px; height:100vh; padding-top:64px; background:#333; color:#fff; transition:left .3s ease; z-index:1500; }
-    .sidebar ul { list-style:none; margin:0; padding:0; }
-    .sidebar li { padding:12px 16px; margin:8px; border-radius:4px; cursor:pointer; transition:background .2s; }
-    .sidebar li:hover { background:rgba(255,255,255,0.1); }
-
-    /* メインコンテナ */
-    .main-container { position:relative; width:100%; height:calc(100vh - 64px); overflow:hidden; transition:margin-left .3s ease; padding:24px; }
-
-    /* パネル共通 */
-    .left-panel, .right-panel {
-      position:absolute; top:0; left:0; width:100%; height:100%;
-      background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.05);
-      padding:24px; overflow-y:auto; transition:transform .3s ease;
-    }
-    .left-panel { transform:translateX(0); }
-    .right-panel { transform:translateX(100%); }
-
-    /* ナビ切替ボタン */
-    .nav-btn {
-      position:fixed; top:50%; transform:translateY(-50%);
-      width:48px; height:48px; background:rgba(0,0,0,0.3);
-      border:none; border-radius:50%; display:flex; align-items:center; justify-content:center;
-      cursor:pointer; z-index:1600; transition:background .2s;
-    }
-    .nav-btn:hover { background:rgba(0,0,0,0.5); }
-    .nav-btn svg { width:24px; height:24px; fill:#fff; }
-    #switchToLeft { left:16px; display:none; }
-    #switchToRight{ right:16px; }
-
-    /* フォーム */
-    .form-group { margin-bottom:20px; }
-    .form-group label { display:block; margin-bottom:6px; font-weight:bold; color:#555; }
-    .form-group input[type="text"], .form-group input[type="number"], .form-group select {
-      width:100%; padding:10px 12px; border:1px solid #ccc; border-radius:4px; transition:border-color .2s;
-    }
-    .form-group input:focus, .form-group select:focus { outline:none; border-color:#ffb300; }
-    button {
-      padding:10px 18px; background:#ffb300; color:#fff; border:none; border-radius:4px;
-      cursor:pointer; transition:background .2s; white-space:nowrap;
-    }
-    button:hover { background:#e6a100; }
-    button:disabled { background:#ccc; cursor:default; }
-
-    /* ポップステータス */
-    .pop-status-group { display:flex; flex-wrap:wrap; gap:8px; }
-    .pop-status-group label {
-      display:flex; align-items:center; justify-content:space-between;
-      background:#ffe082; padding:6px 12px; border-radius:20px; box-shadow:0 1px 3px rgba(0,0,0,0.1);
-      font-size:0.9em; color:#555;
-    }
-    .pop-status-group input { margin-left:8px; accent-color:#ff6f00; }
-
-    /* テーブル */
-    .scrollable-table-container {
-      margin-top:24px; max-height:calc(100vh - 200px);
-      overflow-y:auto; overflow-x:auto; background:#fff; border-radius:8px;
-      box-shadow:0 2px 6px rgba(0,0,0,0.05);
-    }
-    table { width:100%; border-collapse:collapse; border-spacing:0; }
-    thead { position:sticky; top:0; z-index:6; background:#fafafa; }
-    thead th {
-      padding:12px 16px; border:1px solid #e0e0e0;
-      white-space:nowrap; padding-right:24px;
-    }
-    thead th:first-child { position:sticky; left:0; z-index:8; }
-    tbody td { padding:12px 16px; border:1px solid #e0e0e0; background:#fff; }
-    tbody td:first-child { position:sticky; left:0; z-index:7; background:#fff; }
-    th.sort-asc::after { content:" ▲"; }
-    th.sort-desc::after{ content:" ▼"; }
-
-    /* モーダル */
-    #modalWindow {
-      display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-      width:60vw; max-width:60vw; background:#fff; border-radius:8px;
-      padding:24px; z-index:1700; box-shadow:0 4px 12px rgba(0,0,0,0.2);
-    }
-    #modalContent { display:flex; overflow-x:auto; gap:16px; }
-    .modalItem {
-      flex:0 0 auto; background:#f7f7f7; padding:12px; border-radius:4px; text-align:center;
-    }
-    .modalItem img { max-width:80px; margin-bottom:8px; border-radius:4px; }
-    #closeModal { margin-top:16px; width:100%; background:#e53935; }
-
-    /* グラフセクション */
-    #graphSection { display:none; }
-    .chart-container { position:relative; width:100%; height:400px; margin-top:24px; }
-
-    /* レスポンシブ入力切替 */
-    #partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List {
-      display:inline-block; width:calc(100% - 24px);
-    }
-    #partSelect,#type1Select,#type2Select { display:none; width:100%; }
-    @media(min-width:768px){
-      #partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List { display:none; }
-      #partSelect,#type1Select,#type2Select { display:inline-block; }
-    }
-
-    /* モバイル余白調整 */
-    @media(max-width:767px){
-      .main-container{padding:12px;}
-      .left-panel,.right-panel{padding:12px;border-radius:0;}
-      .form-group{margin-bottom:12px;}
-      .scrollable-table-container{margin-top:12px;}
-    }
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-  <header>
-    <div class="hamburger" id="hamburgerBtn">&#9776;</div>
-    <h1>アバター管理画面</h1>
-  </header>
-
-  <div id="modalWindow">
-    <div id="modalContent"></div>
-    <button id="closeModal">閉じる</button>
-  </div>
-
-  <button id="switchToLeft" class="nav-btn" title="前へ">
-    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-  </button>
-  <button id="switchToRight" class="nav-btn" title="次へ">
-    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
-  </button>
-
-  <div class="main-container" id="mainContainer">
-    <div class="sidebar" id="sidebar">
-      <ul>
-        <li data-target="readme">Readme</li>
-        <li data-target="avatarForm">所持アバター追加</li>
-        <li data-target="settings">設定</li>
-        <li data-target="tradeSearch">販売アバター検索</li>
-        <li data-target="graphSection">価格履歴グラフ</li>
-      </ul>
-    </div>
-
-    <div class="left-panel" id="leftPanel">
-      <div id="readme"><h2>Readme</h2></div>
-
-      <div id="avatarForm" style="display:none;">
-        <h2>所持アバター追加</h2>
-        <div class="form-group">
-          <label>パーツ（表示名）:</label>
-          <input type="text" id="partInput" list="partsList" placeholder="例: トップス">
-          <datalist id="partsList"></datalist>
-          <select id="partSelect"></select>
-        </div>
-        <div class="form-group">
-          <label>種類①:</label>
-          <input type="text" id="type1Input" list="type1List" placeholder="例: INT">
-          <datalist id="type1List"></datalist>
-          <select id="type1Select"></select>
-        </div>
-        <div class="form-group">
-          <label>種類②:</label>
-          <input type="text" id="type2Input" list="type2List" placeholder="（未入力可）" disabled>
-          <datalist id="type2List"></datalist>
-          <select id="type2Select"></select>
-        </div>
-        <div class="form-group">
-          <label>上昇値:</label>
-          <input type="number" id="valueInput" placeholder="数値を入力">
-        </div>
-        <button id="addButton" disabled>追加</button>
-      </div>
-
-      <div id="settings" style="display:none;">
-        <h2>設定</h2>
-        <div class="form-group">
-          <label>アバター性別:</label>
-          <select id="genderSelect">
-            <option value="F">女</option>
-            <option value="M">男</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>更新希望ステータス:</label>
-          <div id="updateStatusContainer" class="pop-status-group"></div>
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" id="showItemsCheckbox"> アイテム列を表示</label>
-        </div>
-        <button id="saveSettingsButton">設定を保存</button>
-      </div>
-
-      <div id="tradeSearch" style="display:none;">
-        <h2>販売アバター検索</h2>
-        <button id="reloadTradeButton">再読み込み</button>
-        <div id="tradeDataDisplay"><p>データ未読み込み</p></div>
-      </div>
-
-      <div id="graphSection" style="display:none;">
-        <h2>価格履歴グラフ</h2>
-        <div class="form-group">
-          <label>パラメータ:</label>
-          <select id="paramSelect"></select>
-        </div>
-        <div class="form-group">
-          <label>上昇値:</label>
-          <select id="increaseSelect"></select>
-        </div>
-        <button id="loadGraphButton">グラフ表示</button>
-        <div class="chart-container">
-          <canvas id="historyChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <div class="right-panel" id="rightPanel">
-      <h2>追加されたアバター一覧</h2>
-      <div class="scrollable-table-container">
-        <table id="avatarTable">
-          <thead>
-            <tr>
-              <th>パーツ</th><th>種類①</th><th>種類②</th><th>上昇値</th><th>削除</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let bagcatMapping = {}, partsMapping = {}, typeOptions = [];
-    let avatarList = [], uniqueTradeItems = [], historyData = null, historyChart = null;
-    const sections = ["readme","avatarForm","settings","tradeSearch","graphSection"];
-
-    function fetchCsv(url) {
-      return fetch(url)
-        .then(r => r.text())
-        .then(txt => txt.trim().split("\n").map(l => l.split(",").map(c => c.trim())))
-        .catch(() => []);
-    }
-
-    function loadBagcatLabels() {
-      return fetchCsv("bagcat_labels.csv").then(rows => {
-        rows.slice(1).forEach(([code,jp]) => {
-          if (code && jp) {
-            bagcatMapping[code] = jp;
-            partsMapping[jp] = code;
-          }
-        });
-      });
-    }
-
-    window.addEventListener("load", () => {
-      Promise.all([
-        loadBagcatLabels(),
-        fetch("buzzerHistory.json").then(r => r.json())
-      ]).then(([, hData]) => {
-        historyData = hData;
-        const ps = document.getElementById("paramSelect");
-        Object.keys(historyData).forEach(p => {
-          const opt = document.createElement("option");
-          opt.value = p; opt.textContent = p;
-          ps.appendChild(opt);
-        });
-      });
-
-      const last = localStorage.getItem("lastSection") || "readme";
-      showSection(last);
-
-      document.getElementById("switchToLeft").style.display = "none";
-      document.getElementById("switchToRight").style.display = "block";
-
-      loadBagcatLabels().then(() => {
-        populatePartsOptions();
-        populateType1Options();
-        const s = localStorage.getItem("avatarList");
-        if (s) {
-          avatarList = JSON.parse(s);
-          renderAvatarTable();
-        }
-        generateSettingsUI();
-      });
-    });
-
-    function showSection(id) {
-      sections.forEach(sec => {
-        document.getElementById(sec).style.display = (sec === id ? "block" : "none");
-      });
-      localStorage.setItem("lastSection", id);
-      if (id === "tradeSearch") logItemCodes();
-    }
-
-    document.getElementById("hamburgerBtn").addEventListener("click", () => {
-      const sb = document.getElementById("sidebar"),
-            mc = document.getElementById("mainContainer"),
-            sl = document.getElementById("switchToLeft");
-      if (sb.style.left === "0px") {
-        sb.style.left = "-260px"; mc.style.marginLeft = "0"; sl.style.left = "0";
-      } else {
-        sb.style.left = "0"; mc.style.marginLeft = "240px"; sl.style.left = "240px";
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>アバター管理画面</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-    });
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background: #f2f2f2;
+        color: #333;
+      }
 
-    document.querySelectorAll(".sidebar li").forEach(li => li.addEventListener("click", () => {
-      const tgt = li.getAttribute("data-target");
-      showSection(tgt);
-      document.getElementById("sidebar").style.left = "-260px";
-      document.getElementById("mainContainer").style.marginLeft = "0";
-      document.getElementById("switchToLeft").style.left = "0";
-    }));
+      /* ヘッダー */
+      header {
+        display: flex;
+        align-items: center;
+        background: #ffb300;
+        color: #fff;
+        padding: 16px 24px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .hamburger {
+        font-size: 24px;
+        cursor: pointer;
+        margin-right: 16px;
+      }
+      header h1 {
+        font-size: 1.2em;
+        margin: 0;
+      }
 
-    document.getElementById("switchToRight").addEventListener("click", () => {
-      document.getElementById("leftPanel").style.transform = "translateX(-100%)";
-      document.getElementById("rightPanel").style.transform = "translateX(0)";
-      document.getElementById("switchToRight").style.display = "none";
-      document.getElementById("switchToLeft").style.display = "block";
-    });
+      /* サイドバー */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -260px;
+        width: 240px;
+        height: 100vh;
+        padding-top: 64px;
+        background: #333;
+        color: #fff;
+        transition: left 0.3s ease;
+        z-index: 1500;
+      }
+      .sidebar ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .sidebar li {
+        padding: 12px 16px;
+        margin: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .sidebar li:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
 
-    document.getElementById("switchToLeft").addEventListener("click", () => {
-      document.getElementById("leftPanel").style.transform = "translateX(0)";
-      document.getElementById("rightPanel").style.transform = "translateX(100%)";
-      document.getElementById("switchToLeft").style.display = "none";
-      document.getElementById("switchToRight").style.display = "block";
-    });
+      /* メインコンテナ */
+      .main-container {
+        position: relative;
+        width: 100%;
+        height: calc(100vh - 64px);
+        overflow: hidden;
+        transition: margin-left 0.3s ease;
+        padding: 24px;
+      }
 
-    function populatePartsOptions() {
-      const dl = document.getElementById("partsList"),
-            sel = document.getElementById("partSelect");
-      dl.innerHTML = "";
-      sel.innerHTML = "<option value=''>選択してください</option>";
-      Object.keys(partsMapping).forEach(jp => {
-        dl.innerHTML += `<option value="${jp}">`;
-        sel.innerHTML += `<option value="${jp}">${jp}</option>`;
+      /* パネル共通 */
+      .left-panel,
+      .right-panel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        padding: 24px;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+      }
+      .left-panel {
+        transform: translateX(0);
+      }
+      .right-panel {
+        transform: translateX(100%);
+      }
+
+      /* ナビ切替ボタン */
+      .nav-btn {
+        position: fixed;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 48px;
+        height: 48px;
+        background: rgba(0, 0, 0, 0.3);
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 1600;
+        transition: background 0.2s;
+      }
+      .nav-btn:hover {
+        background: rgba(0, 0, 0, 0.5);
+      }
+      .nav-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: #fff;
+      }
+      #switchToLeft {
+        left: 16px;
+        display: none;
+      }
+      #switchToRight {
+        right: 16px;
+      }
+
+      /* フォーム */
+      .form-group {
+        margin-bottom: 20px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        color: #555;
+      }
+      .form-group input[type="text"],
+      .form-group input[type="number"],
+      .form-group select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        transition: border-color 0.2s;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #ffb300;
+      }
+      button {
+        padding: 10px 18px;
+        background: #ffb300;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+        white-space: nowrap;
+      }
+      button:hover {
+        background: #e6a100;
+      }
+      button:disabled {
+        background: #ccc;
+        cursor: default;
+      }
+
+      /* ポップステータス */
+      .pop-status-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .pop-status-group label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffe082;
+        padding: 6px 12px;
+        border-radius: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        font-size: 0.9em;
+        color: #555;
+      }
+      .pop-status-group input {
+        margin-left: 8px;
+        accent-color: #ff6f00;
+      }
+
+      /* テーブル */
+      .scrollable-table-container {
+        margin-top: 24px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border-spacing: 0;
+      }
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 6;
+        background: #fafafa;
+      }
+      thead th {
+        padding: 12px 16px;
+        border: 1px solid #e0e0e0;
+        white-space: nowrap;
+        padding-right: 24px;
+      }
+      thead th:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 8;
+      }
+      tbody td {
+        padding: 12px 16px;
+        border: 1px solid #e0e0e0;
+        background: #fff;
+      }
+      tbody td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 7;
+        background: #fff;
+      }
+      th.sort-asc::after {
+        content: " ▲";
+      }
+      th.sort-desc::after {
+        content: " ▼";
+      }
+
+      /* モーダル */
+      #modalWindow {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60vw;
+        max-width: 60vw;
+        background: #fff;
+        border-radius: 8px;
+        padding: 24px;
+        z-index: 1700;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+      #modalContent {
+        display: flex;
+        overflow-x: auto;
+        gap: 16px;
+      }
+      .modalItem {
+        flex: 0 0 auto;
+        background: #f7f7f7;
+        padding: 12px;
+        border-radius: 4px;
+        text-align: center;
+      }
+      .modalItem img {
+        max-width: 80px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+      }
+      #closeModal {
+        margin-top: 16px;
+        width: 100%;
+        background: #e53935;
+      }
+
+      /* グラフセクション */
+      #graphSection {
+        display: none;
+      }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        margin-top: 24px;
+      }
+
+      /* レスポンシブ入力切替 */
+      #partInput,
+      #partsList,
+      #type1Input,
+      #type1List,
+      #type2Input,
+      #type2List {
+        display: inline-block;
+        width: calc(100% - 24px);
+      }
+      #partSelect,
+      #type1Select,
+      #type2Select {
+        display: none;
+        width: 100%;
+      }
+      @media (min-width: 768px) {
+        #partInput,
+        #partsList,
+        #type1Input,
+        #type1List,
+        #type2Input,
+        #type2List {
+          display: none;
+        }
+        #partSelect,
+        #type1Select,
+        #type2Select {
+          display: inline-block;
+        }
+      }
+
+      /* モバイル余白調整 */
+      @media (max-width: 767px) {
+        .main-container {
+          padding: 12px;
+        }
+        .left-panel,
+        .right-panel {
+          padding: 12px;
+          border-radius: 0;
+        }
+        .form-group {
+          margin-bottom: 12px;
+        }
+        .scrollable-table-container {
+          margin-top: 12px;
+        }
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="hamburger" id="hamburgerBtn">&#9776;</div>
+      <h1>アバター管理画面</h1>
+    </header>
+
+    <div id="modalWindow">
+      <div id="modalContent"></div>
+      <button id="closeModal">閉じる</button>
+    </div>
+
+    <button id="switchToLeft" class="nav-btn" title="前へ">
+      <svg viewBox="0 0 24 24">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+      </svg>
+    </button>
+    <button id="switchToRight" class="nav-btn" title="次へ">
+      <svg viewBox="0 0 24 24">
+        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z" />
+      </svg>
+    </button>
+
+    <div class="main-container" id="mainContainer">
+      <div class="sidebar" id="sidebar">
+        <ul>
+          <li data-target="readme">Readme</li>
+          <li data-target="avatarForm">所持アバター追加</li>
+          <li data-target="settings">設定</li>
+          <li data-target="tradeSearch">販売アバター検索</li>
+          <li data-target="graphSection">価格履歴グラフ</li>
+        </ul>
+      </div>
+
+      <div class="left-panel" id="leftPanel">
+        <div id="readme"><h2>Readme</h2></div>
+
+        <div id="avatarForm" style="display: none">
+          <h2>所持アバター追加</h2>
+          <div class="form-group">
+            <label>パーツ（表示名）:</label>
+            <input
+              type="text"
+              id="partInput"
+              list="partsList"
+              placeholder="例: トップス"
+            />
+            <datalist id="partsList"></datalist>
+            <select id="partSelect"></select>
+          </div>
+          <div class="form-group">
+            <label>種類①:</label>
+            <input
+              type="text"
+              id="type1Input"
+              list="type1List"
+              placeholder="例: INT"
+            />
+            <datalist id="type1List"></datalist>
+            <select id="type1Select"></select>
+          </div>
+          <div class="form-group">
+            <label>種類②:</label>
+            <input
+              type="text"
+              id="type2Input"
+              list="type2List"
+              placeholder="（未入力可）"
+              disabled
+            />
+            <datalist id="type2List"></datalist>
+            <select id="type2Select"></select>
+          </div>
+          <div class="form-group">
+            <label>上昇値:</label>
+            <input type="number" id="valueInput" placeholder="数値を入力" />
+          </div>
+          <button id="addButton" disabled>追加</button>
+        </div>
+
+        <div id="settings" style="display: none">
+          <h2>設定</h2>
+          <div class="form-group">
+            <label>アバター性別:</label>
+            <select id="genderSelect">
+              <option value="F">女</option>
+              <option value="M">男</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>更新希望ステータス:</label>
+            <div id="updateStatusContainer" class="pop-status-group"></div>
+          </div>
+          <div class="form-group">
+            <label
+              ><input type="checkbox" id="showItemsCheckbox" />
+              アイテム列を表示</label
+            >
+          </div>
+          <button id="saveSettingsButton">設定を保存</button>
+        </div>
+
+        <div id="tradeSearch" style="display: none">
+          <h2>販売アバター検索</h2>
+          <button id="reloadTradeButton">再読み込み</button>
+          <div id="tradeDataDisplay"><p>データ未読み込み</p></div>
+        </div>
+
+        <div id="graphSection" style="display: none">
+          <h2>価格履歴グラフ</h2>
+          <div class="form-group">
+            <label>パラメータ:</label>
+            <select id="paramSelect"></select>
+          </div>
+          <div class="form-group">
+            <label>上昇値:</label>
+            <select id="increaseSelect"></select>
+          </div>
+          <button id="loadGraphButton">グラフ表示</button>
+          <div class="chart-container">
+            <canvas id="historyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel" id="rightPanel">
+        <h2>追加されたアバター一覧</h2>
+        <div class="scrollable-table-container">
+          <table id="avatarTable">
+            <thead>
+              <tr>
+                <th>パーツ</th>
+                <th>種類①</th>
+                <th>種類②</th>
+                <th>上昇値</th>
+                <th>削除</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let bagcatMapping = {},
+        partsMapping = {},
+        typeOptions = [];
+      let avatarList = [],
+        uniqueTradeItems = [],
+        historyData = null,
+        historyChart = null;
+      const sections = [
+        "readme",
+        "avatarForm",
+        "settings",
+        "tradeSearch",
+        "graphSection",
+      ];
+
+      function fetchCsv(url) {
+        return fetch(url)
+          .then((r) => r.text())
+          .then((txt) =>
+            txt
+              .trim()
+              .split("\n")
+              .map((l) => l.split(",").map((c) => c.trim()))
+          )
+          .catch(() => []);
+      }
+
+      function loadBagcatLabels() {
+        return fetchCsv("bagcat_labels.csv").then((rows) => {
+          rows.slice(1).forEach(([code, jp]) => {
+            if (code && jp) {
+              bagcatMapping[code] = jp;
+              partsMapping[jp] = code;
+            }
+          });
+        });
+      }
+
+      window.addEventListener("load", () => {
+        Promise.all([
+          loadBagcatLabels(),
+          fetch("buzzerHistory.json").then((r) => r.json()),
+        ]).then(([, hData]) => {
+          historyData = hData;
+          const ps = document.getElementById("paramSelect");
+          Object.keys(historyData).forEach((p) => {
+            const opt = document.createElement("option");
+            opt.value = p;
+            opt.textContent = p;
+            ps.appendChild(opt);
+          });
+        });
+
+        const last = localStorage.getItem("lastSection") || "readme";
+        showSection(last);
+
+        document.getElementById("switchToLeft").style.display = "none";
+        document.getElementById("switchToRight").style.display = "block";
+
+        loadBagcatLabels().then(() => {
+          populatePartsOptions();
+          populateType1Options();
+          const s = localStorage.getItem("avatarList");
+          if (s) {
+            avatarList = JSON.parse(s);
+            renderAvatarTable();
+          }
+          generateSettingsUI();
+        });
       });
-    }
 
-    function populateType1Options() {
-      typeOptions = ["INT","ALL","HPR","SP","PET","HP","SPR","LUK","ATK","EXP","MAT","POW","VIT","SPD"];
-      const dl = document.getElementById("type1List"),
-            sel = document.getElementById("type1Select");
-      dl.innerHTML = "";
-      sel.innerHTML = "<option value=''>選択してください</option>";
-      typeOptions.forEach(t => {
-        dl.innerHTML += `<option value="${t}">`;
-        sel.innerHTML += `<option value="${t}">${t}</option>`;
+      function showSection(id) {
+        sections.forEach((sec) => {
+          document.getElementById(sec).style.display =
+            sec === id ? "block" : "none";
+        });
+        localStorage.setItem("lastSection", id);
+        if (id === "tradeSearch") logItemCodes();
+      }
+
+      document.getElementById("hamburgerBtn").addEventListener("click", () => {
+        const sb = document.getElementById("sidebar"),
+          mc = document.getElementById("mainContainer"),
+          sl = document.getElementById("switchToLeft");
+        if (sb.style.left === "0px") {
+          sb.style.left = "-260px";
+          mc.style.marginLeft = "0";
+          sl.style.left = "0";
+        } else {
+          sb.style.left = "0";
+          mc.style.marginLeft = "240px";
+          sl.style.left = "240px";
+        }
       });
-    }
 
-    function updateType2Options(skip) {
-      const dl = document.getElementById("type2List"),
-            sel = document.getElementById("type2Select");
-      dl.innerHTML = "<option value=''></option>";
-      sel.innerHTML = "<option value=''>選択してください</option>";
-      typeOptions.forEach(t => {
-        if (t !== skip) {
+      document.querySelectorAll(".sidebar li").forEach((li) =>
+        li.addEventListener("click", () => {
+          const tgt = li.getAttribute("data-target");
+          showSection(tgt);
+          document.getElementById("sidebar").style.left = "-260px";
+          document.getElementById("mainContainer").style.marginLeft = "0";
+          document.getElementById("switchToLeft").style.left = "0";
+        })
+      );
+
+      document.getElementById("switchToRight").addEventListener("click", () => {
+        document.getElementById("leftPanel").style.transform =
+          "translateX(-100%)";
+        document.getElementById("rightPanel").style.transform = "translateX(0)";
+        document.getElementById("switchToRight").style.display = "none";
+        document.getElementById("switchToLeft").style.display = "block";
+      });
+
+      document.getElementById("switchToLeft").addEventListener("click", () => {
+        document.getElementById("leftPanel").style.transform = "translateX(0)";
+        document.getElementById("rightPanel").style.transform =
+          "translateX(100%)";
+        document.getElementById("switchToLeft").style.display = "none";
+        document.getElementById("switchToRight").style.display = "block";
+      });
+
+      function populatePartsOptions() {
+        const dl = document.getElementById("partsList"),
+          sel = document.getElementById("partSelect");
+        dl.innerHTML = "";
+        sel.innerHTML = "<option value=''>選択してください</option>";
+        Object.keys(partsMapping).forEach((jp) => {
+          dl.innerHTML += `<option value="${jp}">`;
+          sel.innerHTML += `<option value="${jp}">${jp}</option>`;
+        });
+      }
+
+      function populateType1Options() {
+        typeOptions = [
+          "INT",
+          "ALL",
+          "HPR",
+          "SP",
+          "PET",
+          "HP",
+          "SPR",
+          "LUK",
+          "ATK",
+          "EXP",
+          "MAT",
+          "POW",
+          "VIT",
+          "SPD",
+        ];
+        const dl = document.getElementById("type1List"),
+          sel = document.getElementById("type1Select");
+        dl.innerHTML = "";
+        sel.innerHTML = "<option value=''>選択してください</option>";
+        typeOptions.forEach((t) => {
           dl.innerHTML += `<option value="${t}">`;
           sel.innerHTML += `<option value="${t}">${t}</option>`;
-        }
-      });
-    }
-
-    function generateSettingsUI() {
-      const g = localStorage.getItem("avatarGender");
-      if (g) document.getElementById("genderSelect").value = g;
-      const cont = document.getElementById("updateStatusContainer"),
-            sav  = JSON.parse(localStorage.getItem("updateStatus") || "[]");
-      cont.innerHTML = "";
-      typeOptions.forEach(t => {
-        cont.innerHTML += `<label>${t}<input type="checkbox" value="${t}" ${sav.includes(t)?"checked":""}></label>`;
-      });
-      const st = localStorage.getItem("showItems");
-      document.getElementById("showItemsCheckbox").checked =
-        (st !== null) ? JSON.parse(st) : (window.innerWidth >= 768);
-    }
-
-    document.getElementById("saveSettingsButton").addEventListener("click", () => {
-      localStorage.setItem("avatarGender", document.getElementById("genderSelect").value);
-      const ck = Array.from(document.querySelectorAll("#updateStatusContainer input:checked"))
-                      .map(cb => cb.value);
-      localStorage.setItem("updateStatus", JSON.stringify(ck));
-      localStorage.setItem("showItems", JSON.stringify(document.getElementById("showItemsCheckbox").checked));
-      alert("設定を保存しました。");
-    });
-
-    const partInput   = document.getElementById("partInput"),
-          partSelect  = document.getElementById("partSelect"),
-          type1Input  = document.getElementById("type1Input"),
-          type1Select = document.getElementById("type1Select"),
-          type2Input  = document.getElementById("type2Input"),
-          type2Select = document.getElementById("type2Select"),
-          valueInput  = document.getElementById("valueInput"),
-          addButton   = document.getElementById("addButton"),
-          avatarTableBody = document.querySelector("#avatarTable tbody");
-
-    function checkInput() {
-      const p  = partInput.value.trim() || partSelect.value.trim(),
-            t1 = type1Input.value.trim() || type1Select.value.trim();
-      addButton.disabled = !(p !== "" && t1 !== "" && valueInput.value.trim() !== "" && !isNaN(valueInput.value));
-    }
-
-    [partInput,partSelect,type1Input,type1Select,type2Input,type2Select,valueInput]
-      .forEach(el => el.addEventListener("input", checkInput));
-
-    type1Input.addEventListener("change", () => {
-      const v = type1Input.value.trim();
-      type2Input.disabled = !v; type2Select.disabled = !v;
-      type2Input.value = ""; type2Select.value = "";
-      updateType2Options(v); checkInput();
-    });
-    type1Select.addEventListener("change", () => {
-      const v = type1Select.value.trim();
-      type2Input.disabled = !v; type2Select.disabled = !v;
-      type2Input.value = ""; type2Select.value = "";
-      updateType2Options(v); checkInput();
-    });
-
-    addButton.addEventListener("click", () => {
-      const p  = partInput.value.trim() || partSelect.value.trim();
-      const t1 = type1Input.value.trim() || type1Select.value.trim();
-      const t2 = type2Input.value.trim() || type2Select.value.trim() || "なし";
-      avatarList.push({ partText:p, type1:t1, type2:t2, increase:valueInput.value.trim() });
-      localStorage.setItem("avatarList", JSON.stringify(avatarList));
-      renderAvatarTable();
-      partInput.value=""; partSelect.value="";
-      type1Input.value=""; type1Select.value="";
-      type2Input.value=""; type2Select.value=""; type2Input.disabled=true; type2Select.disabled=true;
-      valueInput.value=""; checkInput();
-    });
-
-    function renderAvatarTable() {
-      avatarTableBody.innerHTML = "";
-      avatarList.forEach((av,i) => {
-        const tr = document.createElement("tr");
-        ["partText","type1","type2","increase"].forEach(key => {
-          const td = document.createElement("td"); td.textContent = av[key]; tr.appendChild(td);
         });
-        const tdDel = document.createElement("td");
-        tdDel.innerHTML = `<button>削除</button>`;
-        tdDel.firstChild.addEventListener("click", () => {
-          avatarList.splice(i,1);
-          localStorage.setItem("avatarList", JSON.stringify(avatarList));
-          renderAvatarTable();
-        });
-        tr.appendChild(tdDel);
-        avatarTableBody.appendChild(tr);
-      });
-    }
+      }
 
-    document.getElementById("reloadTradeButton").addEventListener("click", logItemCodes);
-
-    function logItemCodes() {
-      Promise.all([
-        loadBagcatLabels(),
-        fetch("bazzarList.json").then(r => r.json()),
-        fetch("itemCodeSchema.json").then(r => r.json()),
-        fetch("itemAnother.json").then(r => r.json())
-      ]).then(([ , bData, schema, another ]) => {
-        const regex = /^【([^+]+)\+([^】]+)】/;
-        schema.forEach(e => {
-          const m = regex.exec(e.itemName);
-          e.type  = m ? m[1] : "";
-          e.param = m ? parseInt(m[2].replace(/％/g,""),10) : 0;
-        });
-        const combined = schema.concat(another);
-
-        uniqueTradeItems = [];
-        const seen = {};
-        bData.forEach(it => {
-          if (!seen[it.bazaarId]) {
-            seen[it.bazaarId] = true;
-            uniqueTradeItems.push(it);
+      function updateType2Options(skip) {
+        const dl = document.getElementById("type2List"),
+          sel = document.getElementById("type2Select");
+        dl.innerHTML = "<option value=''></option>";
+        sel.innerHTML = "<option value=''>選択してください</option>";
+        typeOptions.forEach((t) => {
+          if (t !== skip) {
+            dl.innerHTML += `<option value="${t}">`;
+            sel.innerHTML += `<option value="${t}">${t}</option>`;
           }
         });
+      }
 
-        uniqueTradeItems.forEach(it => {
-          it.listingItems = it.listingItems.map(code => {
-            const m = combined.find(x=>x.itemCode===code) || {};
-            return {
-              itemCode:   code,
-              itemName:   m.itemName   || "",
-              parts:      m.parts      || "",
-              itemGender: m.itemGender || "",
-              type:       m.type       || "",
-              param:      m.param      || 0
-            };
-          });
-
-          it.listingItems.forEach(li => {
-            const jp = bagcatMapping[li.parts] || li.parts;
-            const av = avatarList.find(x=>x.type1===li.type && x.partText===jp);
-            let d = li.param;
-            if (av) {
-              d = li.param - Number(av.increase);
-              if (d < 0) d = 0;
-            }
-            li.diff = d;
-          });
-
-          const uniqueDiffs = {};
-          it.listingItems.forEach(li => {
-            const key = li.type + "_" + li.parts;
-            if (uniqueDiffs[key]===undefined || li.diff > uniqueDiffs[key]) {
-              uniqueDiffs[key] = li.diff;
-            }
-          });
-
-          it.typeSums = {};
-          Object.keys(uniqueDiffs).forEach(key => {
-            const t = key.split("_")[0];
-            it.typeSums[t] = (it.typeSums[t] || 0) + uniqueDiffs[key];
-          });
+      function generateSettingsUI() {
+        const g = localStorage.getItem("avatarGender");
+        if (g) document.getElementById("genderSelect").value = g;
+        const cont = document.getElementById("updateStatusContainer"),
+          sav = JSON.parse(localStorage.getItem("updateStatus") || "[]");
+        cont.innerHTML = "";
+        typeOptions.forEach((t) => {
+          cont.innerHTML += `<label>${t}<input type="checkbox" value="${t}" ${
+            sav.includes(t) ? "checked" : ""
+          }></label>`;
         });
+        const st = localStorage.getItem("showItems");
+        document.getElementById("showItemsCheckbox").checked =
+          st !== null ? JSON.parse(st) : window.innerWidth >= 768;
+      }
 
-        const gender = localStorage.getItem("avatarGender");
-        let filtered = uniqueTradeItems.filter(it => {
-          if (!gender) return true;
-          return !it.listingItems.some(li => li.itemGender === (gender==="F"?"M":"F"));
-        });
-
-        const savedTypes = JSON.parse(localStorage.getItem("updateStatus")||"[]");
-        const displayTypes = savedTypes.sort((a,b)=>typeOptions.indexOf(a)-typeOptions.indexOf(b));
-        const showItems = localStorage.getItem("showItems")!==null
-                          ? JSON.parse(localStorage.getItem("showItems"))
-                          : (window.innerWidth >= 768);
-        const maxItems = (window.innerWidth >=768 && showItems)
-                         ? Math.max(...filtered.map(it=>it.listingItems.length))
-                         : 0;
-
-        let html = "<div class='scrollable-table-container'><table><thead><tr>"
-                 + "<th>販売リンク</th><th>締切</th><th>HC</th>";
-        displayTypes.forEach(t => html += `<th>${t}<br>(HC/差分)</th>`);
-        if (maxItems>0) {
-          for (let i=0;i<maxItems;i++) html += `<th>アイテム${i+1}</th>`;
-        }
-        html += "<th>詳細</th></tr></thead><tbody>";
-
-        filtered.forEach(it => {
-          const end = (it.sellEndDate||"").replace(" ","<br>");
-          const hc  = Number(it.hancoin)||0;
-          html += "<tr>";
-          html += `<td><button onclick="openLinkInNewTab('${it.bazaarId}')">販売リンク</button></td>`;
-          html += `<td>${end}</td><td>${hc}</td>`;
-          displayTypes.forEach(t => {
-            const sum = it.typeSums[t] || 0;
-            const ratio = sum ? (hc/sum).toFixed(2) : "0";
-            html += `<td>${ratio}</td>`;
-          });
-          if (maxItems>0) {
-            for (let j=0;j<maxItems;j++) {
-              if (j < it.listingItems.length) {
-                const li = it.listingItems[j];
-                const jp = bagcatMapping[li.parts] || li.parts;
-                html += `<td>${jp}<br>${li.type}+${li.param}</td>`;
-              } else {
-                html += "<td></td>";
-              }
-            }
-          }
-          html += `<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td>`;
-          html += "</tr>";
-        });
-
-        html += "</tbody></table></div>";
-        document.getElementById("tradeDataDisplay").innerHTML = html;
-
-        const tbl = document.querySelector("#tradeDataDisplay table");
-        if (tbl) {
-          tbl.querySelectorAll("thead th").forEach((cell,i) =>
-            cell.addEventListener("click", ()=>sortTableByColumn(tbl,i))
+      document
+        .getElementById("saveSettingsButton")
+        .addEventListener("click", () => {
+          localStorage.setItem(
+            "avatarGender",
+            document.getElementById("genderSelect").value
           );
-        }
-      })
-      .catch(e => {
-        document.getElementById("tradeDataDisplay").innerHTML =
-          `<p>読み込みエラー: ${e.message}</p>`;
-      });
-    }
+          const ck = Array.from(
+            document.querySelectorAll("#updateStatusContainer input:checked")
+          ).map((cb) => cb.value);
+          localStorage.setItem("updateStatus", JSON.stringify(ck));
+          localStorage.setItem(
+            "showItems",
+            JSON.stringify(document.getElementById("showItemsCheckbox").checked)
+          );
+          alert("設定を保存しました。");
+        });
 
-    function openLinkInNewTab(id) {
-      window.open(
-        `https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${id}`,
-        "_blank"
-      );
-    }
+      const partInput = document.getElementById("partInput"),
+        partSelect = document.getElementById("partSelect"),
+        type1Input = document.getElementById("type1Input"),
+        type1Select = document.getElementById("type1Select"),
+        type2Input = document.getElementById("type2Input"),
+        type2Select = document.getElementById("type2Select"),
+        valueInput = document.getElementById("valueInput"),
+        addButton = document.getElementById("addButton"),
+        avatarTableBody = document.querySelector("#avatarTable tbody");
 
-    function showModal(id) {
-      const c = document.getElementById("modalContent");
-      c.innerHTML = "";
-      const it = uniqueTradeItems.find(x=>x.bazaarId===id);
-      if (!it) return;
-      it.listingItems.forEach(li => {
-        const div = document.createElement("div");
-        div.className = "modalItem";
-        const img = document.createElement("img");
-        img.src = `https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`;
-        div.appendChild(img);
-        const jp = bagcatMapping[li.parts] || li.parts;
-        const p1 = document.createElement("p");
-        p1.textContent = `${jp} / 差分:${li.type}+${li.diff}`;
-        div.appendChild(p1);
-        const p2 = document.createElement("p");
-        p2.textContent = li.itemName;
-        div.appendChild(p2);
-        c.appendChild(div);
-      });
-      document.getElementById("modalWindow").style.display = "block";
-    }
-
-    document.getElementById("closeModal").addEventListener("click", () => {
-      document.getElementById("modalWindow").style.display = "none";
-    });
-
-    function sortTableByColumn(table, colIndex) {
-      const tbody = table.querySelector("tbody"),
-            rows  = Array.from(tbody.querySelectorAll("tr")),
-            ths   = table.querySelectorAll("thead th");
-      ths.forEach(th => th.classList.remove("sort-asc","sort-desc"));
-
-      let dir = "asc";
-      if (table._sortCol === colIndex) {
-        dir = table._sortDir === "asc" ? "desc" : "asc";
+      function checkInput() {
+        const p = partInput.value.trim() || partSelect.value.trim(),
+          t1 = type1Input.value.trim() || type1Select.value.trim();
+        addButton.disabled = !(
+          p !== "" &&
+          t1 !== "" &&
+          valueInput.value.trim() !== "" &&
+          !isNaN(valueInput.value)
+        );
       }
-      table._sortCol = colIndex;
-      table._sortDir = dir;
-      ths[colIndex].classList.add(dir==="asc"?"sort-asc":"sort-desc");
 
-      const isRatio = ths[colIndex].textContent.includes("(HC/差分)");
-      rows.sort((a,b) => {
-        const ta = a.children[colIndex].textContent.trim(),
-              tb = b.children[colIndex].textContent.trim(),
-              na = parseFloat(ta), nb = parseFloat(tb);
-        let va, vb;
-        if (!isNaN(na) && !isNaN(nb)) {
-          if (isRatio && dir==="asc") {
-            va = na===0 ? Infinity : na;
-            vb = nb===0 ? Infinity : nb;
-          } else {
-            va = na; vb = nb;
-          }
-        } else {
-          va = ta; vb = tb;
-        }
-        const cmp = (typeof va==="number" && typeof vb==="number")
-                    ? va - vb
-                    : String(va).localeCompare(String(vb));
-        return dir==="asc" ? cmp : -cmp;
+      [
+        partInput,
+        partSelect,
+        type1Input,
+        type1Select,
+        type2Input,
+        type2Select,
+        valueInput,
+      ].forEach((el) => el.addEventListener("input", checkInput));
+
+      type1Input.addEventListener("change", () => {
+        const v = type1Input.value.trim();
+        type2Input.disabled = !v;
+        type2Select.disabled = !v;
+        type2Input.value = "";
+        type2Select.value = "";
+        updateType2Options(v);
+        checkInput();
       });
-      rows.forEach(r => tbody.appendChild(r));
-    }
+      type1Select.addEventListener("change", () => {
+        const v = type1Select.value.trim();
+        type2Input.disabled = !v;
+        type2Select.disabled = !v;
+        type2Input.value = "";
+        type2Select.value = "";
+        updateType2Options(v);
+        checkInput();
+      });
 
-    document.getElementById("paramSelect").addEventListener("change", () => {
-      const p = document.getElementById("paramSelect").value,
-            incSel = document.getElementById("increaseSelect");
-      incSel.innerHTML = "<option value=''>選択してください</option>";
-      if (historyData && historyData[p]) {
-        Object.keys(historyData[p]).forEach(i => {
-          const opt = document.createElement("option");
-          opt.value = i; opt.textContent = i;
-          incSel.appendChild(opt);
+      addButton.addEventListener("click", () => {
+        const p = partInput.value.trim() || partSelect.value.trim();
+        const t1 = type1Input.value.trim() || type1Select.value.trim();
+        const t2 =
+          type2Input.value.trim() || type2Select.value.trim() || "なし";
+        avatarList.push({
+          partText: p,
+          type1: t1,
+          type2: t2,
+          increase: valueInput.value.trim(),
+        });
+        localStorage.setItem("avatarList", JSON.stringify(avatarList));
+        renderAvatarTable();
+        partInput.value = "";
+        partSelect.value = "";
+        type1Input.value = "";
+        type1Select.value = "";
+        type2Input.value = "";
+        type2Select.value = "";
+        type2Input.disabled = true;
+        type2Select.disabled = true;
+        valueInput.value = "";
+        checkInput();
+      });
+
+      function renderAvatarTable() {
+        avatarTableBody.innerHTML = "";
+        avatarList.forEach((av, i) => {
+          const tr = document.createElement("tr");
+          ["partText", "type1", "type2", "increase"].forEach((key) => {
+            const td = document.createElement("td");
+            td.textContent = av[key];
+            tr.appendChild(td);
+          });
+          const tdDel = document.createElement("td");
+          tdDel.innerHTML = `<button>削除</button>`;
+          tdDel.firstChild.addEventListener("click", () => {
+            avatarList.splice(i, 1);
+            localStorage.setItem("avatarList", JSON.stringify(avatarList));
+            renderAvatarTable();
+          });
+          tr.appendChild(tdDel);
+          avatarTableBody.appendChild(tr);
         });
       }
-    });
 
-    document.getElementById("loadGraphButton").addEventListener("click", () => {
-      const p   = document.getElementById("paramSelect").value,
-            inc = document.getElementById("increaseSelect").value;
-      if (!p || !inc || !historyData) return;
-      const series = historyData[p][inc];
-      const datasets = Object.entries(series).map(([parts, vals]) => {
-        const jp = bagcatMapping[parts] || parts;
-        const data = Object.entries(vals)
-          .map(([t,v]) => ({ x: new Date(t), y: v }))
-          .sort((a,b) => a.x - b.x);
-        return {
-          label: jp,
-          data,
-          fill: false,
-          tension: 0.4,
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6
-        };
-      });
-      const ctx = document.getElementById("historyChart").getContext("2d");
-      if (historyChart) historyChart.destroy();
-      historyChart = new Chart(ctx, {
-        type: "line",
-        data: { datasets },
-        options: {
-          responsive:true,
-          plugins: {
-            legend: {
-              position:"bottom",
-              labels: { usePointStyle:true, padding:20, boxWidth:10 }
-            },
-            tooltip: {
-              mode:"index",
-              intersect:false,
-              callbacks: {
-                title(items) {
-                  return new Date(items[0].parsed.x).toLocaleString();
-                },
-                label(item) {
-                  return `${item.dataset.label}: ${item.parsed.y} HC`;
+      document
+        .getElementById("reloadTradeButton")
+        .addEventListener("click", logItemCodes);
+
+      function logItemCodes() {
+        Promise.all([
+          loadBagcatLabels(),
+          fetch("bazzarList.json").then((r) => r.json()),
+          fetch("itemCodeSchema.json").then((r) => r.json()),
+          fetch("itemAnother.json").then((r) => r.json()),
+        ])
+          .then(([, bData, schema, another]) => {
+            const regex = /^【([^+]+)\+([^】]+)】/;
+            schema.forEach((e) => {
+              const m = regex.exec(e.itemName);
+              e.type = m ? m[1] : "";
+              e.param = m ? parseInt(m[2].replace(/％/g, ""), 10) : 0;
+            });
+            const combined = schema.concat(another);
+
+            uniqueTradeItems = [];
+            const seen = {};
+            bData.forEach((it) => {
+              if (!seen[it.bazaarId]) {
+                seen[it.bazaarId] = true;
+                uniqueTradeItems.push(it);
+              }
+            });
+
+            uniqueTradeItems.forEach((it) => {
+              it.listingItems = it.listingItems.map((code) => {
+                const m = combined.find((x) => x.itemCode === code) || {};
+                return {
+                  itemCode: code,
+                  itemName: m.itemName || "",
+                  parts: m.parts || "",
+                  itemGender: m.itemGender || "",
+                  type: m.type || "",
+                  param: m.param || 0,
+                };
+              });
+
+              it.listingItems.forEach((li) => {
+                const jp = bagcatMapping[li.parts] || li.parts;
+                const av = avatarList.find(
+                  (x) => x.type1 === li.type && x.partText === jp
+                );
+                let d = li.param;
+                if (av) {
+                  d = li.param - Number(av.increase);
+                  if (d < 0) d = 0;
+                }
+                li.diff = d;
+              });
+
+              const uniqueDiffs = {};
+              it.listingItems.forEach((li) => {
+                const key = li.type + "_" + li.parts;
+                if (
+                  uniqueDiffs[key] === undefined ||
+                  li.diff > uniqueDiffs[key]
+                ) {
+                  uniqueDiffs[key] = li.diff;
+                }
+              });
+
+              it.typeSums = {};
+              Object.keys(uniqueDiffs).forEach((key) => {
+                const t = key.split("_")[0];
+                it.typeSums[t] = (it.typeSums[t] || 0) + uniqueDiffs[key];
+              });
+            });
+
+            const gender = localStorage.getItem("avatarGender");
+            let filtered = uniqueTradeItems.filter((it) => {
+              if (!gender) return true;
+              return !it.listingItems.some(
+                (li) => li.itemGender === (gender === "F" ? "M" : "F")
+              );
+            });
+
+            const savedTypes = JSON.parse(
+              localStorage.getItem("updateStatus") || "[]"
+            );
+            const displayTypes = savedTypes.sort(
+              (a, b) => typeOptions.indexOf(a) - typeOptions.indexOf(b)
+            );
+            const showItems =
+              localStorage.getItem("showItems") !== null
+                ? JSON.parse(localStorage.getItem("showItems"))
+                : window.innerWidth >= 768;
+            const maxItems =
+              window.innerWidth >= 768 && showItems
+                ? Math.max(...filtered.map((it) => it.listingItems.length))
+                : 0;
+
+            let html =
+              "<div class='scrollable-table-container'><table><thead><tr>" +
+              "<th>販売リンク</th><th>締切</th><th>HC</th>";
+            displayTypes.forEach((t) => (html += `<th>${t}<br>(HC/差分)</th>`));
+            if (maxItems > 0) {
+              for (let i = 0; i < maxItems; i++)
+                html += `<th>アイテム${i + 1}</th>`;
+            }
+            html += "<th>詳細</th></tr></thead><tbody>";
+
+            filtered.forEach((it) => {
+              const end = (it.sellEndDate || "").replace(" ", "<br>");
+              const hc = Number(it.hancoin) || 0;
+              html += "<tr>";
+              html += `<td><button onclick="openLinkInNewTab('${it.bazaarId}')">販売リンク</button></td>`;
+              html += `<td>${end}</td><td>${hc}</td>`;
+              displayTypes.forEach((t) => {
+                const sum = it.typeSums[t] || 0;
+                const ratio = sum ? (hc / sum).toFixed(2) : "0";
+                html += `<td>${ratio}</td>`;
+              });
+              if (maxItems > 0) {
+                for (let j = 0; j < maxItems; j++) {
+                  if (j < it.listingItems.length) {
+                    const li = it.listingItems[j];
+                    const jp = bagcatMapping[li.parts] || li.parts;
+                    html += `<td>${jp}<br>${li.type}+${li.param}</td>`;
+                  } else {
+                    html += "<td></td>";
+                  }
                 }
               }
+              html += `<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td>`;
+              html += "</tr>";
+            });
+
+            html += "</tbody></table></div>";
+            document.getElementById("tradeDataDisplay").innerHTML = html;
+
+            const tbl = document.querySelector("#tradeDataDisplay table");
+            if (tbl) {
+              tbl
+                .querySelectorAll("thead th")
+                .forEach((cell, i) =>
+                  cell.addEventListener("click", () =>
+                    sortTableByColumn(tbl, i)
+                  )
+                );
             }
-          },
-          scales: {
-            x: {
-              type:"time",
-              time: {
-                tooltipFormat:"YYYY-MM-DD HH:mm",
-                unit:"hour",
-                displayFormats:{ hour:"MM/DD HH:mm" }
-              },
-              title:{ display:true, text:"時間" },
-              grid:{ display:false }
-            },
-            y: {
-              title:{ display:true, text:"ハンコイン" },
-              beginAtZero:true,
-              grid:{ color:"rgba(0,0,0,0.05)" }
+          })
+          .catch((e) => {
+            document.getElementById(
+              "tradeDataDisplay"
+            ).innerHTML = `<p>読み込みエラー: ${e.message}</p>`;
+          });
+      }
+
+      function openLinkInNewTab(id) {
+        window.open(
+          `https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${id}`,
+          "_blank"
+        );
+      }
+
+      function showModal(id) {
+        const c = document.getElementById("modalContent");
+        c.innerHTML = "";
+        const it = uniqueTradeItems.find((x) => x.bazaarId === id);
+        if (!it) return;
+        it.listingItems.forEach((li) => {
+          const div = document.createElement("div");
+          div.className = "modalItem";
+          const img = document.createElement("img");
+          img.src = `https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`;
+          div.appendChild(img);
+          const jp = bagcatMapping[li.parts] || li.parts;
+          const p1 = document.createElement("p");
+          p1.textContent = `${jp} / 差分:${li.type}+${li.diff}`;
+          div.appendChild(p1);
+          const p2 = document.createElement("p");
+          p2.textContent = li.itemName;
+          div.appendChild(p2);
+          c.appendChild(div);
+        });
+        document.getElementById("modalWindow").style.display = "block";
+      }
+
+      document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("modalWindow").style.display = "none";
+      });
+
+      function sortTableByColumn(table, colIndex) {
+        const tbody = table.querySelector("tbody"),
+          rows = Array.from(tbody.querySelectorAll("tr")),
+          ths = table.querySelectorAll("thead th");
+        ths.forEach((th) => th.classList.remove("sort-asc", "sort-desc"));
+
+        let dir = "asc";
+        if (table._sortCol === colIndex) {
+          dir = table._sortDir === "asc" ? "desc" : "asc";
+        }
+        table._sortCol = colIndex;
+        table._sortDir = dir;
+        ths[colIndex].classList.add(dir === "asc" ? "sort-asc" : "sort-desc");
+
+        const isRatio = ths[colIndex].textContent.includes("(HC/差分)");
+        rows.sort((a, b) => {
+          const ta = a.children[colIndex].textContent.trim(),
+            tb = b.children[colIndex].textContent.trim(),
+            na = parseFloat(ta),
+            nb = parseFloat(tb);
+          let va, vb;
+          if (!isNaN(na) && !isNaN(nb)) {
+            if (isRatio && dir === "asc") {
+              va = na === 0 ? Infinity : na;
+              vb = nb === 0 ? Infinity : nb;
+            } else {
+              va = na;
+              vb = nb;
             }
-          },
-          elements: {
-            line:{ borderCapStyle:"round" },
-            point:{ hoverBorderWidth:2 }
+          } else {
+            va = ta;
+            vb = tb;
           }
+          const cmp =
+            typeof va === "number" && typeof vb === "number"
+              ? va - vb
+              : String(va).localeCompare(String(vb));
+          return dir === "asc" ? cmp : -cmp;
+        });
+        rows.forEach((r) => tbody.appendChild(r));
+      }
+
+      document.getElementById("paramSelect").addEventListener("change", () => {
+        const p = document.getElementById("paramSelect").value,
+          incSel = document.getElementById("increaseSelect");
+        incSel.innerHTML = "<option value=''>選択してください</option>";
+        if (historyData && historyData[p]) {
+          Object.keys(historyData[p]).forEach((i) => {
+            const opt = document.createElement("option");
+            opt.value = i;
+            opt.textContent = i;
+            incSel.appendChild(opt);
+          });
         }
       });
-    });
-  </script>
-</body>
+
+      document
+        .getElementById("loadGraphButton")
+        .addEventListener("click", () => {
+          const p = document.getElementById("paramSelect").value,
+            inc = document.getElementById("increaseSelect").value;
+          if (!p || !inc || !historyData) return;
+          const series = historyData[p][inc];
+          const datasets = Object.entries(series).map(([parts, vals]) => {
+            const jp = bagcatMapping[parts] || parts;
+            const data = Object.entries(vals)
+              .map(([t, v]) => ({ x: new Date(t), y: v }))
+              .sort((a, b) => a.x - b.x);
+            return {
+              label: jp,
+              data,
+              fill: false,
+              tension: 0.4,
+              borderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6,
+            };
+          });
+          const ctx = document.getElementById("historyChart").getContext("2d");
+          if (historyChart) historyChart.destroy();
+          historyChart = new Chart(ctx, {
+            type: "line",
+            data: { datasets },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                  labels: { usePointStyle: true, padding: 20, boxWidth: 10 },
+                },
+                tooltip: {
+                  mode: "index",
+                  intersect: false,
+                  callbacks: {
+                    title(items) {
+                      return new Date(items[0].parsed.x).toLocaleString();
+                    },
+                    label(item) {
+                      return `${item.dataset.label}: ${item.parsed.y} HC`;
+                    },
+                  },
+                },
+              },
+              scales: {
+                x: {
+                  type: "time",
+                  time: {
+                    tooltipFormat: "YYYY-MM-DD HH:mm",
+                    unit: "hour",
+                    displayFormats: { hour: "MM/DD HH:mm" },
+                  },
+                  title: { display: true, text: "時間" },
+                  grid: { display: false },
+                },
+                y: {
+                  title: { display: true, text: "ハンコイン" },
+                  beginAtZero: true,
+                  grid: { color: "rgba(0,0,0,0.05)" },
+                },
+              },
+              elements: {
+                line: { borderCapStyle: "round" },
+                point: { hoverBorderWidth: 2 },
+              },
+            },
+          });
+        });
+    </script>
+  </body>
 </html>
