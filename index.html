@@ -16,39 +16,74 @@
     .sidebar li { padding:12px 16px; margin:8px; border-radius:4px; cursor:pointer; transition:background .2s; }
     .sidebar li:hover { background:rgba(255,255,255,0.1); }
     .main-container { position:relative; width:100%; height:calc(100vh - 64px); overflow:hidden; transition:margin-left .3s ease; padding:24px; }
-    .left-panel, .right-panel { position:absolute; top:0; left:0; width:100%; height:100%; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.05); padding:24px; overflow-y:auto; transition:transform .3s ease; }
+    .left-panel, .right-panel {
+      position:absolute; top:0; left:0; width:100%; height:100%;
+      background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.05);
+      padding:24px; overflow-y:auto; transition:transform .3s ease;
+    }
     .left-panel { transform:translateX(0); }
     .right-panel { transform:translateX(100%); }
-    .nav-btn { position:fixed; top:50%; transform:translateY(-50%); width:48px; height:48px; background:rgba(0,0,0,0.3); border:none; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:1600; transition:background .2s; }
+    .nav-btn {
+      position:fixed; top:50%; transform:translateY(-50%);
+      width:48px; height:48px; background:rgba(0,0,0,0.3);
+      border:none; border-radius:50%; display:flex; align-items:center; justify-content:center;
+      cursor:pointer; z-index:1600; transition:background .2s;
+    }
     .nav-btn:hover { background:rgba(0,0,0,0.5); }
     .nav-btn svg { width:24px; height:24px; fill:#fff; }
     #switchToLeft { left:16px; display:none; }
-    #switchToRight{ right:16px; }
+    #switchToRight { right:16px; }
     .form-group { margin-bottom:20px; }
     .form-group label { display:block; margin-bottom:6px; font-weight:bold; color:#555; }
-    .form-group input[type="text"], .form-group input[type="number"], .form-group select { width:100%; padding:10px 12px; border:1px solid #ccc; border-radius:4px; transition:border-color .2s; }
+    .form-group input[type="text"], .form-group input[type="number"], .form-group select {
+      width:100%; padding:10px 12px; border:1px solid #ccc; border-radius:4px; transition:border-color .2s;
+    }
     .form-group input:focus, .form-group select:focus { outline:none; border-color:#ffb300; }
-    button { padding:10px 18px; background:#ffb300; color:#fff; border:none; border-radius:4px; cursor:pointer; transition:background .2s; white-space:nowrap; }
+    button {
+      padding:10px 18px; background:#ffb300; color:#fff; border:none; border-radius:4px;
+      cursor:pointer; transition:background .2s; white-space:nowrap;
+    }
     button:hover { background:#e6a100; }
     button:disabled { background:#ccc; cursor:default; }
     .pop-status-group { display:flex; flex-wrap:wrap; gap:8px; }
-    .pop-status-group label { display:flex; align-items:center; justify-content:space-between; background:#ffe082; padding:6px 12px; border-radius:20px; box-shadow:0 1px 3px rgba(0,0,0,0.1); font-size:0.9em; color:#555; }
+    .pop-status-group label {
+      display:flex; align-items:center; justify-content:space-between;
+      background:#ffe082; padding:6px 12px; border-radius:20px; box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      font-size:0.9em; color:#555;
+    }
     .pop-status-group input { margin-left:8px; accent-color:#ff6f00; }
-    .scrollable-table-container { margin-top:24px; max-height:calc(100vh - 200px); overflow-y:auto; overflow-x:auto; background:#fff; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.05); }
+    .scrollable-table-container {
+      margin-top:24px; max-height:calc(100vh - 200px);
+      overflow-y:auto; overflow-x:auto; background:#fff; border-radius:8px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+    }
     table { width:100%; border-collapse:collapse; border-spacing:0; }
     thead { position:sticky; top:0; z-index:6; background:#fafafa; }
-    thead th { padding:12px 16px; border:1px solid #e0e0e0; white-space:nowrap; padding-right:24px; }
+    thead th {
+      padding:12px 16px; border:1px solid #e0e0e0;
+      white-space:nowrap; padding-right:24px;
+    }
     thead th:first-child { position:sticky; left:0; z-index:8; }
     tbody td { padding:12px 16px; border:1px solid #e0e0e0; background:#fff; }
     tbody td:first-child { position:sticky; left:0; z-index:7; background:#fff; }
     th.sort-asc::after { content:" ▲"; }
-    th.sort-desc::after{ content:" ▼"; }
-    #modalWindow { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:60vw; max-width:60vw; background:#fff; border-radius:8px; padding:24px; z-index:1700; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+    th.sort-desc::after { content:" ▼"; }
+    #modalWindow {
+      display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+      width:60vw; max-width:60vw; background:#fff; border-radius:8px;
+      padding:24px; z-index:1700; box-shadow:0 4px 12px rgba(0,0,0,0.2);
+    }
     #modalContent { display:flex; overflow-x:auto; gap:16px; }
-    .modalItem { flex:0 0 auto; background:#f7f7f7; padding:12px; border-radius:4px; text-align:center; }
+    .modalItem {
+      flex:0 0 auto; background:#f7f7f7; padding:12px; border-radius:4px; text-align:center;
+    }
     .modalItem img { max-width:80px; margin-bottom:8px; border-radius:4px; }
     #closeModal { margin-top:16px; width:100%; background:#e53935; }
-    #partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List { display:inline-block; width:calc(100% - 24px); }
+    #graphSection { display:none; }
+    .chart-container { position:relative; width:100%; height:400px; margin-top:24px; }
+    #partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List {
+      display:inline-block; width:calc(100% - 24px);
+    }
     #partSelect,#type1Select,#type2Select { display:none; width:100%; }
     @media(min-width:768px){
       #partInput,#partsList,#type1Input,#type1List,#type2Input,#type2List { display:none; }
@@ -60,7 +95,6 @@
       .form-group{margin-bottom:12px;}
       .scrollable-table-container{margin-top:12px;}
     }
-    #historyChart { width:100%; height:300px; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -69,19 +103,12 @@
     <div class="hamburger" id="hamburgerBtn">&#9776;</div>
     <h1>アバター管理画面</h1>
   </header>
-
   <div id="modalWindow">
     <div id="modalContent"></div>
     <button id="closeModal">閉じる</button>
   </div>
-
-  <button id="switchToLeft" class="nav-btn">
-    <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-  </button>
-  <button id="switchToRight" class="nav-btn">
-    <svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
-  </button>
-
+  <button id="switchToLeft" class="nav-btn"><svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
+  <button id="switchToRight" class="nav-btn"><svg viewBox="0 0 24 24"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg></button>
   <div class="main-container" id="mainContainer">
     <div class="sidebar" id="sidebar">
       <ul>
@@ -89,165 +116,95 @@
         <li data-target="avatarForm">所持アバター追加</li>
         <li data-target="settings">設定</li>
         <li data-target="tradeSearch">販売アバター検索</li>
-        <li data-target="historyGraph">履歴グラフ</li>
+        <li data-target="graphSection">価格履歴グラフ</li>
       </ul>
     </div>
-
     <div class="left-panel" id="leftPanel">
       <div id="readme"><h2>Readme</h2></div>
-
       <div id="avatarForm" style="display:none;">
         <h2>所持アバター追加</h2>
-        <div class="form-group">
-          <label>パーツ（表示名）:</label>
-          <input type="text" id="partInput" list="partsList" placeholder="例: トップス">
-          <datalist id="partsList"></datalist>
-          <select id="partSelect"><option value="">選択してください</option></select>
-        </div>
-        <div class="form-group">
-          <label>種類①:</label>
-          <input type="text" id="type1Input" list="type1List" placeholder="例: INT">
-          <datalist id="type1List"></datalist>
-          <select id="type1Select"><option value="">選択してください</option></select>
-        </div>
-        <div class="form-group">
-          <label>種類②:</label>
-          <input type="text" id="type2Input" list="type2List" placeholder="（未入力可）" disabled>
-          <datalist id="type2List"></datalist>
-          <select id="type2Select"><option value="">選択してください</option></select>
-        </div>
-        <div class="form-group">
-          <label>上昇値:</label>
-          <input type="number" id="valueInput" placeholder="数値を入力">
-        </div>
+        <div class="form-group"><label>パーツ（表示名）:</label><input type="text" id="partInput" list="partsList"><datalist id="partsList"></datalist><select id="partSelect"></select></div>
+        <div class="form-group"><label>種類①:</label><input type="text" id="type1Input" list="type1List"><datalist id="type1List"></datalist><select id="type1Select"></select></div>
+        <div class="form-group"><label>種類②:</label><input type="text" id="type2Input" list="type2List" disabled><datalist id="type2List"></datalist><select id="type2Select"></select></div>
+        <div class="form-group"><label>上昇値:</label><input type="number" id="valueInput"></div>
         <button id="addButton" disabled>追加</button>
       </div>
-
       <div id="settings" style="display:none;">
         <h2>設定</h2>
-        <div class="form-group">
-          <label>アバター性別:</label>
-          <select id="genderSelect">
-            <option value="F">女</option>
-            <option value="M">男</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>更新希望ステータス:</label>
-          <div id="updateStatusContainer" class="pop-status-group"></div>
-        </div>
-        <div class="form-group">
-          <label><input type="checkbox" id="showItemsCheckbox"> アイテム列を表示</label>
-        </div>
+        <div class="form-group"><label>アバター性別:</label><select id="genderSelect"><option value="F">女</option><option value="M">男</option></select></div>
+        <div class="form-group"><label>更新希望ステータス:</label><div id="updateStatusContainer" class="pop-status-group"></div></div>
+        <div class="form-group"><label><input type="checkbox" id="showItemsCheckbox"> アイテム列を表示</label></div>
         <button id="saveSettingsButton">設定を保存</button>
       </div>
-
       <div id="tradeSearch" style="display:none;">
         <h2>販売アバター検索</h2>
         <button id="reloadTradeButton">再読み込み</button>
         <div id="tradeDataDisplay"><p>データ未読み込み</p></div>
       </div>
-
-      <div id="historyGraph" style="display:none;">
-        <h2>履歴グラフ</h2>
-        <div class="form-group">
-          <label>パラメータ:</label>
-          <select id="paramSelect"><option value="">選択してください</option></select>
-        </div>
-        <div class="form-group">
-          <label>上昇値:</label>
-          <select id="increaseSelect"><option value="">選択してください</option></select>
-        </div>
-        <div class="form-group">
-          <button id="loadGraphButton">表示</button>
-        </div>
-        <canvas id="historyChart"></canvas>
+      <div id="graphSection" style="display:none;">
+        <h2>価格履歴グラフ</h2>
+        <div class="form-group"><label>パラメータ:</label><select id="paramSelect"></select></div>
+        <div class="form-group"><label>上昇値:</label><select id="increaseSelect"></select></div>
+        <button id="loadGraphButton">グラフ表示</button>
+        <div class="chart-container"><canvas id="historyChart"></canvas></div>
       </div>
     </div>
-
     <div class="right-panel" id="rightPanel">
       <h2>追加されたアバター一覧</h2>
       <div class="scrollable-table-container">
-        <table id="avatarTable">
-          <thead>
-            <tr><th>パーツ</th><th>種類①</th><th>種類②</th><th>上昇値</th><th>削除</th></tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+        <table id="avatarTable"><thead><tr><th>パーツ</th><th>種類①</th><th>種類②</th><th>上昇値</th><th>削除</th></tr></thead><tbody></tbody></table>
       </div>
     </div>
   </div>
-
   <script>
     let bagcatMapping={}, partsMapping={}, typeOptions=[];
-    let avatarList=[], uniqueTradeItems=[];
-    let historyData=null, historyChart=null;
-    const sections=["readme","avatarForm","settings","tradeSearch","historyGraph"];
-
-    function fetchCsv(u){return fetch(u).then(r=>r.text()).then(t=>t.trim().split("\n").map(l=>l.split(",").map(c=>c.trim()))).catch(e=>[]);}
-
-    function loadBagcatLabels(){
-      return fetchCsv("bagcat_labels.csv").then(rows=>{
-        rows.slice(1).forEach(([code,jp])=>{
-          if(code&&jp){ bagcatMapping[code]=jp; partsMapping[jp]=code; }
-        });
+    let avatarList=[], uniqueTradeItems=[], historyData=null, historyChart=null;
+    const sections=["readme","avatarForm","settings","tradeSearch","graphSection"];
+    function fetchCsv(u){return fetch(u).then(r=>r.text()).then(t=>t.trim().split("\n").map(l=>l.split(",").map(c=>c.trim()))).catch(()=>[]);}
+    function loadBagcat(){return fetchCsv("bagcat_labels.csv").then(r=>{r.slice(1).forEach(([c,j])=>{if(c&&j){bagcatMapping[c]=j;partsMapping[j]=c;}});});}
+    window.addEventListener("load",()=>{
+      Promise.all([loadBagcat(),fetch("buzzerHistory.json").then(r=>r.json())]).then(([,h])=>{
+        historyData=h;
+        const ps=document.getElementById("paramSelect");
+        Object.keys(historyData).forEach(p=>ps.innerHTML+=`<option value="${p}">${p}</option>`);
       });
-    }
-
-    function loadTypeOptions(){
-      return fetchCsv("type_options.csv").then(rows=>{
-        typeOptions=rows.slice(1).map(r=>r[0]).filter(t=>t);
+      const last=localStorage.getItem("lastSection")||"readme"; showSection(last);
+      document.getElementById("switchToLeft").style.display="none";
+      document.getElementById("switchToRight").style.display="block";
+      loadBagcat().then(()=>{
+        populatePartsOptions();populateType1Options();
+        const s=localStorage.getItem("avatarList"); if(s){avatarList=JSON.parse(s);renderAvatarTable();}
+        generateSettingsUI();
       });
-    }
-
+    });
     function showSection(id){
-      sections.forEach(sec=>{
-        document.getElementById(sec).style.display=sec===id?"block":"none";
-      });
+      sections.forEach(s=>document.getElementById(s).style.display=(s===id?"block":"none"));
       localStorage.setItem("lastSection",id);
       if(id==="tradeSearch") logItemCodes();
     }
-
-    window.addEventListener("load",()=>{
-      Promise.all([loadBagcatLabels(), loadTypeOptions(), loadHistoryData()]).then(()=>{
-        const last=localStorage.getItem("lastSection")||"readme";
-        showSection(last);
-        document.getElementById("switchToLeft").style.display="none";
-        populatePartsOptions();
-        populateType1Options();
-        generateSettingsUI();
-        const s=localStorage.getItem("avatarList");
-        if(s){ avatarList=JSON.parse(s); renderAvatarTable(); }
-      });
+    document.getElementById("hamburgerBtn").addEventListener("click",()=>{
+      const sb=document.getElementById("sidebar"), mc=document.getElementById("mainContainer"), sl=document.getElementById("switchToLeft");
+      if(sb.style.left==="0px"){sb.style.left="-260px";mc.style.marginLeft="0";sl.style.left="0";}
+      else {sb.style.left="0";mc.style.marginLeft="240px";sl.style.left="240px";}
     });
-
-    const sidebar=document.getElementById("sidebar"), mainContainer=document.getElementById("mainContainer"),
-          switchToLeft=document.getElementById("switchToLeft"), switchToRight=document.getElementById("switchToRight"),
-          hamburgerBtn=document.getElementById("hamburgerBtn");
-    hamburgerBtn.addEventListener("click",()=>{
-      if(sidebar.style.left==="0px"){
-        sidebar.style.left="-260px"; mainContainer.style.marginLeft="0"; switchToLeft.style.left="0";
-      } else {
-        sidebar.style.left="0"; mainContainer.style.marginLeft="240px"; switchToLeft.style.left="240px";
-      }
-    });
-    document.querySelectorAll(".sidebar li").forEach(li=>{
-      li.addEventListener("click",()=>{
-        showSection(li.getAttribute("data-target"));
-        sidebar.style.left="-260px"; mainContainer.style.marginLeft="0"; switchToLeft.style.left="0";
-      });
-    });
-    switchToRight.addEventListener("click",()=>{
+    document.querySelectorAll(".sidebar li").forEach(li=>li.addEventListener("click",()=>{
+      showSection(li.getAttribute("data-target"));
+      document.getElementById("sidebar").style.left="-260px";
+      document.getElementById("mainContainer").style.marginLeft="0";
+      document.getElementById("switchToLeft").style.left="0";
+    }));
+    document.getElementById("switchToRight").addEventListener("click",()=>{
       document.getElementById("leftPanel").style.transform="translateX(-100%)";
       document.getElementById("rightPanel").style.transform="translateX(0)";
-      switchToRight.style.display="none"; switchToLeft.style.display="block";
+      document.getElementById("switchToRight").style.display="none";
+      document.getElementById("switchToLeft").style.display="block";
     });
-    switchToLeft.addEventListener("click",()=>{
+    document.getElementById("switchToLeft").addEventListener("click",()=>{
       document.getElementById("leftPanel").style.transform="translateX(0)";
       document.getElementById("rightPanel").style.transform="translateX(100%)";
-      switchToLeft.style.display="none"; switchToRight.style.display="block";
+      document.getElementById("switchToLeft").style.display="none";
+      document.getElementById("switchToRight").style.display="block";
     });
-
     function populatePartsOptions(){
       const dl=document.getElementById("partsList"), sel=document.getElementById("partSelect");
       dl.innerHTML=""; sel.innerHTML="<option value=''>選択してください</option>";
@@ -256,40 +213,27 @@
       });
     }
     function populateType1Options(){
+      const defaultTypes=["INT","ALL","HPR","SP","PET","HP","SPR","LUK","ATK","EXP","MAT","POW","VIT","SPD"];
+      typeOptions=defaultTypes;
       const dl=document.getElementById("type1List"), sel=document.getElementById("type1Select");
       dl.innerHTML=""; sel.innerHTML="<option value=''>選択してください</option>";
-      typeOptions.forEach(t=>{
-        dl.innerHTML+=`<option value="${t}">`; sel.innerHTML+=`<option value="${t}">${t}</option>`;
-      });
+      typeOptions.forEach(t=>{dl.innerHTML+=`<option value="${t}">`; sel.innerHTML+=`<option value="${t}">${t}</option>`;});
     }
     function updateType2Options(skip){
       const dl=document.getElementById("type2List"), sel=document.getElementById("type2Select");
       dl.innerHTML="<option value=''></option>"; sel.innerHTML="<option value=''>選択してください</option>";
-      typeOptions.forEach(t=>{
-        if(t!==skip){
-          dl.innerHTML+=`<option value="${t}">`;
-          sel.innerHTML+=`<option value="${t}">${t}</option>`;
-        }
-      });
+      typeOptions.forEach(t=>{if(t!==skip){dl.innerHTML+=`<option value="${t}">`;sel.innerHTML+=`<option value="${t}">${t}</option>`;}});
     }
-
     function generateSettingsUI(){
       const g=localStorage.getItem("avatarGender");
       if(g) document.getElementById("genderSelect").value=g;
-      const cont=document.getElementById("updateStatusContainer");
+      const cont=document.getElementById("updateStatusContainer"), sav=JSON.parse(localStorage.getItem("updateStatus")||"[]");
       cont.innerHTML="";
-      const sav=JSON.parse(localStorage.getItem("updateStatus")||"[]");
       typeOptions.forEach(t=>{
-        const cb=document.createElement("input");
-        cb.type="checkbox"; cb.id="status_"+t; cb.value=t;
-        if(sav.includes(t)) cb.checked=true;
-        const lbl=document.createElement("label");
-        lbl.htmlFor=cb.id; lbl.textContent=t;
-        lbl.insertBefore(cb,lbl.firstChild);
-        cont.appendChild(lbl);
+        cont.innerHTML+=`<label>${t}<input type="checkbox" value="${t}" ${sav.includes(t)?"checked":""}></label>`;
       });
       const st=localStorage.getItem("showItems");
-      document.getElementById("showItemsCheckbox").checked=st!==null?JSON.parse(st):(window.innerWidth>=768);
+      document.getElementById("showItemsCheckbox").checked = st!==null?JSON.parse(st):(window.innerWidth>=768);
     }
     document.getElementById("saveSettingsButton").addEventListener("click",()=>{
       localStorage.setItem("avatarGender",document.getElementById("genderSelect").value);
@@ -298,7 +242,6 @@
       localStorage.setItem("showItems",JSON.stringify(document.getElementById("showItemsCheckbox").checked));
       alert("設定を保存しました。");
     });
-
     const partInput=document.getElementById("partInput"), partSelect=document.getElementById("partSelect"),
           type1Input=document.getElementById("type1Input"), type1Select=document.getElementById("type1Select"),
           type2Input=document.getElementById("type2Input"), type2Select=document.getElementById("type2Select"),
@@ -309,19 +252,12 @@
       const t1=type1Input.value.trim()||type1Select.value.trim();
       addButton.disabled=!(p!==""&&t1!==""&&valueInput.value.trim()!==""&&!isNaN(valueInput.value));
     }
-    [partInput,partSelect,type1Input,type1Select,type2Input,type2Select,valueInput]
-      .forEach(el=>el.addEventListener("input",checkInput));
+    [partInput,partSelect,type1Input,type1Select,type2Input,type2Select,valueInput].forEach(el=>el.addEventListener("input",checkInput));
     type1Input.addEventListener("change",()=>{
-      const v=type1Input.value.trim();
-      type2Input.disabled=!v; type2Select.disabled=!v;
-      type2Input.value=""; type2Select.value="";
-      updateType2Options(v); checkInput();
+      const v=type1Input.value.trim();type2Input.disabled=!v;type2Select.disabled=!v;type2Input.value="";type2Select.value="";updateType2Options(v);checkInput();
     });
     type1Select.addEventListener("change",()=>{
-      const v=type1Select.value.trim();
-      type2Input.disabled=!v; type2Select.disabled=!v;
-      type2Input.value=""; type2Select.value="";
-      updateType2Options(v); checkInput();
+      const v=type1Select.value.trim();type2Input.disabled=!v;type2Select.disabled=!v;type2Input.value="";type2Select.value="";updateType2Options(v);checkInput();
     });
     addButton.addEventListener("click",()=>{
       const p=partInput.value.trim()||partSelect.value.trim();
@@ -330,95 +266,69 @@
       avatarList.push({ partText:p, type1:t1, type2:t2, increase:valueInput.value.trim() });
       localStorage.setItem("avatarList",JSON.stringify(avatarList));
       renderAvatarTable();
-      partInput.value=""; partSelect.value=""; type1Input.value=""; type1Select.value="";
+      partInput.value=""; partSelect.value="";
+      type1Input.value=""; type1Select.value="";
       type2Input.value=""; type2Select.value=""; type2Input.disabled=true; type2Select.disabled=true;
       valueInput.value=""; checkInput();
     });
-
     function renderAvatarTable(){
       avatarTableBody.innerHTML="";
       avatarList.forEach((av,i)=>{
         const tr=document.createElement("tr");
         ["partText","type1","type2","increase"].forEach(key=>{
-          const td=document.createElement("td");
-          td.textContent=av[key];
-          tr.appendChild(td);
+          const td=document.createElement("td"); td.textContent=av[key]; tr.appendChild(td);
         });
         const tdDel=document.createElement("td");
-        const btn=document.createElement("button");
-        btn.textContent="削除";
-        btn.addEventListener("click",()=>{
+        tdDel.innerHTML=`<button>削除</button>`;
+        tdDel.firstChild.addEventListener("click",()=>{
           avatarList.splice(i,1);
           localStorage.setItem("avatarList",JSON.stringify(avatarList));
           renderAvatarTable();
         });
-        tdDel.appendChild(btn);
         tr.appendChild(tdDel);
         avatarTableBody.appendChild(tr);
       });
     }
-
-    document.getElementById("reloadTradeButton").addEventListener("click", logItemCodes);
+    document.getElementById("reloadTradeButton").addEventListener("click",logItemCodes);
     function logItemCodes(){
       Promise.all([
-        loadBagcatLabels(),
+        loadBagcat(),
         fetch("bazzarList.json").then(r=>r.json()),
         fetch("itemCodeSchema.json").then(r=>r.json()),
         fetch("itemAnother.json").then(r=>r.json())
-      ]).then(([ ,bData,schema,another ])=>{
-        const bazaarList=Array.isArray(bData)?bData:(bData.bazzarList||[]);
+      ]).then(([,bData,schema,another])=>{
         const regex=/^【([^+]+)\+([^】]+)】/;
-        schema.forEach(e=>{
-          const m=regex.exec(e.itemName);
-          e.type=m?m[1]:""; e.param=m?parseInt(m[2].replace(/％/g,""),10):0;
-        });
+        schema.forEach(e=>{const m=regex.exec(e.itemName);e.type=m?m[1]:"";e.param=m?parseInt(m[2].replace(/％/g,""),10):0;});
         const combined=schema.concat(another);
-        uniqueTradeItems=[]; const seen={};
-        bazaarList.forEach(it=>{
-          if(!seen[it.bazaarId]){ seen[it.bazaarId]=true; uniqueTradeItems.push(it); }
-        });
+        uniqueTradeItems=[];const seen={};
+        bData.bazzarList.forEach(it=>{if(!seen[it.bazaarId]){seen[it.bazaarId]=true;uniqueTradeItems.push(it);}});
         uniqueTradeItems.forEach(it=>{
-          it.listingItems=it.listingItems.map(code=>{
-            const m=combined.find(x=>x.itemCode===code)||{};
-            return { itemCode:code, itemName:m.itemName||"", parts:m.parts||"", itemGender:m.itemGender||"", type:m.type||"", param:m.param||0 };
-          });
+          it.listingItems=it.listingItems.map(code=>{const m=combined.find(x=>x.itemCode===code)||{};return{itemCode:code,itemName:m.itemName||"",parts:m.parts||"",itemGender:m.itemGender||"",type:m.type||"",param:m.param||0};});
           it.listingItems.forEach(li=>{
             const jp=bagcatMapping[li.parts]||li.parts;
             const av=avatarList.find(x=>x.type1===li.type&&x.partText===jp);
-            let d=li.param;
-            if(av){ d=li.param-Number(av.increase); if(d<0)d=0; }
-            li.diff=d;
+            let d=li.param;if(av){d=li.param-Number(av.increase);if(d<0)d=0;}li.diff=d;
           });
           const uniqueDiffs={};
           it.listingItems.forEach(li=>{
             const key=li.type+"_"+li.parts;
-            if(uniqueDiffs[key]===undefined||li.diff>uniqueDiffs[key]){
-              uniqueDiffs[key]=li.diff;
-            }
+            if(uniqueDiffs[key]===undefined||li.diff>uniqueDiffs[key])uniqueDiffs[key]=li.diff;
           });
           it.typeSums={};
-          Object.keys(uniqueDiffs).forEach(key=>{
-            const t=key.split("_")[0];
-            it.typeSums[t]=(it.typeSums[t]||0)+uniqueDiffs[key];
-          });
+          Object.keys(uniqueDiffs).forEach(key=>{const t=key.split("_")[0];it.typeSums[t]=(it.typeSums[t]||0)+uniqueDiffs[key];});
         });
         const gender=localStorage.getItem("avatarGender");
-        let filtered=uniqueTradeItems.filter(it=>{
-          if(!gender) return true;
-          return !it.listingItems.some(li=>(gender==="F"?"M":"F")===li.itemGender);
-        });
+        let filtered=uniqueTradeItems.filter(it=>!gender||!it.listingItems.some(li=>li.itemGender===(gender==="F"?"M":"F")));
         const savedTypes=JSON.parse(localStorage.getItem("updateStatus")||"[]");
         const displayTypes=savedTypes.sort((a,b)=>typeOptions.indexOf(a)-typeOptions.indexOf(b));
         const showItems=localStorage.getItem("showItems")!==null?JSON.parse(localStorage.getItem("showItems")):(window.innerWidth>=768);
         const maxItems=(window.innerWidth>=768&&showItems)?Math.max(...filtered.map(it=>it.listingItems.length)):0;
-        let html="<div class='scrollable-table-container'><table><thead><tr>"
-          +"<th>販売リンク</th><th>締切</th><th>HC</th>";
+        let html="<div class='scrollable-table-container'><table><thead><tr><th>販売リンク</th><th>締切</th><th>HC</th>";
         displayTypes.forEach(t=>html+=`<th>${t}<br>(HC/差分)</th>`);
-        if(maxItems>0) for(let i=0;i<maxItems;i++) html+=`<th>アイテム${i+1}</th>`;
+        if(maxItems>0)for(let i=0;i<maxItems;i++)html+=`<th>アイテム${i+1}</th>`;
         html+="<th>詳細</th></tr></thead><tbody>";
         filtered.forEach(it=>{
-          const end=(it.sellEndDate||"").replace(" ","<br>");
-          const hc=Number(it.hancoin)||0;
+          const end=(it.sellEndDate||"").replace(" ","<br>"),hc=Number(it.hancoin)||0;
           html+="<tr>";
           html+=`<td><button onclick="openLinkInNewTab('${it.bazaarId}')">販売リンク</button></td>`;
           html+=`<td>${end}</td><td>${hc}</td>`;
@@ -436,54 +346,37 @@
               } else html+="<td></td>";
             }
           }
-          html+=`<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td></tr>`;
+          html+=`<td><button onclick="showModal('${it.bazaarId}')">詳細</button></td>`;
+          html+="</tr>";
         });
         html+="</tbody></table></div>";
         document.getElementById("tradeDataDisplay").innerHTML=html;
         const tbl=document.querySelector("#tradeDataDisplay table");
-        if(tbl) tbl.querySelectorAll("thead th").forEach((cell,i)=>cell.addEventListener("click",()=>sortTableByColumn(tbl,i)));
+        if(tbl)tbl.querySelectorAll("thead th").forEach((cell,i)=>cell.addEventListener("click",()=>sortTableByColumn(tbl,i)));
       }).catch(e=>{
-        document.getElementById("tradeDataDisplay").innerHTML=`<p>データ読み込み失敗: ${e.message}</p>`;
+        document.getElementById("tradeDataDisplay").innerHTML=`<p>読み込みエラー: ${e.message}</p>`;
       });
     }
-
-    function openLinkInNewTab(id){
-      window.open(`https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${id}`,"_blank");
-    }
-
+    function openLinkInNewTab(id){window.open(`https://puretomo.hange.jp/bazaar/exhibitDetail/?info=LISTING_DETAIL&bazaarId=${id}`,"_blank");}
     function showModal(id){
-      const c=document.getElementById("modalContent");
-      c.innerHTML="";
-      const it=uniqueTradeItems.find(x=>x.bazaarId===id);
-      if(!it) return;
+      const c=document.getElementById("modalContent");c.innerHTML="";
+      const it=uniqueTradeItems.find(x=>x.bazaarId===id);if(!it)return;
       it.listingItems.forEach(li=>{
-        const div=document.createElement("div");
-        div.className="modalItem";
-        const img=document.createElement("img");
-        img.src=`https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`;
-        div.appendChild(img);
+        const d=document.createElement("div");d.className="modalItem";
+        const img=document.createElement("img");img.src=`https://puretomo-image.hange.jp/disp/${li.itemCode.toLowerCase()}.gif`;
+        d.appendChild(img);
         const jp=bagcatMapping[li.parts]||li.parts;
-        const p1=document.createElement("p");
-        p1.textContent=`${jp} / 差分:${li.type}+${li.diff}`;
-        div.appendChild(p1);
-        const p2=document.createElement("p");
-        p2.textContent=li.itemName;
-        div.appendChild(p2);
-        c.appendChild(div);
+        const p1=document.createElement("p");p1.textContent=`${jp} / 差分:${li.type}+${li.diff}`;d.appendChild(p1);
+        const p2=document.createElement("p");p2.textContent=li.itemName;d.appendChild(p2);
+        c.appendChild(d);
       });
       document.getElementById("modalWindow").style.display="block";
     }
-
+    document.getElementById("closeModal").addEventListener("click",()=>{document.getElementById("modalWindow").style.display="none";});
     function sortTableByColumn(table,colIndex){
       const tbody=table.querySelector("tbody"), rows=Array.from(tbody.querySelectorAll("tr"));
-      const ths=table.querySelectorAll("thead th");
-      ths.forEach(th=>th.classList.remove("sort-asc","sort-desc"));
-      let dir="asc";
-      if(table._lastSortCol===colIndex){
-        dir=table._lastSortDir==="asc"?"desc":"asc";
-      }
-      table._lastSortCol=colIndex;
-      table._lastSortDir=dir;
+      const ths=table.querySelectorAll("thead th");ths.forEach(th=>th.classList.remove("sort-asc","sort-desc"));
+      let dir="asc";if(table._sortCol===colIndex){dir=table._sortDir==="asc"?"desc":"asc"};table._sortCol=colIndex;table._sortDir=dir;
       ths[colIndex].classList.add(dir==="asc"?"sort-asc":"sort-desc");
       const isRatio=ths[colIndex].textContent.includes("(HC/差分)");
       rows.sort((a,b)=>{
@@ -491,58 +384,48 @@
         const na=parseFloat(ta), nb=parseFloat(tb);
         let va,vb;
         if(!isNaN(na)&&!isNaN(nb)){
-          if(isRatio&&dir==="asc"){ va=na===0?Infinity:na; vb=nb===0?Infinity:nb; }
-          else{ va=na; vb=nb; }
-        } else { va=ta; vb=tb; }
+          if(isRatio&&dir==="asc"){va=na===0?Infinity:na;vb=nb===0?Infinity:nb;}
+          else{va=na;vb=nb;}
+        } else{va=ta;vb=tb;}
         const cmp=(typeof va==="number"&&typeof vb==="number"?va-vb:String(va).localeCompare(String(vb)));
         return dir==="asc"?cmp:-cmp;
       });
       rows.forEach(r=>tbody.appendChild(r));
     }
-
-    document.getElementById("closeModal").addEventListener("click",()=>{
-      document.getElementById("modalWindow").style.display="none";
-    });
-
-    function loadHistoryData(){
-      return fetch("buzzerHistory.json").then(r=>r.json()).then(data=>{
-        historyData=data;
-        const ps=document.getElementById("paramSelect");
-        ps.innerHTML="<option value=''>選択してください</option>";
-        Object.keys(data).forEach(p=>ps.innerHTML+=`<option value="${p}">${p}</option>`);
-      }).catch(e=>{
-        alert("履歴データ読み込み失敗: "+e.message);
-      });
-    }
-
     document.getElementById("paramSelect").addEventListener("change",()=>{
       const p=document.getElementById("paramSelect").value;
-      const isel=document.getElementById("increaseSelect");
-      isel.innerHTML="<option value=''>選択してください</option>";
+      const incSel=document.getElementById("increaseSelect");
+      incSel.innerHTML="<option value=''>選択してください</option>";
       if(historyData&&historyData[p]){
-        Object.keys(historyData[p]).forEach(inc=>isel.innerHTML+=`<option value="${inc}">${inc}</option>`);
+        Object.keys(historyData[p]).forEach(i=>incSel.innerHTML+=`<option value="${i}">${i}</option>`);
       }
     });
-
     document.getElementById("loadGraphButton").addEventListener("click",()=>{
       const p=document.getElementById("paramSelect").value;
       const inc=document.getElementById("increaseSelect").value;
-      if(!p||!inc) return;
-      const seriesObj=historyData[p][inc];
-      const timestamps=Object.keys(seriesObj).sort();
-      const labels=timestamps.map(t=>t.replace("T"," ").substring(0,16));
-      const datasets=Object.keys(seriesObj).map(parts=>{
+      if(!p||!inc||!historyData) return;
+      const series=historyData[p][inc];
+      const datasets=Object.entries(series).map(([parts, vals])=>{
         const jp=bagcatMapping[parts]||parts;
-        const data=timestamps.map(t=>seriesObj[parts][t]);
-        return { label:jp, data:data, tension:0.1 };
+        const data=Object.entries(vals).map(([t,v])=>({x:new Date(t),y:v})).sort((a,b)=>a.x-b.x);
+        return {label:jp,data,fill:false,tension:0.4,borderWidth:2,pointRadius:4,pointHoverRadius:6};
       });
       const ctx=document.getElementById("historyChart").getContext("2d");
       if(historyChart) historyChart.destroy();
-      historyChart=new Chart(ctx,{
-        type:"line",
-        data:{ labels:labels, datasets:datasets },
-        options:{ responsive:true, scales:{ x:{ title:{ display:true, text:"時間" }}, y:{ title:{ display:true, text:"ハンコイン" }}}}
-      });
+      historyChart=new Chart(ctx,{type:"line",data:{datasets},options:{
+        responsive:true,plugins:{
+          legend:{position:"bottom",labels:{usePointStyle:true,padding:20,boxWidth:10}},
+          tooltip:{mode:"index",intersect:false,callbacks:{
+            title(items){return new Date(items[0].parsed.x).toLocaleString();},
+            label(item){return `${item.dataset.label}: ${item.parsed.y} HC`;}
+          }}
+        },
+        scales:{
+          x:{type:"time",time:{tooltipFormat:"YYYY-MM-DD HH:mm",unit:"hour",displayFormats:{hour:"MM/DD HH:mm"}},title:{display:true,text:"時間"},grid:{display:false}},
+          y:{title:{display:true,text:"ハンコイン"},beginAtZero:true,grid:{color:"rgba(0,0,0,0.05)"}}
+        },
+        elements:{line:{borderCapStyle:"round"},point:{hoverBorderWidth:2}}
+      }});
     });
   </script>
 </body>
