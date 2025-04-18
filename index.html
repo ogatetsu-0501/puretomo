@@ -128,13 +128,11 @@
     <h1>アバター管理画面</h1>
   </header>
 
-  <!-- モーダル -->
   <div id="modalWindow">
     <div id="modalContent"></div>
     <button id="closeModal">閉じる</button>
   </div>
 
-  <!-- 切替ボタン -->
   <button id="switchToLeft" class="nav-btn" title="前へ">
     <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
   </button>
@@ -143,7 +141,6 @@
   </button>
 
   <div class="main-container" id="mainContainer">
-    <!-- サイドバー -->
     <div class="sidebar" id="sidebar">
       <ul>
         <li data-target="readme">Readme</li>
@@ -154,7 +151,6 @@
       </ul>
     </div>
 
-    <!-- 左パネル -->
     <div class="left-panel" id="leftPanel">
       <div id="readme"><h2>Readme</h2></div>
 
@@ -227,7 +223,6 @@
       </div>
     </div>
 
-    <!-- 右パネル: 所持アバター一覧 -->
     <div class="right-panel" id="rightPanel">
       <h2>追加されたアバター一覧</h2>
       <div class="scrollable-table-container">
@@ -481,7 +476,7 @@
 
         uniqueTradeItems = [];
         const seen = {};
-        bData.bazzarList.forEach(it => {
+        bData.forEach(it => {
           if (!seen[it.bazaarId]) {
             seen[it.bazaarId] = true;
             uniqueTradeItems.push(it);
@@ -512,7 +507,6 @@
             li.diff = d;
           });
 
-          // 同じ type+parts は最大のみ
           const uniqueDiffs = {};
           it.listingItems.forEach(li => {
             const key = li.type + "_" + li.parts;
