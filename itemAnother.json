@@ -1,5 +1,23 @@
 [
   {
+    "itemCode": "P1210H8",
+    "itemName": "[VG]ツインマキナコード",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P12198N",
+    "itemName": "[’S]スウェルアイレ",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P12198M",
+    "itemName": "[’S]ラフリテール",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
     "itemCode": "LD2M3",
     "itemName": "水玉スタイル",
     "parts": "HL",
@@ -111,24 +129,6 @@
     "itemCode": "HD20V",
     "itemName": "ヴェスティー・フルール",
     "parts": "H",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD212B0",
-    "itemName": "【復刻】ちらみせユニオン",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD212AY",
-    "itemName": "【復刻】ぱすてりっくでいじぃ",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "P124LP",
-    "itemName": "【Cool】エアリーロングC",
-    "parts": "P",
     "itemGender": "F"
   }
 ]
