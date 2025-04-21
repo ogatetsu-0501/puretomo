@@ -560,6 +560,15 @@
             <label>上昇値:</label>
             <select id="increaseSelect"></select>
           </div>
+          <div class="form-group">
+            <label>期間:</label>
+            <select id="periodSelect">
+              <option value="7">1週間</option>
+              <option value="14">2週間</option>
+              <option value="30">1か月</option>
+              <option value="365">1年</option>
+            </select>
+          </div>
           <button id="loadGraphButton">グラフ表示</button>
           <div class="chart-container">
             <canvas id="historyChart"></canvas>
@@ -1235,85 +1244,7 @@
           });
         }
       });
-
-      document
-        .getElementById("loadGraphButton")
-        .addEventListener("click", () => {
-          const p = document.getElementById("paramSelect").value,
-            inc = document.getElementById("increaseSelect").value;
-          if (!p || !inc || !historyData) return;
-          // ─────────────── ここを書き換え ───────────────
-          // 小学生向け：まず元の生データを取ってくるよ
-          const rawSeries = historyData[p][inc];
-          console.log("【生データ】rawSeries:", rawSeries);
-          // 小学生向け：１時間ごとに間を埋めたデータに変換するよ
-          const series = completeHourlyData(rawSeries);
-          console.log("【補完後データ】series:", series);
-          const datasets = Object.entries(series).map(([parts, vals]) => {
-            const jp = bagcatMapping[parts] || parts;
-            const data = Object.entries(vals)
-              .map(([t, v]) => ({ x: new Date(t), y: v }))
-              .sort((a, b) => a.x - b.x);
-            return {
-              label: jp,
-              data,
-              fill: false,
-              tension: 0,
-              borderWidth: 2,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-            };
-          });
-          const ctx = document.getElementById("historyChart").getContext("2d");
-          if (historyChart) historyChart.destroy();
-          historyChart = new Chart(ctx, {
-            type: "line",
-            data: { datasets },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: {
-                  position: "bottom",
-                  labels: { usePointStyle: true, padding: 20, boxWidth: 10 },
-                },
-                tooltip: {
-                  mode: "index",
-                  intersect: false,
-                  callbacks: {
-                    title(items) {
-                      return new Date(items[0].parsed.x).toLocaleString();
-                    },
-                    label(item) {
-                      return `${item.dataset.label}: ${item.parsed.y} HC`;
-                    },
-                  },
-                },
-              },
-              scales: {
-                x: {
-                  type: "time",
-                  time: {
-                    tooltipFormat: "YYYY-MM-DD HH:mm",
-                    unit: "hour",
-                    displayFormats: { hour: "MM/DD HH:mm" },
-                  },
-                  title: { display: true, text: "時間" },
-                  grid: { display: false },
-                },
-                y: {
-                  title: { display: true, text: "ハンコイン" },
-                  beginAtZero: true,
-                  grid: { color: "rgba(0,0,0,0.05)" },
-                },
-              },
-              elements: {
-                line: { borderCapStyle: "round" },
-                point: { hoverBorderWidth: 2 },
-              },
-            },
-          });
-        });
-
+    
         // ────────────────────────────────────────
   // 小学生向け：与えられた時刻→価格データを
   // 小学生向け：１時間ごとの補完処理を改善した関数だよ
@@ -1368,84 +1299,92 @@
   }
   // ────────────────────────────────────────
   // 既存の「グラフ表示」ボタン処理の直前にだけ追加します
-  document.getElementById("loadGraphButton")
-    .addEventListener("click", () => {
-      const p = document.getElementById("paramSelect").value,
-            inc = document.getElementById("increaseSelect").value;
-      if (!p || !inc || !historyData) return;
+  document
+  .getElementById("loadGraphButton")
+  .addEventListener("click", () => {
+    const p   = document.getElementById("paramSelect").value,
+          inc = document.getElementById("increaseSelect").value;
+    if (!p || !inc || !historyData) return;
 
-      // ── ここから補完処理 ──
-      // 元の series: { parts1: { time: value, … }, parts2: { … } }
-      const rawSeries = historyData[p][inc];
-      // １時間ごとに間を埋めた新しいデータを作るよ
-      const series = completeHourlyData(rawSeries);
-      // ── ここまで補完処理 ──
+    // ─────────────── 期間フィルタ取得 ───────────────
+    // 小学生向け：何日前からを見るかを取得するよ
+    const days = parseInt(document.getElementById("periodSelect").value, 10);
+    // 小学生向け：現在時刻からdays日前の日時を計算するよ
+    const threshold = new Date();
+    threshold.setDate(threshold.getDate() - days);
 
-      // 以下、既存の Chart.js 用データ生成ロジックはそのままだよ
-      const datasets = Object.entries(series).map(([parts, vals]) => {
-        const jp = bagcatMapping[parts] || parts;
-        const data = Object.entries(vals)
-          .map(([t, v]) => ({ x: new Date(t), y: v }))
-          .sort((a, b) => a.x - b.x);
-        return {
-          label: jp,
-          data,
-          fill: false,
-          tension: 0,
-          borderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 6,
-        };
+    // ─────────────── データ補完 ───────────────
+    // 小学生向け：まず生データを取ってくるよ
+    const rawSeries = historyData[p][inc];
+    // 小学生向け：１時間ごとに間を埋めるよ
+    const series     = completeHourlyData(rawSeries);
+
+    // ─────────────── 期間フィルタ適用 ───────────────
+    // 小学生向け：閾値より古い時間のデータを取り除くよ
+    const filteredSeries = {};
+    Object.entries(series).forEach(([parts, vals]) => {
+      const temp = {};
+      Object.entries(vals).forEach(([ts, v]) => {
+        if (new Date(ts) >= threshold) {
+          temp[ts] = v;
+        }
       });
-      const ctx = document.getElementById("historyChart").getContext("2d");
-      if (historyChart) historyChart.destroy();
-      historyChart = new Chart(ctx, {
-        type: "line",
-        data: { datasets },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              position: "bottom",
-              labels: { usePointStyle: true, padding: 20, boxWidth: 10 },
-            },
-            tooltip: {
-              mode: "index",
-              intersect: false,
-              callbacks: {
-                title(items) {
-                  return new Date(items[0].parsed.x).toLocaleString();
-                },
-                label(item) {
-                  return `${item.dataset.label}: ${item.parsed.y} HC`;
-                },
+      filteredSeries[parts] = temp;
+    });
+
+    // ─────────────── Chart.js データ生成 ───────────────
+    const datasets = Object.entries(filteredSeries).map(([parts, vals]) => {
+      const jp = bagcatMapping[parts] || parts;
+      const data = Object.entries(vals)
+        .map(([t, v]) => ({ x: new Date(t), y: v }))
+        .sort((a, b) => a.x - b.x);
+      return {
+        label: jp,
+        data,
+        fill: false,
+        tension: 0,
+        borderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      };
+    });
+
+    const ctx = document.getElementById("historyChart").getContext("2d");
+    if (historyChart) historyChart.destroy();
+    historyChart = new Chart(ctx, {
+      type: "line",
+      data: { datasets },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: "bottom", labels: { usePointStyle: true } },
+          tooltip: {
+            mode: "index",
+            intersect: false,
+            callbacks: {
+              title(items) {
+                return new Date(items[0].parsed.x).toLocaleString();
+              },
+              label(item) {
+                return `${item.dataset.label}: ${item.parsed.y} HC`;
               },
             },
-          },
-          scales: {
-            x: {
-              type: "time",
-              time: {
-                tooltipFormat: "YYYY-MM-DD HH:mm",
-                unit: "hour",
-                displayFormats: { hour: "MM/DD HH:mm" },
-              },
-              title: { display: true, text: "時間" },
-              grid: { display: false },
-            },
-            y: {
-              title: { display: true, text: "ハンコイン" },
-              beginAtZero: true,
-              grid: { color: "rgba(0,0,0,0.05)" },
-            },
-          },
-          elements: {
-            line: { borderCapStyle: "round" },
-            point: { hoverBorderWidth: 2 },
           },
         },
-      });
+        scales: {
+          x: {
+            type: "time",
+            time: { unit: "hour", displayFormats: { hour: "MM/DD HH:mm" } },
+            title: { display: true, text: "時間" },
+          },
+          y: {
+            title: { display: true, text: "ハンコイン" },
+            beginAtZero: true,
+          },
+        },
+      },
     });
+  });
     </script>
   </body>
 </html>
