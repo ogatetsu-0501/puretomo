@@ -1005,14 +1005,6 @@
             // ──────────────── デバッグ① ────────────────
             // 小学生向け：計算が終わった typeSums と HC が正しく入っているか見てね
             uniqueTradeItems.forEach((item) => {
-              // console.log(
-              //   "[DEBUG①] bazaarId=" +
-              //     item.bazaarId +
-              //     " typeSums=" +
-              //     JSON.stringify(item.typeSums) +
-              //     " hancoin=" +
-              //     item.hancoin
-              // );
             });
 
             // 7. 性別フィルターを適用するよ
@@ -1026,7 +1018,6 @@
 
             // ──────────────── デバッグ② ────────────────
             // 小学生向け：フィルター後に何件残ったか教えてね
-            // console.log("[DEBUG②] filtered count=" + filtered.length, filtered);
 
             // 8. テーブル用の型を決めるよ（ここで savedTypes に trim を入れる）
             const savedTypes = JSON.parse(
@@ -1066,30 +1057,10 @@
               displayTypes.forEach((type) => {
                 // ─── キー照合デバッグ ───
                 const key = type.trim(); // 余分な空白を取り除く
-                console.log(
-                  "[KEY CHECK] bazaarId=" +
-                    item.bazaarId +
-                    " keys=" +
-                    Object.keys(item.typeSums).join(",") +
-                    " looking for key=" +
-                    JSON.stringify(key)
-                );
 
                 const sum = item.typeSums[key] || 0;
                 const ratio = sum ? (hc / sum).toFixed(2) : "0";
 
-                console.log(
-                  "[DEBUG③] bazaarId=" +
-                    item.bazaarId +
-                    " type=" +
-                    key +
-                    " sum=" +
-                    sum +
-                    " hc=" +
-                    hc +
-                    " ratio=" +
-                    ratio
-                );
 
                 html += `<td>${ratio}</td>`;
               });
