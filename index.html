@@ -1242,7 +1242,13 @@
           const p = document.getElementById("paramSelect").value,
             inc = document.getElementById("increaseSelect").value;
           if (!p || !inc || !historyData) return;
-          const series = historyData[p][inc];
+          // ─────────────── ここを書き換え ───────────────
+          // 小学生向け：まず元の生データを取ってくるよ
+          const rawSeries = historyData[p][inc];
+          console.log("【生データ】rawSeries:", rawSeries);
+          // 小学生向け：１時間ごとに間を埋めたデータに変換するよ
+          const series = completeHourlyData(rawSeries);
+          console.log("【補完後データ】series:", series);
           const datasets = Object.entries(series).map(([parts, vals]) => {
             const jp = bagcatMapping[parts] || parts;
             const data = Object.entries(vals)
@@ -1307,6 +1313,139 @@
             },
           });
         });
+
+        // ────────────────────────────────────────
+  // 小学生向け：与えられた時刻→価格データを
+  // 小学生向け：１時間ごとの補完処理を改善した関数だよ
+  function completeHourlyData(seriesData) {
+    const completed = {};
+
+    Object.entries(seriesData).forEach(([parts, timeMap]) => {
+      // ① 生データ(ts→val)から「時刻だけ(時:00:00)」のmapを作るよ
+      const actualHourMap = {};
+      Object.entries(timeMap).forEach(([ts, val]) => {
+        const d = new Date(ts);
+        d.setMinutes(0, 0, 0, 0);      // 小学生向け：分・秒を0にそろえるよ
+        actualHourMap[d.toISOString()] = val;
+      });
+
+      // ② 時刻キーをDateにしてソートするよ
+      const hours = Object.keys(actualHourMap)
+        .map(s => new Date(s))
+        .sort((a, b) => a - b);
+
+      if (hours.length === 0) {
+        completed[parts] = {};
+        return;
+      }
+
+      // ③ 開始と終了の時刻を決めるよ
+      const start = hours[0];
+      const end = hours[hours.length - 1];
+
+      // ④ １時間ずつ進めながら、前の値(lastVal)を埋めるよ
+      const filled = {};
+      let lastVal = actualHourMap[start.toISOString()]; // 最初の時刻の値でスタート
+
+      for (
+        let cur = new Date(start);
+        cur <= end;
+        cur.setHours(cur.getHours() + 1)
+      ) {
+        const key = cur.toISOString();
+        if (actualHourMap[key] !== undefined) {
+          // 本来データがある時間は、それを新しい lastVal にするよ
+          lastVal = actualHourMap[key];
+        }
+        // ない時間は、前の lastVal をそのままコピーするよ
+        filled[key] = lastVal;
+      }
+
+      completed[parts] = filled;
+    });
+
+    return completed;
+  }
+  // ────────────────────────────────────────
+  // 既存の「グラフ表示」ボタン処理の直前にだけ追加します
+  document.getElementById("loadGraphButton")
+    .addEventListener("click", () => {
+      const p = document.getElementById("paramSelect").value,
+            inc = document.getElementById("increaseSelect").value;
+      if (!p || !inc || !historyData) return;
+
+      // ── ここから補完処理 ──
+      // 元の series: { parts1: { time: value, … }, parts2: { … } }
+      const rawSeries = historyData[p][inc];
+      // １時間ごとに間を埋めた新しいデータを作るよ
+      const series = completeHourlyData(rawSeries);
+      // ── ここまで補完処理 ──
+
+      // 以下、既存の Chart.js 用データ生成ロジックはそのままだよ
+      const datasets = Object.entries(series).map(([parts, vals]) => {
+        const jp = bagcatMapping[parts] || parts;
+        const data = Object.entries(vals)
+          .map(([t, v]) => ({ x: new Date(t), y: v }))
+          .sort((a, b) => a.x - b.x);
+        return {
+          label: jp,
+          data,
+          fill: false,
+          tension: 0,
+          borderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+        };
+      });
+      const ctx = document.getElementById("historyChart").getContext("2d");
+      if (historyChart) historyChart.destroy();
+      historyChart = new Chart(ctx, {
+        type: "line",
+        data: { datasets },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { usePointStyle: true, padding: 20, boxWidth: 10 },
+            },
+            tooltip: {
+              mode: "index",
+              intersect: false,
+              callbacks: {
+                title(items) {
+                  return new Date(items[0].parsed.x).toLocaleString();
+                },
+                label(item) {
+                  return `${item.dataset.label}: ${item.parsed.y} HC`;
+                },
+              },
+            },
+          },
+          scales: {
+            x: {
+              type: "time",
+              time: {
+                tooltipFormat: "YYYY-MM-DD HH:mm",
+                unit: "hour",
+                displayFormats: { hour: "MM/DD HH:mm" },
+              },
+              title: { display: true, text: "時間" },
+              grid: { display: false },
+            },
+            y: {
+              title: { display: true, text: "ハンコイン" },
+              beginAtZero: true,
+              grid: { color: "rgba(0,0,0,0.05)" },
+            },
+          },
+          elements: {
+            line: { borderCapStyle: "round" },
+            point: { hoverBorderWidth: 2 },
+          },
+        },
+      });
+    });
     </script>
   </body>
 </html>
