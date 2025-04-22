@@ -1298,23 +1298,28 @@
       filteredSeries[parts] = temp;
     });
 
-    // ─────────────── Chart.js データ生成 ───────────────
-    const datasets = Object.entries(filteredSeries).map(([parts, vals]) => {
-      const jp = bagcatMapping[parts] || parts;
-      const data = Object.entries(vals)
-        .map(([t, v]) => ({ x: new Date(t), y: v }))
-        .sort((a, b) => a.x - b.x);
-      return {
-        label: jp,
-        data,
-        fill: false,
-        tension: 0,
-        borderWidth: 2,
-        pointRadius: 4,
-        pointHoverRadius: 6,
-      };
-    });
+  // ─────────────── Chart.js データ生成 ───────────────
+  const datasets = Object.entries(filteredSeries).map(([parts, vals]) => {
+    // 小学生向け：partsはもう「アクセ1」など表示したい名前なので、
+    //               bagcatMappingを使わず、そのままラベルにするよ
+    const label = parts;
 
+    // 小学生向け：timestamp→値 のペアを {x: Date, y: HC値} の配列にするよ
+    const data = Object.entries(vals)
+      .map(([t, v]) => ({ x: new Date(t), y: v }))
+      .sort((a, b) => a.x - b.x);
+
+    // 小学生向け：グラフの線の設定を返すよ
+    return {
+      label,           // そのままの名前を凡例にする
+      data,            // 順序付きのデータ
+      fill: false,     // 線の下を塗りつぶさない
+      tension: 0,      // 線のカーブをなしに
+      borderWidth: 2,  // 線の太さ
+      pointRadius: 4,  // データ点の丸の大きさ
+      pointHoverRadius: 6, // マウスオーバー時の丸の大きさ
+    };
+  });
     const ctx = document.getElementById("historyChart").getContext("2d");
     if (historyChart) historyChart.destroy();
     historyChart = new Chart(ctx, {
