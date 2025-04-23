@@ -1214,21 +1214,32 @@
         // ────────────────────────────────────────
   // 小学生向け：与えられた時刻→価格データを
   // 小学生向け：１時間ごとの補完処理を改善した関数だよ
+// ─────────────────────────────────────────────────
+// 小学生向け：与えられた時刻→価格データを
+// １時間ごとに補完しつつ、NEW直前を途切れさせる関数だよ
   function completeHourlyData(seriesData) {
     const completed = {};
 
+    // parts ごとに処理するよ
     Object.entries(seriesData).forEach(([parts, timeMap]) => {
-      // ① 生データ(ts→val)から「時刻だけ(時:00:00)」のmapを作るよ
-      const actualHourMap = {};
-      Object.entries(timeMap).forEach(([ts, val]) => {
+      // ① 生データ(ts→val/NEW)から map を作るよ
+      const rawMap = {};
+      Object.entries(timeMap).forEach(([ts, v]) => {
         const d = new Date(ts);
-        d.setMinutes(0, 0, 0, 0);      // 小学生向け：分・秒を0にそろえるよ
-        actualHourMap[d.toISOString()] = val;
+        d.setMinutes(0, 0, 0, 0);           // 分・秒を 00:00 にそろえるよ
+        const key = d.toISOString();
+        if (v !== null && typeof v === "object") {
+          // オブジェクトなら value と NEW フラグを保存
+          rawMap[key] = { value: v.value, isNew: true };
+        } else {
+          // 数字だけなら普通の値、NEW フラグは false
+          rawMap[key] = { value: v, isNew: false };
+        }
       });
 
-      // ② 時刻キーをDateにしてソートするよ
-      const hours = Object.keys(actualHourMap)
-        .map(s => new Date(s))
+      // ② キーを Date にしてソート
+      const hours = Object.keys(rawMap)
+        .map((t) => new Date(t))
         .sort((a, b) => a - b);
 
       if (hours.length === 0) {
@@ -1240,9 +1251,9 @@
       const start = hours[0];
       const end = hours[hours.length - 1];
 
-      // ④ １時間ずつ進めながら、前の値(lastVal)を埋めるよ
+      // ④ １時間ずつ進めて補完するよ
       const filled = {};
-      let lastVal = actualHourMap[start.toISOString()]; // 最初の時刻の値でスタート
+      let lastVal = rawMap[start.toISOString()].value; // 最初の値を保持
 
       for (
         let cur = new Date(start);
@@ -1250,12 +1261,22 @@
         cur.setHours(cur.getHours() + 1)
       ) {
         const key = cur.toISOString();
-        if (actualHourMap[key] !== undefined) {
-          // 本来データがある時間は、それを新しい lastVal にするよ
-          lastVal = actualHourMap[key];
+        if (rawMap[key]) {
+          // 実データがあるときはその値を使う
+          lastVal = rawMap[key].value;
+          filled[key] = lastVal;
+        } else {
+          // 実データがないとき
+          // 次に来る実データの時刻を探すよ
+          const future = hours.find((h) => h > cur);
+          if (future && rawMap[future.toISOString()].isNew) {
+            // もし次の実データがNEWなら、ここは空(null)にするよ
+            filled[key] = null;
+          } else {
+            // それ以外は前の値で埋めるよ
+            filled[key] = lastVal;
+          }
         }
-        // ない時間は、前の lastVal をそのままコピーするよ
-        filled[key] = lastVal;
       }
 
       completed[parts] = filled;
@@ -1263,6 +1284,8 @@
 
     return completed;
   }
+// ─────────────────────────────────────────────────
+
   // ────────────────────────────────────────
   // 既存の「グラフ表示」ボタン処理の直前にだけ追加します
   document
@@ -1314,6 +1337,7 @@
       label,           // そのままの名前を凡例にする
       data,            // 順序付きのデータ
       fill: false,     // 線の下を塗りつぶさない
+      spanGaps: false,  // ← これでnull区間は必ず切れる
       tension: 0,      // 線のカーブをなしに
       borderWidth: 2,  // 線の太さ
       pointRadius: 4,  // データ点の丸の大きさ
