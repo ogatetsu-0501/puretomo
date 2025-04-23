@@ -724,6 +724,7 @@
         li.addEventListener("click", () => {
           const tgt = li.getAttribute("data-target");
           showSection(tgt);
+          gtag('event', 'select_section', { section_name: tgt });
           document.getElementById("sidebar").style.left = "-260px";
           document.getElementById("mainContainer").style.marginLeft = "0";
           document.getElementById("switchToLeft").style.left = "0";
@@ -736,6 +737,7 @@
         document.getElementById("rightPanel").style.transform = "translateX(0)";
         document.getElementById("switchToRight").style.display = "none";
         document.getElementById("switchToLeft").style.display = "block";
+        gtag('event', 'view_added_avatar_list');
       });
 
       document.getElementById("switchToLeft").addEventListener("click", () => {
