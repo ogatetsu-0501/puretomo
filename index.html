@@ -428,6 +428,18 @@
   }
 }
 /* スマホ時（767px 以下）はヘッダーを広告分だけ下にずらす */
+      /* スマホ時に広告の高さ分、headerとmainを下にずらす */
+@media (max-width: 767px) {
+  header {
+    margin-top: 50px;  /* ← ヘッダー全体を下に */
+  }
+  .main-container {
+    margin-top: 50px;  /* ← メイン部分も一緒に下に */
+  }
+  #admax-side {
+    z-index: 2000;     /* ← 確実に上に出すための指定 */
+  }
+}
     </style>
   
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
