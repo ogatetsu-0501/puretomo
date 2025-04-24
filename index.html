@@ -613,6 +613,7 @@
             </div>
           </div>
           <button id="saveSettingsButton">設定を保存</button>
+          <div id="settingsAdContainer"></div>
         </div>
 
         <div id="tradeSearch" style="display: none">
@@ -670,6 +671,31 @@
     </div>
 
     <script>
+
+
+      function loadSettingsAd() {
+        const cnt = document.getElementById("settingsAdContainer");
+        if (cnt.dataset.loaded) return;     // 1回だけロード
+        cnt.dataset.loaded = "1";
+      
+        // ① action タグ
+        const adInline = document.createElement("script");
+        adInline.type = "text/javascript";
+        adInline.text = `(admaxads = window.admaxads || []).push({
+          admax_id: "abaf56c5df7973ada2bead83e0569535",
+          type: "action"
+        });`;
+        cnt.appendChild(adInline);
+      
+        // ② 非同期ライブラリロード
+        const adLib = document.createElement("script");
+        adLib.type    = "text/javascript";
+        adLib.charset = "utf-8";
+        adLib.src     = "https://adm.shinobi.jp/st/t.js";
+        adLib.async   = true;
+        cnt.appendChild(adLib);
+      }
+      
   // ユーティリティ関数：登録データをavatarListに入れる
   function registerAvatar(partText, type1, type2, increase) {
     const newInc = Number(increase);
@@ -845,6 +871,7 @@
           const tgt = li.getAttribute("data-target");
           showInterstitialAd();
           showSection(tgt);
+          if (tgt === "settings") loadSettingsAd();
           gtag('event', 'select_section', { section_name: tgt });
           document.getElementById("sidebar").style.left = "-260px";
           document.getElementById("mainContainer").style.marginLeft = "0";
@@ -1673,23 +1700,9 @@
   });
     </script>
 <!-- 固定表示用スタイル -->
-<style>
-  #admax-side {
-    position: fixed;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    width: 100%;      /* サイズは100%のまま */
-    z-index: 1500;    /* nav-btn(1600) の下に配置 */
-    padding: 8px;
-    background: transparent;
-  }
-</style>
-<div id="admax-side">
-  <!-- admax -->
-  <script src="https://adm.shinobi.jp/s/abaf56c5df7973ada2bead83e0569535"></script>
-  <!-- admax -->
-</div>
+<!-- admax -->
+<script src="https://adm.shinobi.jp/s/abaf56c5df7973ada2bead83e0569535"></script>
+<!-- admax -->
 
   </body>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9014066221222515"
