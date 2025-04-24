@@ -758,6 +758,7 @@
       document.querySelectorAll(".sidebar li").forEach((li) =>
         li.addEventListener("click", () => {
           const tgt = li.getAttribute("data-target");
+          showInterstitialAd();
           showSection(tgt);
           gtag('event', 'select_section', { section_name: tgt });
           document.getElementById("sidebar").style.left = "-260px";
