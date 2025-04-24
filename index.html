@@ -726,12 +726,29 @@
     renderAvatarTable();
   }
       
-  // ① どこからでも呼べるヘルパー関数を追加
-  function showInterstitialAd() {
-    const s = document.createElement('script');
-    s.src = 'https://adm.shinobi.jp/s/82daded32b3c55a9ae8ab9704f1898a8';
-    document.body.appendChild(s);
-  }
+// ① どこからでも呼べるヘルパー関数を追加
+function showInterstitialAd() {
+  // ────────────────────────────────
+  // 1) インタースティシャル用・非同期 action タグ
+  const inline = document.createElement('script');
+  inline.type = 'text/javascript';
+  inline.text = `
+    (admaxads = window.admaxads || []).push({
+      admax_id: "82daded32b3c55a9ae8ab9704f1898a8",
+      type:     "action"
+    });
+  `;
+  document.body.appendChild(inline);
+
+  // ────────────────────────────────
+  // 2) shogun ライブラリを非同期で読み込むタグ
+  const loader = document.createElement('script');
+  loader.type    = 'text/javascript';
+  loader.charset = 'utf-8';
+  loader.src     = 'https://adm.shinobi.jp/st/t.js';
+  loader.async   = true;
+  document.body.appendChild(loader);
+}
       let bagcatMapping = {},
         partsMapping = {},
         typeOptions = [];
