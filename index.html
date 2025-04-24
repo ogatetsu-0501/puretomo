@@ -646,6 +646,7 @@
     </div>
 
     <script>
+      
   // ① どこからでも呼べるヘルパー関数を追加
   function showInterstitialAd() {
     const s = document.createElement('script');
@@ -655,6 +656,7 @@
       let bagcatMapping = {},
         partsMapping = {},
         typeOptions = [];
+        partOrder = [];
       let updateStatusOptions = []; // 小学生向け：ここにCSVから取ってきた順序を入れるよ
       let avatarList = [],
         uniqueTradeItems = [],
@@ -706,6 +708,7 @@
             if (code && jp) {
               bagcatMapping[code] = jp;
               partsMapping[jp] = code;
+              partOrder.push(jp);
             }
           });
         });
@@ -1010,9 +1013,23 @@
       
         // ② テーブルをクリア
         avatarTableBody.innerHTML = "";
-      
+          // ② 並び替え：パーツ→種類①→種類② の優先度でソート
+          console.log(partOrder, typeOptions);
+          const sortedList = avatarList.slice().sort((a, b) => {
+            const pa = partOrder.indexOf(a.partText);
+            const pb = partOrder.indexOf(b.partText);
+            if (pa !== pb) return pa - pb;
+        
+            const t1a = typeOptions.indexOf(a.type1);
+            const t1b = typeOptions.indexOf(b.type1);
+            if (t1a !== t1b) return t1a - t1b;
+        
+            const t2a = typeOptions.indexOf(a.type2);
+            const t2b = typeOptions.indexOf(b.type2);
+            return t2a - t2b;
+          });
         // ③ avatarList をループして、絞り込み条件に合うものだけ描画
-        avatarList.forEach((av, idx) => {
+        sortedList.forEach((av, idx) => {
           if (
             (!fPart || av.partText === fPart) &&
             (!fType || av.type1    === fType) &&
