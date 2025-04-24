@@ -573,6 +573,24 @@
               アイテム列を表示</label
             >
           </div>
+          <div class="form-group">
+            <label>絞り込み — パーツ:</label>
+            <select id="filterPartSelect">
+              <option value="">全て</option>
+              <!-- JS で partsMapping から埋めます -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>絞り込み — 種類:</label>
+            <select id="filterTypeSelect">
+              <option value="">全て</option>
+              <!-- JS で typeOptions から埋めます -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>絞り込み — 上昇値:</label>
+            <input type="number" id="filterIncInput" placeholder="数値を入力（空欄で全て）" />
+          </div>
           <button id="saveSettingsButton">設定を保存</button>
         </div>
 
@@ -839,6 +857,26 @@
         const st = localStorage.getItem("showItems");
         document.getElementById("showItemsCheckbox").checked =
           st !== null ? JSON.parse(st) : window.innerWidth >= 768;
+
+            // --- 絞り込み用項目に選択肢をセット ---
+        const fp = document.getElementById("filterPartSelect");
+        const ft = document.getElementById("filterTypeSelect");
+        // partsMapping は code→日本語マッピング
+        Object.keys(partsMapping).forEach(jp => {
+          const o = document.createElement("option");
+          o.value = jp; o.textContent = jp;
+          fp.appendChild(o);
+        });
+        typeOptions.forEach(t => {
+          const o = document.createElement("option");
+          o.value = t; o.textContent = t;
+          ft.appendChild(o);
+      });
+
+       // 保存済みの絞り込み値を復元
+        fp.value = localStorage.getItem("filterPart") || "";
+        ft.value = localStorage.getItem("filterType") || "";
+        document.getElementById("filterIncInput").value = localStorage.getItem("filterInc") || "";""; 
       }
 
       document
@@ -856,6 +894,9 @@
             "showItems",
             JSON.stringify(document.getElementById("showItemsCheckbox").checked)
           );
+          localStorage.setItem("filterPart", document.getElementById("filterPartSelect").value);
+          localStorage.setItem("filterType", document.getElementById("filterTypeSelect").value);
+          localStorage.setItem("filterInc", document.getElementById("filterIncInput").value.trim());
           alert("設定を保存しました。");
         });
 
@@ -1084,6 +1125,20 @@
               );
             });
 
+              // 7-b. 設定画面で選んだ絞り込み値を取得
+              const fPart = localStorage.getItem("filterPart") || "";
+              const fType = localStorage.getItem("filterType") || "";
+              const fIncRaw = localStorage.getItem("filterInc");
+              const fInc = fIncRaw ? Number(fIncRaw) : null;
+
+              // 7-c. listingItems の中に「全条件を満たすアイテム」がある bazaar だけ残す
+              filtered = filtered.filter(it =>
+                it.listingItems.some(li =>
+                  (!fPart || li.parts === fPart) &&
+                  (!fType || li.type  === fType) &&
+                  (!fInc  || li.param === fInc)
+                )
+              );
             // ──────────────── デバッグ② ────────────────
             // 小学生向け：フィルター後に何件残ったか教えてね
 
