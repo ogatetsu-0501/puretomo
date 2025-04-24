@@ -957,8 +957,11 @@
 
       document
         .getElementById("reloadTradeButton")
-        .addEventListener("click", logItemCodes);
-
+        .addEventListener("click", () => {
+          // 広告を表示してから、検索処理を呼び出す
+          showInterstitialAd();
+          logItemCodes();
+        });
       // 小学生向け：販売アバター検索のデータを読んでテーブルを作る関数だよ
       function logItemCodes() {
         Promise.all([
