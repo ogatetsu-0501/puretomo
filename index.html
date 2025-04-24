@@ -628,6 +628,9 @@
 
       <div class="right-panel" id="rightPanel">
         <h2>追加されたアバター一覧</h2>
+            <!-- ここからサマリー -->
+        <div id="avatarSummary" style="margin: 0 0 12px; font-weight: bold;"></div>
+    <!-- ここまでサマリー -->
         <div class="scrollable-table-container">
           <table id="avatarTable">
             <thead>
@@ -646,6 +649,35 @@
     </div>
 
     <script>
+  // ユーティリティ関数：登録データをavatarListに入れる
+  function registerAvatar(partText, type1, type2, increase) {
+    const newInc = Number(increase);
+    const now = new Date().toISOString();     // ← 追加日時
+    const idx = avatarList.findIndex(av =>
+      av.partText === partText &&
+      av.type1    === type1 &&
+      av.type2    === type2
+    );
+    if (idx !== -1) {
+      const oldInc = Number(avatarList[idx].increase);
+      if (oldInc >= newInc) {
+        alert(`${partText} ${type1}/${type2} は既存の方が大きいため登録キャンセル`);
+        return;
+      } else {
+        avatarList.splice(idx, 1);
+        alert(`${partText} ${type1}/${type2} の最大値を更新しました（古いデータを削除）`);
+      }
+    }
+    avatarList.push({
+      partText,
+      type1,
+      type2,
+      increase: String(newInc),
+      registeredAt: now           // ← ここに追加日時を格納
+    });
+    localStorage.setItem("avatarList", JSON.stringify(avatarList));
+    renderAvatarTable();
+  }
       
   // ① どこからでも呼べるヘルパー関数を追加
   function showInterstitialAd() {
@@ -1005,6 +1037,22 @@
       });
       
       function renderAvatarTable() {
+            // --- サマリー用：type1/type2 両方の合計上昇値を集計 ---
+            const sumByType = {};
+            avatarList.forEach(av => {
+              const inc = Number(av.increase);
+              [av.type1, av.type2].forEach(t => {
+                if (t && t !== 'なし') {
+                  sumByType[t] = (sumByType[t] || 0) + inc;
+                }
+              });
+            });
+
+        // --- サマリー要素に表示 ---
+        const summaryEl = document.getElementById('avatarSummary');
+        summaryEl.textContent = Object.entries(sumByType)
+          .map(([type, sum]) => `${type}: ${sum}`)
+          .join('　|　');  // 好きな区切り文字でOK
         // ① ローカルストレージから絞り込み条件を取得
         const fPart = localStorage.getItem("filterPart") || "";
         const fType = localStorage.getItem("filterType") || "";
@@ -1204,7 +1252,7 @@
               for (let i = 0; i < maxItems; i++)
                 html += `<th>アイテム${i + 1}</th>`;
             }
-            html += "<th>詳細</th></tr></thead><tbody>";
+            html += "<th>詳細</th><th>購入済</th></tr></thead><tbody>";
 
             // 10. 各行を作っていくよ
             filtered.forEach((item) => {
@@ -1239,13 +1287,14 @@
               }
 
               html += `<td><button onclick="showModal('${item.bazaarId}')">詳細</button></td>`;
+              html += `<td><button class="purchasedBtn" data-bazaar-id="${item.bazaarId}">購入済</button></td>`;
               html += "</tr>";
             });
 
             // 11. テーブルを画面に表示するよ
             html += "</tbody></table></div>";
             document.getElementById("tradeDataDisplay").innerHTML = html;
-
+            
             // 12. ヘッダークリックでソートできるようにするよ
             const tbl = document.querySelector("#tradeDataDisplay table");
             if (tbl) {
@@ -1253,6 +1302,21 @@
                 cell.addEventListener("click", () => sortTableByColumn(tbl, i));
               });
             }
+            // ● 購入済ボタンのクリックで一括登録
+            document.querySelectorAll(".purchasedBtn").forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const bazaarId = btn.dataset.bazaarId;
+                const listing = uniqueTradeItems.find((it) => it.bazaarId === bazaarId);
+                if (!listing) return;
+                listing.listingItems.forEach((li) => {
+                  const partText = bagcatMapping[li.parts] || li.parts;
+                  const type1    = li.type;
+                  const type2    = "なし";          // listingItems に type2 がなければ固定で
+                  const increase = li.param;
+                  registerAvatar(partText, type1, type2, increase);
+                });
+              });
+            });
           })
           .catch((e) => {
             // 読み込みで失敗したときはエラーを表示するよ
