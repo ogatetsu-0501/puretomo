@@ -729,20 +729,25 @@
       // ① インタースティシャル(admax_id=82daded32b3c55a9ae8ab9704f1898a8)をプッシュ
       // ② 非同期でadm.shinobi.jp/st/t.js(広告ライブラリ)をロード
       function showInterstitialAd() {
-        // (1) action タグの代わりに admaxads.push() でインタースティシャルをリクエスト
-        (window.admaxads = window.admaxads || []).push({
-          admax_id: "82daded32b3c55a9ae8ab9704f1898a8",
-          type: "action"
-        });
-
-        // (2) 非同期で広告ライブラリを読み込む
-        const s = document.createElement("script");
-        s.type    = "text/javascript";
-        s.charset = "utf-8";
-        s.src     = "https://adm.shinobi.jp/st/t.js";
-        s.async   = true;
-        document.body.appendChild(s);
+        // ① プッシュ用の inline スクリプトを生成
+        const pushScript = document.createElement("script");
+        pushScript.type = "text/javascript";
+        pushScript.text = `
+          (window.admaxads = window.admaxads || []).push({
+            admax_id: "82daded32b3c55a9ae8ab9704f1898a8",
+            type: "action"
+          });
+        `;
+        document.body.appendChild(pushScript);
+      
+        // ② 非同期で広告ライブラリを読み込む
+        const loader = document.createElement("script");
+        loader.src     = "https://adm.shinobi.jp/st/t.js";
+        loader.async   = true;
+        loader.charset = "utf-8";
+        document.body.appendChild(loader);
       }
+      
       let bagcatMapping = {},
         partsMapping = {},
         typeOptions = [];
