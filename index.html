@@ -897,6 +897,8 @@
           localStorage.setItem("filterPart", document.getElementById("filterPartSelect").value);
           localStorage.setItem("filterType", document.getElementById("filterTypeSelect").value);
           localStorage.setItem("filterInc", document.getElementById("filterIncInput").value.trim());
+          renderAvatarTable();
+
           alert("設定を保存しました。");
         });
 
@@ -980,7 +982,8 @@
           partText: part,
           type1:    type1,
           type2:    type2,
-          increase: String(newInc)
+          increase: String(newInc),
+          registeredAt: new Date().toISOString()
         });
         localStorage.setItem("avatarList", JSON.stringify(avatarList));
         renderAvatarTable();
@@ -999,26 +1002,43 @@
       });
       
       function renderAvatarTable() {
+        // ① ローカルストレージから絞り込み条件を取得
+        const fPart = localStorage.getItem("filterPart") || "";
+        const fType = localStorage.getItem("filterType") || "";
+        const fIncRaw = localStorage.getItem("filterInc") || "";
+        const fInc = fIncRaw !== "" ? Number(fIncRaw) : null;
+      
+        // ② テーブルをクリア
         avatarTableBody.innerHTML = "";
-        avatarList.forEach((av, i) => {
-          const tr = document.createElement("tr");
-          ["partText", "type1", "type2", "increase"].forEach((key) => {
-            const td = document.createElement("td");
-            td.textContent = av[key];
-            tr.appendChild(td);
-          });
-          const tdDel = document.createElement("td");
-          tdDel.innerHTML = `<button>削除</button>`;
-          tdDel.firstChild.addEventListener("click", () => {
-            avatarList.splice(i, 1);
-            localStorage.setItem("avatarList", JSON.stringify(avatarList));
-            renderAvatarTable();
-          });
-          tr.appendChild(tdDel);
-          avatarTableBody.appendChild(tr);
+      
+        // ③ avatarList をループして、絞り込み条件に合うものだけ描画
+        avatarList.forEach((av, idx) => {
+          if (
+            (!fPart || av.partText === fPart) &&
+            (!fType || av.type1    === fType) &&
+            ( fInc  === null || Number(av.increase) === fInc)
+          ) {
+            const tr = document.createElement("tr");
+            ["partText","type1","type2","increase"].forEach(key => {
+              const td = document.createElement("td");
+              td.textContent = av[key];
+              tr.appendChild(td);
+            });
+            // 削除ボタンも idx を使って正しい要素を消せるように
+            const tdDel = document.createElement("td");
+            tdDel.innerHTML = `<button>削除</button>`;
+            tdDel.firstChild.addEventListener("click", () => {
+              avatarList.splice(idx, 1);
+              localStorage.setItem("avatarList", JSON.stringify(avatarList));
+              renderAvatarTable();  // 再描画
+            });
+            tr.appendChild(tdDel);
+      
+            avatarTableBody.appendChild(tr);
+          }
         });
       }
-
+      
       document
         .getElementById("reloadTradeButton")
         .addEventListener("click", () => {
