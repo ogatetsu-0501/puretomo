@@ -394,25 +394,26 @@
           margin-bottom: 12px; /* 下に余白をつけて見やすく */
         }
       }
+/* デフォルトは非表示 */
+#admax-side { display: none; }
 
-/* 最初は隠す */
-#admax-side {
-  display: none;
-}
-
-/* スマホ表示（767px 以下）では、ヘッダー直後の通常フローで幅100%に */
+/* スマホ時は画面下固定 */
 @media (max-width: 767px) {
   #admax-side {
     display: block;
-    position: static;      /* ドキュメントフローに沿って表示 */
-    width: 100%;           /* スマホ画面幅いっぱい */
-    height: auto;          /* 高さは広告に合わせて自動 */
-    margin: 8px 0;         /* ヘッダーとコンテンツの間にちょっと余白 */
-    text-align: center;    /* 広告を中央寄せ */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    /* 高さは広告の実寸に合わせて調整 */
+    height: 50px;
+    z-index: 1500;
+    background: transparent;
+    text-align: center;
   }
 }
 
-/* PC表示（768px 以上）では、右サイド固定 */
+/* PC時は右サイド固定 */
 @media (min-width: 768px) {
   #admax-side {
     display: block;
@@ -1751,55 +1752,57 @@
     });
   });
     </script>
-    <script>
-  // PC用（右サイド 160×600バナー）
-  function loadSideAd() {
-    // ① push スクリプト
-    const inline = document.createElement("script");
-    inline.type = "text/javascript";
-    inline.text = `
-      (admaxads = window.admaxads || []).push({
-        admax_id: "abaf56c5df7973ada2bead83e0569535",
-        type: "action"
-      });
-    `;
-    document.getElementById("admax-side").appendChild(inline);
+  <script>
+// PC用バナー
+function loadSideAd() {
+  const c = document.getElementById("admax-side");
+  // inline push
+  const s1 = document.createElement("script");
+  s1.type = "text/javascript";
+  s1.text = `
+    (admaxads = window.admaxads || []).push({
+      admax_id: "abaf56c5df7973ada2bead83e0569535",
+      type: "action"
+    });
+  `;
+  c.appendChild(s1);
+  // ライブラリ
+  const s2 = document.createElement("script");
+  s2.src     = "https://adm.shinobi.jp/st/t.js";
+  s2.charset = "utf-8";
+  s2.async   = true;
+  c.appendChild(s2);
+}
 
-    // ② ライブラリ本体
-    const lib = document.createElement("script");
-    lib.src     = "https://adm.shinobi.jp/st/t.js";
-    lib.charset = "utf-8";
-    lib.async   = true;
-    document.getElementById("admax-side").appendChild(lib);
+// スマホ用バナー
+function loadMobileBanner() {
+  const c = document.getElementById("admax-side");
+  // inline push（overlay ではなく action に）
+  const s1 = document.createElement("script");
+  s1.type = "text/javascript";
+  s1.text = `
+    (admaxads = window.admaxads || []).push({
+      admax_id: "9154875978cb3129a544a74cbef78462",
+      type: "action"
+    });
+  `;
+  c.appendChild(s1);
+  // ライブラリ
+  const s2 = document.createElement("script");
+  s2.src     = "https://adm.shinobi.jp/st/t.js";
+  s2.charset = "utf-8";
+  s2.async   = true;
+  c.appendChild(s2);
+}
+
+// 読み込み時に振り分け
+window.addEventListener("load", () => {
+  if (window.matchMedia("(max-width: 767px)").matches) {
+    loadMobileBanner();
+  } else {
+    loadSideAd();
   }
-
-  // スマホ用（overlay 型）
-  function loadOverlayAd() {
-    const inline = document.createElement("script");
-    inline.type = "text/javascript";
-    inline.text = `
-      (admaxads = window.admaxads || []).push({
-        admax_id: "9154875978cb3129a544a74cbef78462",
-        type: "overlay"
-      });
-    `;
-    document.body.appendChild(inline);
-
-    const lib = document.createElement("script");
-    lib.src     = "https://adm.shinobi.jp/st/t.js";
-    lib.charset = "utf-8";
-    lib.async   = true;
-    document.body.appendChild(lib);
-  }
-
-  // ページ読み込み時に「画面幅」で切り分けて呼び出す
-  window.addEventListener("load", () => {
-    if (window.matchMedia("(max-width: 767px)").matches) {
-      loadOverlayAd();
-    } else {
-      loadSideAd();
-    }
-  });
+});
 </script>
   </body>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9014066221222515"crossorigin="anonymous"></script>
