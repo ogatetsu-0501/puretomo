@@ -394,6 +394,66 @@
           margin-bottom: 12px; /* 下に余白をつけて見やすく */
         }
       }
+      はい、そのタグで合っています。PC表示時に右サイドに 160×600 のバナーを常時出すには、先ほど作った固定コンテナにこの「非同期タグ」をそのまま入れ、CSSでメディアクエリを使ってPC幅だけ表示するようにします。
+
+<!-- HTML の </body> 手前などに置く -->
+<div id="admax-side">
+  <!-- admax 非同期タグ（160×600 右サイド用） -->
+  <script type="text/javascript">
+    (admaxads = window.admaxads || []).push({
+      admax_id: "abaf56c5df7973ada2bead83e0569535",
+      type: "action"
+    });
+  </script>
+  <script 
+    type="text/javascript" 
+    charset="utf-8" 
+    src="https://adm.shinobi.jp/st/t.js" 
+    async>
+  </script>
+  <!-- admax -->
+</div>
+
+/* 最初は隠しておく */
+#admax-side {
+  display: none;
+}
+
+/* PCサイズ（例：横幅768px以上）のときだけ表示 */
+@media (min-width: 768px) {
+  #admax-side {
+    display: block;
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 160px;
+    height: 600px;
+    z-index: 1500;
+    background: transparent;
+  }
+}
+
+1. <div id="admax-side"> 内に、管理画面からコピーしたこの非同期タグをペースト
+
+
+2. CSS で @media (min-width:768px) を使い、PC表示時のみ幅160px×高さ600pxで固定表示
+
+
+3. スマホでは display: none; によって非表示
+
+
+
+これで…
+
+PC（横幅768px以上）：ページ右サイドに常時バナー（160×600）が表示
+
+スマホ：非表示
+
+
+となり、インタースティシャル広告との併用も可能です。
+
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
@@ -1715,6 +1775,23 @@
     });
   });
     </script>
+    <!-- HTML の </body> 手前などに置く -->
+<div id="admax-side">
+  <!-- admax 非同期タグ（160×600 右サイド用） -->
+  <script type="text/javascript">
+    (admaxads = window.admaxads || []).push({
+      admax_id: "abaf56c5df7973ada2bead83e0569535",
+      type: "action"
+    });
+  </script>
+  <script 
+    type="text/javascript" 
+    charset="utf-8" 
+    src="https://adm.shinobi.jp/st/t.js" 
+    async>
+  </script>
+  <!-- admax -->
+</div>
   </body>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9014066221222515"crossorigin="anonymous"></script>
 </html>
