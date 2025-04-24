@@ -909,31 +909,54 @@
         checkInput();
       });
 
-      addButton.addEventListener("click", () => {
-        const p = partInput.value.trim() || partSelect.value.trim();
-        const t1 = type1Input.value.trim() || type1Select.value.trim();
-        const t2 =
-          type2Input.value.trim() || type2Select.value.trim() || "なし";
+      addButton.addEventListener("click", function() {
+        // 入力値を取得
+        const part   = partInput.value.trim()  || partSelect.value.trim();
+        const type1  = type1Input.value.trim() || type1Select.value.trim();
+        const type2  = type2Input.value.trim() || type2Select.value.trim() || "なし";
+        const newInc = Number(valueInput.value.trim());
+      
+        // 同一パーツ・種類の既存エントリーを探す
+        const idx = avatarList.findIndex(av =>
+          av.partText === part &&
+          av.type1    === type1 &&
+          av.type2    === type2
+        );
+      
+        if (idx !== -1) {
+          const oldInc = Number(avatarList[idx].increase);
+          if (oldInc >= newInc) {
+            alert("最大値ではないため登録できません");
+            return;  // ここでハンドラを抜けるので安全です
+          } else {
+            alert("最大値を更新したため過去のアバターを削除します");
+            avatarList.splice(idx, 1);  // 古い方を削除
+          }
+        }
+      
+        // 新規登録
         avatarList.push({
-          partText: p,
-          type1: t1,
-          type2: t2,
-          increase: valueInput.value.trim(),
+          partText: part,
+          type1:    type1,
+          type2:    type2,
+          increase: String(newInc)
         });
         localStorage.setItem("avatarList", JSON.stringify(avatarList));
         renderAvatarTable();
-        partInput.value = "";
+      
+        // フォームクリア
+        partInput.value  = "";
         partSelect.value = "";
         type1Input.value = "";
         type1Select.value = "";
         type2Input.value = "";
         type2Select.value = "";
-        type2Input.disabled = true;
-        type2Select.disabled = true;
         valueInput.value = "";
-        checkInput();
+        type2Input.disabled  = true;
+        type2Select.disabled = true;
+        addButton.disabled    = true;
       });
-
+      
       function renderAvatarTable() {
         avatarTableBody.innerHTML = "";
         avatarList.forEach((av, i) => {
