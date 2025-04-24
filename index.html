@@ -427,8 +427,20 @@
     background: transparent;
   }
 }
-
+/* スマホ時（767px 以下）はヘッダーを広告分だけ下にずらす */
+@media (max-width: 767px) {
+  header {
+    position: relative;
+    top: 50px; /* 広告の高さ分をずらす */
+  }
+}
+      @media (max-width: 767px) {
+  .nav-btn {
+    top: calc(50% + 50px); /* 50% の位置から広告分だけ下に */
+  }
+}
     </style>
+  
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/min/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
