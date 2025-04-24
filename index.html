@@ -1135,12 +1135,21 @@
             const tdDel = document.createElement("td");
             tdDel.innerHTML = `<button>削除</button>`;
             tdDel.firstChild.addEventListener("click", () => {
-              avatarList.splice(idx, 1);
-              localStorage.setItem("avatarList", JSON.stringify(avatarList));
-              renderAvatarTable();
+              // ソート前の avatarList 内の実際のインデックスを探す
+              const origIdx = avatarList.findIndex(item =>
+                item.partText === av.partText &&
+                item.type1    === av.type1 &&
+                item.type2    === av.type2 &&
+                item.increase === av.increase
+              );
+              if (origIdx !== -1) {
+                avatarList.splice(origIdx, 1);
+                localStorage.setItem("avatarList", JSON.stringify(avatarList));
+                renderAvatarTable();
+              }
             });
             tr.appendChild(tdDel);
-      
+          
             avatarTableBody.appendChild(tr);
           }
         });
