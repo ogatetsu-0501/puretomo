@@ -602,8 +602,15 @@
             </select>
           </div>
           <div class="form-group">
-            <label>絞り込み — 上昇値:</label>
-            <input type="number" id="filterIncInput" placeholder="数値を入力（空欄で全て）" />
+            <label>上昇値で絞り込む：</label>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <input type="number" id="filterIncInput" placeholder="数値を入力">
+              <select id="filterIncOp" disabled>
+                <option value="gte">以上</option>
+                <option value="lte">以下</option>
+                <option value="eq">等しい</option>
+              </select>
+            </div>
           </div>
           <button id="saveSettingsButton">設定を保存</button>
         </div>
@@ -777,7 +784,18 @@
             opt.textContent = p;
             ps.appendChild(opt);
           });
+                    // ■――――■ 絞り込み演算子の切り替え ■――――■
+          const incInput = document.getElementById("filterIncInput");
+          const incOpSel = document.getElementById("filterIncOp");
 
+          incInput.addEventListener("input", () => {
+            if (incInput.value.trim() !== "") {
+              incOpSel.disabled = false;
+              incOpSel.value    = "gte";  // 値が変わるたび「以上」にリセット
+            } else {
+              incOpSel.disabled = true;
+            }
+          });
           generateSettingsUI();
         });
 
@@ -925,7 +943,7 @@
        // 保存済みの絞り込み値を復元
         fp.value = localStorage.getItem("filterPart") || "";
         ft.value = localStorage.getItem("filterType") || "";
-        document.getElementById("filterIncInput").value = localStorage.getItem("filterInc") || "";""; 
+        document.getElementById("filterIncInput").value = localStorage.getItem("filterInc") || "" 
       }
 
       document
@@ -946,6 +964,7 @@
           localStorage.setItem("filterPart", document.getElementById("filterPartSelect").value);
           localStorage.setItem("filterType", document.getElementById("filterTypeSelect").value);
           localStorage.setItem("filterInc", document.getElementById("filterIncInput").value.trim());
+          localStorage.setItem("filterIncOp", document.getElementById("filterIncOp").value);
           renderAvatarTable();
 
           alert("設定を保存しました。");
@@ -1072,11 +1091,11 @@
         const fType = localStorage.getItem("filterType") || "";
         const fIncRaw = localStorage.getItem("filterInc") || "";
         const fInc = fIncRaw !== "" ? Number(fIncRaw) : null;
+        const fOp     = localStorage.getItem("filterIncOp") || "gte";
       
         // ② テーブルをクリア
         avatarTableBody.innerHTML = "";
           // ② 並び替え：パーツ→種類①→種類② の優先度でソート
-          console.log(partOrder, typeOptions);
           const sortedList = avatarList.slice().sort((a, b) => {
             const pa = partOrder.indexOf(a.partText);
             const pb = partOrder.indexOf(b.partText);
@@ -1092,10 +1111,19 @@
           });
         // ③ avatarList をループして、絞り込み条件に合うものだけ描画
         sortedList.forEach((av, idx) => {
+          const inc = Number(av.increase);
+          // ▲ 新規：上昇値フィルタの判定
+          let incMatch = true;
+          if (fInc !== null) {
+            if (fOp === "gte") incMatch = inc >= fInc;
+            else if (fOp === "lte") incMatch = inc <= fInc;
+            else if (fOp === "eq")  incMatch = inc === fInc;
+          }
+
           if (
             (!fPart || av.partText === fPart) &&
             (!fType || av.type1    === fType) &&
-            ( fInc  === null || Number(av.increase) === fInc)
+            incMatch  // ▼ ここを fInc===null || Number(av.increase)===fInc から置き換え
           ) {
             const tr = document.createElement("tr");
             ["partText","type1","type2","increase"].forEach(key => {
@@ -1103,13 +1131,13 @@
               td.textContent = av[key];
               tr.appendChild(td);
             });
-            // 削除ボタンも idx を使って正しい要素を消せるように
+            // 削除ボタン
             const tdDel = document.createElement("td");
             tdDel.innerHTML = `<button>削除</button>`;
             tdDel.firstChild.addEventListener("click", () => {
               avatarList.splice(idx, 1);
               localStorage.setItem("avatarList", JSON.stringify(avatarList));
-              renderAvatarTable();  // 再描画
+              renderAvatarTable();
             });
             tr.appendChild(tdDel);
       
@@ -1229,15 +1257,26 @@
               const fType = localStorage.getItem("filterType") || "";
               const fIncRaw = localStorage.getItem("filterInc");
               const fInc = fIncRaw ? Number(fIncRaw) : null;
+              const fOp     = localStorage.getItem("filterIncOp") || "gte";
 
               // 7-c. listingItems の中に「全条件を満たすアイテム」がある bazaar だけ残す
               filtered = filtered.filter(it =>
-                it.listingItems.some(li =>
-                  (!fPart || li.parts === fPart) &&
-                  (!fType || li.type  === fType) &&
-                  (!fInc  || li.param === fInc)
-                )
-              );
+              it.listingItems.some(li => {
+                // パーツフィルタ
+                if (fPart && li.parts !== fPart) return false;
+                // タイプフィルタ
+                if (fType && li.type  !== fType) return false;
+            
+                // ■ 新規：上昇値フィルタ（以上／以下／等しい）
+                if (fInc !== null) {
+                  if (fOp === "gte" && li.param <  fInc) return false;
+                  if (fOp === "lte" && li.param >  fInc) return false;
+                  if (fOp === "eq"  && li.param !== fInc) return false;
+                }
+            
+                return true;
+              })
+            );
             // ──────────────── デバッグ② ────────────────
             // 小学生向け：フィルター後に何件残ったか教えてね
 
