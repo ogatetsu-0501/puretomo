@@ -395,11 +395,24 @@
         }
       }
 
+/* 最初は隠す */
 #admax-side {
   display: none;
 }
 
-/* PCサイズ（例：横幅768px以上）のときだけ表示 */
+/* スマホ表示（767px 以下）では、ヘッダー直後の通常フローで幅100%に */
+@media (max-width: 767px) {
+  #admax-side {
+    display: block;
+    position: static;      /* ドキュメントフローに沿って表示 */
+    width: 100%;           /* スマホ画面幅いっぱい */
+    height: auto;          /* 高さは広告に合わせて自動 */
+    margin: 8px 0;         /* ヘッダーとコンテンツの間にちょっと余白 */
+    text-align: center;    /* 広告を中央寄せ */
+  }
+}
+
+/* PC表示（768px 以上）では、右サイド固定 */
 @media (min-width: 768px) {
   #admax-side {
     display: block;
@@ -425,6 +438,21 @@
       <h1>Puretomoアシスタント for チョコットランド</h1>
     </header>
 
+  <div id="admax-side">
+    <!-- admax 非同期タグ（160×600 右サイド用／スマホではトップバナー用） -->
+    <script type="text/javascript">
+      (admaxads = window.admaxads || []).push({
+        admax_id: "abaf56c5df7973ada2bead83e0569535",
+        type: "action"
+      });
+    </script>
+    <script
+      type="text/javascript"
+      charset="utf-8"
+      src="https://adm.shinobi.jp/st/t.js"
+      async>
+    </script>
+  </div>
     <div id="modalWindow">
       <div id="modalContent"></div>
       <button id="closeModal">閉じる</button>
@@ -1735,23 +1763,6 @@
     });
   });
     </script>
-    <!-- HTML の </body> 手前などに置く -->
-<div id="admax-side">
-  <!-- admax 非同期タグ（160×600 右サイド用） -->
-  <script type="text/javascript">
-    (admaxads = window.admaxads || []).push({
-      admax_id: "abaf56c5df7973ada2bead83e0569535",
-      type: "action"
-    });
-  </script>
-  <script 
-    type="text/javascript" 
-    charset="utf-8" 
-    src="https://adm.shinobi.jp/st/t.js" 
-    async>
-  </script>
-  <!-- admax -->
-</div>
   </body>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9014066221222515"crossorigin="anonymous"></script>
 </html>
