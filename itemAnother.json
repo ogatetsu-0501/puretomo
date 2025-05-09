@@ -1,5 +1,23 @@
 [
   {
+    "itemCode": "SB218L",
+    "itemName": "うらはらバルーンレター",
+    "parts": "SB",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A23DJ",
+    "itemName": "お祭り☆トルネードポテト！",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E111E",
+    "itemName": "ビスクしゅっぽっぽ・14周年",
+    "parts": "E1",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "LD148Y",
     "itemName": "ゆるっとパーカー",
     "parts": "HL",
@@ -148,23 +166,5 @@
     "itemName": "ゴシックワンピ【限定色】",
     "parts": "H",
     "itemGender": "F"
-  },
-  {
-    "itemCode": "SB218L",
-    "itemName": "うらはらバルーンレター",
-    "parts": "SB",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A23DJ",
-    "itemName": "お祭り☆トルネードポテト！",
-    "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "E111E",
-    "itemName": "ビスクしゅっぽっぽ・14周年",
-    "parts": "E1",
-    "itemGender": "A"
   }
 ]
