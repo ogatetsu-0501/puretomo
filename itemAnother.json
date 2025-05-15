@@ -1,5 +1,47 @@
 [
   {
+    "itemCode": "A255F",
+    "itemName": "キューピッドの必需品",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E41RV",
+    "itemName": "ゆきろぼ",
+    "parts": "E4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E41OK",
+    "itemName": "見習いキューピッド",
+    "parts": "E4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "P127OB",
+    "itemName": "月凛華",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A4190I",
+    "itemName": "新緑ステンドグラス",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A418K7",
+    "itemName": "しばいぬか～ぺっと",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A4A2F",
+    "itemName": "スターパレード",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "A4191A",
     "itemName": "ロストカラーシティ・イエロー",
     "parts": "A4",
@@ -72,18 +114,6 @@
     "itemGender": "F"
   },
   {
-    "itemCode": "A4190I",
-    "itemName": "新緑ステンドグラス",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A418K7",
-    "itemName": "しばいぬか～ぺっと",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "AE110Z",
     "itemName": "揺蕩う蒼花・23rd",
     "parts": "AE",
@@ -100,17 +130,5 @@
     "itemName": "【復刻】アップルキッス",
     "parts": "HL",
     "itemGender": "M"
-  },
-  {
-    "itemCode": "P127OB",
-    "itemName": "月凛華",
-    "parts": "P",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A4A2F",
-    "itemName": "スターパレード",
-    "parts": "A4",
-    "itemGender": "A"
   }
 ]
