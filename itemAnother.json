@@ -12,24 +12,6 @@
     "itemGender": "M"
   },
   {
-    "itemCode": "A4BFA",
-    "itemName": "音楽隊びより",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A25P9",
-    "itemName": "音楽隊ホルン",
-    "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "E41V1",
-    "itemName": "音楽隊ブニャ",
-    "parts": "E4",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "A4A2F",
     "itemName": "スターパレード",
     "parts": "A4",
@@ -44,6 +26,18 @@
   {
     "itemCode": "LD259T",
     "itemName": "ギャルソンスタイル",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD26YN",
+    "itemName": "忍者がーる",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD24QH",
+    "itemName": "ろぼキューピッド",
     "parts": "HL",
     "itemGender": "F"
   },
@@ -66,6 +60,24 @@
     "itemGender": "F"
   },
   {
+    "itemCode": "A418Q0",
+    "itemName": "ブルーミルクニット",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E2LM",
+    "itemName": "読書ブニャ",
+    "parts": "E2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "LC27Y7",
+    "itemName": "ブラックロリータ【限定品】",
+    "parts": "L",
+    "itemGender": "F"
+  },
+  {
     "itemCode": "A24HW",
     "itemName": "おおきめカチュ・レッド",
     "parts": "A2",
@@ -81,6 +93,24 @@
     "itemCode": "A1197A",
     "itemName": "レンズフレアプンスカ",
     "parts": "A1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A4BFA",
+    "itemName": "音楽隊びより",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A25P9",
+    "itemName": "音楽隊ホルン",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E41V1",
+    "itemName": "音楽隊ブニャ",
+    "parts": "E4",
     "itemGender": "A"
   },
   {
