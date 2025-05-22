@@ -1257,8 +1257,19 @@
         });
       // 小学生向け：販売アバター検索のデータを読んでテーブルを作る関数だよ
       function logItemCodes() {
+          // ──────────────── 性別に応じたファイル名を決める ────────────────
+        // 小学生向け：ここで設定画面で選んだ性別を取り出すよ
+        const gender = localStorage.getItem("avatarGender") 
+                        || document.getElementById("genderSelect").value;
+        // 小学生向け：女なら「femalebazzarList.json」、男なら「malebazzarList.json」を読むよ
+        const bazaarListFile = (gender === "F")
+          ? "femalebazzarList.json"
+          : "malebazzarList.json";
         Promise.all([
           loadBagcatLabels(),
+              // ──────────────── ここだけ変更 ────────────────
+          // 小学生向け：性別に応じてファイルを切り替えてfetchするよ
+          fetch(bazaarListFile).then((r) => r.json()),
           fetch("bazzarList.json").then((r) => r.json()),
           fetch("itemCodeSchema.json").then((r) => r.json()),
           fetch("itemAnother.json").then((r) => r.json()),
