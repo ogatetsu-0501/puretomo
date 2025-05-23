@@ -861,10 +861,21 @@
 
       window.addEventListener("load", () => {
         showInterstitialAd();
+        // ────────── 性別でヒストリーファイルを選ぶブロック ──────────
+        // ② ローカルストレージから性別を取ってくるよ（"F" または "M"）
+        const gender = localStorage.getItem("avatarGender");
+        // ③ デフォルトは buzzerHistory.json（性別未設定時）
+        let historyFile = "malebuzzerHistory.json";
+        // ④ 女性なら femalebuzzerHistory.json、男性なら malebuzzerHistory.json に切り替えるよ
+        if (gender === "F") {
+          historyFile = "femalebuzzerHistory.json";
+        } else if (gender === "M") {
+          historyFile = "malebuzzerHistory.json";
+        }
         Promise.all([
           loadBagcatLabels(),
           loadTypeOptions(),
-          fetch("buzzerHistory.json").then((r) => r.json()),
+          fetch(historyFile).then((r) => r.json()),
         ]).then(([, , hData]) => {
           historyData = hData;
           const ps = document.getElementById("paramSelect");
