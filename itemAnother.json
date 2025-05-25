@@ -1,21 +1,15 @@
 [
   {
+    "itemCode": "ADV6",
+    "itemName": "カッパのくちばし",
+    "parts": "AD",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "B31A3",
     "itemName": "ぴよさんと一緒",
     "parts": "B3",
     "itemGender": "M"
-  },
-  {
-    "itemCode": "A24PO",
-    "itemName": "ブルスケッタ",
-    "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A141D",
-    "itemName": "コンポタ缶",
-    "parts": "A1",
-    "itemGender": "A"
   },
   {
     "itemCode": "A24HW",
@@ -32,6 +26,18 @@
   {
     "itemCode": "A1197A",
     "itemName": "レンズフレアプンスカ",
+    "parts": "A1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A24PO",
+    "itemName": "ブルスケッタ",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A141D",
+    "itemName": "コンポタ缶",
     "parts": "A1",
     "itemGender": "A"
   },
@@ -63,12 +69,6 @@
     "itemCode": "A4A2F",
     "itemName": "スターパレード",
     "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "ADV6",
-    "itemName": "カッパのくちばし",
-    "parts": "AD",
     "itemGender": "A"
   },
   {
