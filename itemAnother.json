@@ -1,5 +1,11 @@
 [
   {
+    "itemCode": "B31A3",
+    "itemName": "ぴよさんと一緒",
+    "parts": "B3",
+    "itemGender": "M"
+  },
+  {
     "itemCode": "LD219EN",
     "itemName": "【復刻】プラネットロリポップ",
     "parts": "HL",
@@ -10,12 +16,6 @@
     "itemName": "【復刻】クリアデイヴィヴィッド",
     "parts": "HL",
     "itemGender": "F"
-  },
-  {
-    "itemCode": "B31A3",
-    "itemName": "ぴよさんと一緒",
-    "parts": "B3",
-    "itemGender": "M"
   },
   {
     "itemCode": "AA2NT",
@@ -51,18 +51,6 @@
     "itemCode": "ADV6",
     "itemName": "カッパのくちばし",
     "parts": "AD",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AFUB",
-    "itemName": "プチピア・トパーズ",
-    "parts": "AF",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A49JP",
-    "itemName": "もうすぐ印刷",
-    "parts": "A4",
     "itemGender": "A"
   }
 ]
