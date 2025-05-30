@@ -1,23 +1,5 @@
 [
   {
-    "itemCode": "B1GL",
-    "itemName": "[Nd]クローブレザートランク",
-    "parts": "B1",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "B230F",
-    "itemName": "［’S］翡翠の心眼",
-    "parts": "B2",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "B21WH",
-    "itemName": "［’S］ノエルsick・17th",
-    "parts": "B2",
-    "itemGender": "F"
-  },
-  {
     "itemCode": "P1226Y",
     "itemName": "アニッタ",
     "parts": "P",
@@ -33,6 +15,24 @@
     "itemCode": "P126LK",
     "itemName": "シプラ",
     "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "B1GL",
+    "itemName": "[Nd]クローブレザートランク",
+    "parts": "B1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "B230F",
+    "itemName": "［’S］翡翠の心眼",
+    "parts": "B2",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "B21WH",
+    "itemName": "［’S］ノエルsick・17th",
+    "parts": "B2",
     "itemGender": "F"
   },
   {
