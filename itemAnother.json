@@ -1,5 +1,17 @@
 [
   {
+    "itemCode": "LD212HE",
+    "itemName": "水面ラウンジガール",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "AE13XH",
+    "itemName": "ノアオレイユ・24th",
+    "parts": "AE",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "FA1ZM",
     "itemName": "陽和",
     "parts": "F",
@@ -118,17 +130,5 @@
     "itemName": "スノウミロワール・24th",
     "parts": "B2",
     "itemGender": "F"
-  },
-  {
-    "itemCode": "LD212HE",
-    "itemName": "水面ラウンジガール",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "AE13XH",
-    "itemName": "ノアオレイユ・24th",
-    "parts": "AE",
-    "itemGender": "A"
   }
 ]
