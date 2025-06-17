@@ -1,29 +1,5 @@
 [
   {
-    "itemCode": "LD219G2",
-    "itemName": "【復刻】やみやみうさぽむ",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "FA1ZM",
-    "itemName": "陽和",
-    "parts": "F",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "B213UZ",
-    "itemName": "スノウミロワール・24th・s",
-    "parts": "B2",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "B213UY",
-    "itemName": "スノウミロワール・24th",
-    "parts": "B2",
-    "itemGender": "F"
-  },
-  {
     "itemCode": "P127OB",
     "itemName": "月凛華",
     "parts": "P",
@@ -57,6 +33,30 @@
     "itemCode": "LD29QU",
     "itemName": "おそとで☆りらっくすカーデ・桃",
     "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD219G2",
+    "itemName": "【復刻】やみやみうさぽむ",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "FA1ZM",
+    "itemName": "陽和",
+    "parts": "F",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "B213UZ",
+    "itemName": "スノウミロワール・24th・s",
+    "parts": "B2",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "B213UY",
+    "itemName": "スノウミロワール・24th",
+    "parts": "B2",
     "itemGender": "F"
   },
   {
@@ -102,6 +102,12 @@
     "itemGender": "A"
   },
   {
+    "itemCode": "B31A3",
+    "itemName": "ぴよさんと一緒",
+    "parts": "B3",
+    "itemGender": "M"
+  },
+  {
     "itemCode": "AF1BQ",
     "itemName": "イースターラビピアス",
     "parts": "AF",
@@ -118,12 +124,6 @@
     "itemName": "ばっちりぬいぐるみリボン",
     "parts": "A2",
     "itemGender": "A"
-  },
-  {
-    "itemCode": "B31A3",
-    "itemName": "ぴよさんと一緒",
-    "parts": "B3",
-    "itemGender": "M"
   },
   {
     "itemCode": "AE12O2",
