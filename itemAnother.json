@@ -1,11 +1,5 @@
 [
   {
-    "itemCode": "P127OB",
-    "itemName": "月凛華",
-    "parts": "P",
-    "itemGender": "F"
-  },
-  {
     "itemCode": "A4A2F",
     "itemName": "スターパレード",
     "parts": "A4",
@@ -33,6 +27,12 @@
     "itemCode": "LD29QU",
     "itemName": "おそとで☆りらっくすカーデ・桃",
     "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P127OB",
+    "itemName": "月凛華",
+    "parts": "P",
     "itemGender": "F"
   },
   {
@@ -102,12 +102,6 @@
     "itemGender": "A"
   },
   {
-    "itemCode": "B31A3",
-    "itemName": "ぴよさんと一緒",
-    "parts": "B3",
-    "itemGender": "M"
-  },
-  {
     "itemCode": "AF1BQ",
     "itemName": "イースターラビピアス",
     "parts": "AF",
@@ -124,6 +118,12 @@
     "itemName": "ばっちりぬいぐるみリボン",
     "parts": "A2",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "B31A3",
+    "itemName": "ぴよさんと一緒",
+    "parts": "B3",
+    "itemGender": "M"
   },
   {
     "itemCode": "AE12O2",
