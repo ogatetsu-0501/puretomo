@@ -1,29 +1,5 @@
 [
   {
-    "itemCode": "B1SG",
-    "itemName": "おえかきばっぐ",
-    "parts": "B1",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "LD259T",
-    "itemName": "ギャルソンスタイル",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "HC2BJQ",
-    "itemName": "ゆるっとラグラン",
-    "parts": "H",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "FA1ZM",
-    "itemName": "陽和",
-    "parts": "F",
-    "itemGender": "M"
-  },
-  {
     "itemCode": "P127OB",
     "itemName": "月凛華",
     "parts": "P",
@@ -48,6 +24,12 @@
     "itemGender": "F"
   },
   {
+    "itemCode": "LD259T",
+    "itemName": "ギャルソンスタイル",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
     "itemCode": "A1197A",
     "itemName": "レンズフレアプンスカ",
     "parts": "A1",
@@ -58,6 +40,30 @@
     "itemName": "パスコロ・リラ",
     "parts": "P",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "A4A2F",
+    "itemName": "スターパレード",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "B1SG",
+    "itemName": "おえかきばっぐ",
+    "parts": "B1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "HC2BJQ",
+    "itemName": "ゆるっとラグラン",
+    "parts": "H",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "FA1ZM",
+    "itemName": "陽和",
+    "parts": "F",
+    "itemGender": "M"
   },
   {
     "itemCode": "B113A",
