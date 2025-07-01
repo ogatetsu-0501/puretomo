@@ -1,21 +1,9 @@
 [
   {
-    "itemCode": "E41OK",
-    "itemName": "見習いキューピッド",
-    "parts": "E4",
+    "itemCode": "AFUB",
+    "itemName": "プチピア・トパーズ",
+    "parts": "AF",
     "itemGender": "A"
-  },
-  {
-    "itemCode": "A4D32",
-    "itemName": "やわらかチューリップ畑",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "HC2BJQ",
-    "itemName": "ゆるっとラグラン",
-    "parts": "H",
-    "itemGender": "F"
   },
   {
     "itemCode": "LD259T",
@@ -60,12 +48,6 @@
     "itemGender": "F"
   },
   {
-    "itemCode": "AFUB",
-    "itemName": "プチピア・トパーズ",
-    "parts": "AF",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "A49JP",
     "itemName": "もうすぐ印刷",
     "parts": "A4",
@@ -106,5 +88,11 @@
     "itemName": "【POW＋1】トゲネズミ",
     "parts": "E2",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "HC2BJQ",
+    "itemName": "ゆるっとラグラン",
+    "parts": "H",
+    "itemGender": "F"
   }
 ]
