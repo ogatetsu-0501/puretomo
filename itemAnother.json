@@ -1,17 +1,5 @@
 [
   {
-    "itemCode": "AFUB",
-    "itemName": "プチピア・トパーズ",
-    "parts": "AF",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A49JP",
-    "itemName": "もうすぐ印刷",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "E41OK",
     "itemName": "見習いキューピッド",
     "parts": "E4",
@@ -66,20 +54,26 @@
     "itemGender": "F"
   },
   {
+    "itemCode": "P127OB",
+    "itemName": "月凛華",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "AFUB",
+    "itemName": "プチピア・トパーズ",
+    "parts": "AF",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A49JP",
+    "itemName": "もうすぐ印刷",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "B23BI",
     "itemName": "フォーチュンブルーム",
-    "parts": "B2",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD29MD",
-    "itemName": "［’S］束縛のディープレッド",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "B22VG",
-    "itemName": "［’S］白銀の紫水晶",
     "parts": "B2",
     "itemGender": "F"
   },
