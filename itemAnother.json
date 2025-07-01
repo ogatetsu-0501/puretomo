@@ -1,27 +1,15 @@
 [
   {
-    "itemCode": "P127OB",
-    "itemName": "月凛華",
-    "parts": "P",
-    "itemGender": "F"
+    "itemCode": "AFUB",
+    "itemName": "プチピア・トパーズ",
+    "parts": "AF",
+    "itemGender": "A"
   },
   {
-    "itemCode": "LC2EGL",
-    "itemName": "ロリポップミニ",
-    "parts": "L",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD24QH",
-    "itemName": "ろぼキューピッド",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LC2B6Z",
-    "itemName": "ホワイトプリン服",
-    "parts": "L",
-    "itemGender": "F"
+    "itemCode": "A49JP",
+    "itemName": "もうすぐ印刷",
+    "parts": "A4",
+    "itemGender": "A"
   },
   {
     "itemCode": "E41OK",
@@ -68,6 +56,12 @@
   {
     "itemCode": "LD26YN",
     "itemName": "忍者がーる",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD24QH",
+    "itemName": "ろぼキューピッド",
     "parts": "HL",
     "itemGender": "F"
   },
