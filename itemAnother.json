@@ -1,11 +1,5 @@
 [
   {
-    "itemCode": "AFUB",
-    "itemName": "プチピア・トパーズ",
-    "parts": "AF",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "A419HL",
     "itemName": "ハピネスメモリア",
     "parts": "A4",
@@ -15,6 +9,12 @@
     "itemCode": "A419IL",
     "itemName": "ハピネスメモリア・追懐",
     "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "AFUB",
+    "itemName": "プチピア・トパーズ",
+    "parts": "AF",
     "itemGender": "A"
   },
   {
