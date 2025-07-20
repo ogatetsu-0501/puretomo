@@ -1,5 +1,17 @@
 [
   {
+    "itemCode": "P125RH",
+    "itemName": "シルキーサイドテール",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P1249I",
+    "itemName": "ペリシエ",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
     "itemCode": "LC2EGL",
     "itemName": "ロリポップミニ",
     "parts": "L",
@@ -148,23 +160,5 @@
     "itemName": "トライカラーエクステ・パステル",
     "parts": "AF",
     "itemGender": "A"
-  },
-  {
-    "itemCode": "AE4D9",
-    "itemName": "エッグベレー",
-    "parts": "AE",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "P126EB",
-    "itemName": "モカホイップ",
-    "parts": "P",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD23RN",
-    "itemName": "恋人はシェフ",
-    "parts": "HL",
-    "itemGender": "F"
   }
 ]
