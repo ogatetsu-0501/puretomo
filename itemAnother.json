@@ -1,5 +1,23 @@
 [
   {
+    "itemCode": "A46YU",
+    "itemName": "ポップンキャンディーズ",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A46VG",
+    "itemName": "デコレートショートケーキ",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E2OH",
+    "itemName": "ブニャティ",
+    "parts": "E2",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "A13MD",
     "itemName": "【オトギ】ラブリーロリポップ",
     "parts": "A1",
@@ -208,23 +226,5 @@
     "itemName": "ボーダー半袖ニット",
     "parts": "H",
     "itemGender": "F"
-  },
-  {
-    "itemCode": "A46YU",
-    "itemName": "ポップンキャンディーズ",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A46VG",
-    "itemName": "デコレートショートケーキ",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "E2OH",
-    "itemName": "ブニャティ",
-    "parts": "E2",
-    "itemGender": "A"
   }
 ]
