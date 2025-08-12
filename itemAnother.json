@@ -1,5 +1,23 @@
 [
   {
+    "itemCode": "E3137",
+    "itemName": "ドラムスタイペン",
+    "parts": "E3",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "ABSU",
+    "itemName": "想い想われ（想い）",
+    "parts": "AB",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "ABTV",
+    "itemName": "どきぱんイリュージョン",
+    "parts": "AB",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "E112TQ",
     "itemName": "星詠みのベール",
     "parts": "E1",
@@ -196,23 +214,5 @@
     "itemName": "シトロンサングラス",
     "parts": "AD",
     "itemGender": "A"
-  },
-  {
-    "itemCode": "P1212R",
-    "itemName": "チェーリティアップ",
-    "parts": "P",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LC2A24T",
-    "itemName": "クラシックピュア【限定品】",
-    "parts": "L",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "HC21A3",
-    "itemName": "ボーダー半袖ニット",
-    "parts": "H",
-    "itemGender": "F"
   }
 ]
