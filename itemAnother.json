@@ -1,5 +1,53 @@
 [
   {
+    "itemCode": "P127OB",
+    "itemName": "月凛華",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A4B5K",
+    "itemName": "古代の神殿",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A4AIZ",
+    "itemName": "あめふりマーチ",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A4AU3",
+    "itemName": "かにぱらだいす",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "LC2BTY",
+    "itemName": "ピンクアラーニャ",
+    "parts": "L",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A4CY5",
+    "itemName": "博士な夏空",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "P128ET",
+    "itemName": "カロッテ",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "E2OH",
+    "itemName": "ブニャティ",
+    "parts": "E2",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "LD148Y",
     "itemName": "ゆるっとパーカー",
     "parts": "HL",
@@ -75,12 +123,6 @@
     "itemCode": "A2220",
     "itemName": "おにぎりおいしい",
     "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "E2OH",
-    "itemName": "ブニャティ",
-    "parts": "E2",
     "itemGender": "A"
   },
   {
@@ -190,35 +232,5 @@
     "itemName": "親愛なるキミへ",
     "parts": "A1",
     "itemGender": "A"
-  },
-  {
-    "itemCode": "P127OB",
-    "itemName": "月凛華",
-    "parts": "P",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A4B5K",
-    "itemName": "古代の神殿",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A4AIZ",
-    "itemName": "あめふりマーチ",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A4AU3",
-    "itemName": "かにぱらだいす",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "LC2BTY",
-    "itemName": "ピンクアラーニャ",
-    "parts": "L",
-    "itemGender": "F"
   }
 ]
