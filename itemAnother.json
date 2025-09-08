@@ -1,5 +1,11 @@
 [
   {
+    "itemCode": "E2RM",
+    "itemName": "【POW＋1】トゲネズミ",
+    "parts": "E2",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "A255F",
     "itemName": "キューピッドの必需品",
     "parts": "A2",
@@ -10,6 +16,24 @@
     "itemName": "原始のヤリ",
     "parts": "A1",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "A4CDR",
+    "itemName": "アクワレル・ジェリー",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "LD29RD",
+    "itemName": "しまりすぼでぃ",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P12883",
+    "itemName": "しまりすへっど",
+    "parts": "P",
+    "itemGender": "F"
   },
   {
     "itemCode": "A410B2",
@@ -66,12 +90,6 @@
     "itemGender": "F"
   },
   {
-    "itemCode": "E2RM",
-    "itemName": "【POW＋1】トゲネズミ",
-    "parts": "E2",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "B2AY",
     "itemName": "ボンボンマフラー",
     "parts": "B2",
@@ -87,12 +105,6 @@
     "itemCode": "AB446",
     "itemName": "フォーチュンハートドーム",
     "parts": "AB",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AE4IS",
-    "itemName": "グウスカアイマスク",
-    "parts": "AE",
     "itemGender": "A"
   }
 ]
