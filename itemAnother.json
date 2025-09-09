@@ -36,30 +36,6 @@
     "itemGender": "A"
   },
   {
-    "itemCode": "A14F1",
-    "itemName": "にわとりさんだっこ",
-    "parts": "A1",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A25CO",
-    "itemName": "でかもみじ",
-    "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "LD259T",
-    "itemName": "ギャルソンスタイル",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "P12654",
-    "itemName": "ラフポニーテール",
-    "parts": "P",
-    "itemGender": "F"
-  },
-  {
     "itemCode": "A255F",
     "itemName": "キューピッドの必需品",
     "parts": "A2",
@@ -68,6 +44,12 @@
   {
     "itemCode": "A14UN",
     "itemName": "原始のヤリ",
+    "parts": "A1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A14F1",
+    "itemName": "にわとりさんだっこ",
     "parts": "A1",
     "itemGender": "A"
   },
@@ -86,6 +68,24 @@
   {
     "itemCode": "P12883",
     "itemName": "しまりすへっど",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A25CO",
+    "itemName": "でかもみじ",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "LD259T",
+    "itemName": "ギャルソンスタイル",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P12654",
+    "itemName": "ラフポニーテール",
     "parts": "P",
     "itemGender": "F"
   },
