@@ -1,5 +1,23 @@
 [
   {
+    "itemCode": "E2OH",
+    "itemName": "ブニャティ",
+    "parts": "E2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A2220",
+    "itemName": "おにぎりおいしい",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A23XT",
+    "itemName": "【オトギ】オトギノソード",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "A487Z",
     "itemName": "らくがきすのー",
     "parts": "A4",
@@ -18,24 +36,6 @@
     "itemGender": "A"
   },
   {
-    "itemCode": "LD26YN",
-    "itemName": "忍者がーる",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LD24QH",
-    "itemName": "ろぼキューピッド",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LC2B6Z",
-    "itemName": "ホワイトプリン服",
-    "parts": "L",
-    "itemGender": "F"
-  },
-  {
     "itemCode": "P127OB",
     "itemName": "月凛華",
     "parts": "P",
@@ -46,6 +46,24 @@
     "itemName": "スターパレード",
     "parts": "A4",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "A2502",
+    "itemName": "告白とラブレター",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "E41OA",
+    "itemName": "代わりに入ってみました",
+    "parts": "E4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "LC2EGL",
+    "itemName": "ロリポップミニ",
+    "parts": "L",
+    "itemGender": "F"
   },
   {
     "itemCode": "A4JT",
@@ -111,12 +129,6 @@
     "itemCode": "HC2BJQ",
     "itemName": "ゆるっとラグラン",
     "parts": "H",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LC2EGL",
-    "itemName": "ロリポップミニ",
-    "parts": "L",
     "itemGender": "F"
   },
   {
