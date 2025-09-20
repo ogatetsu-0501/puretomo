@@ -1,61 +1,13 @@
 [
   {
-    "itemCode": "HC2BJQ",
-    "itemName": "ゆるっとラグラン",
-    "parts": "H",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LC2EGL",
-    "itemName": "ロリポップミニ",
-    "parts": "L",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A14F1",
-    "itemName": "にわとりさんだっこ",
-    "parts": "A1",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "E2RM",
-    "itemName": "【POW＋1】トゲネズミ",
-    "parts": "E2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "FA1191",
-    "itemName": "くると・スノー",
-    "parts": "F",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "SB1H9",
-    "itemName": "本日の営業は終了しました。",
-    "parts": "SB",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "A487Z",
-    "itemName": "らくがきすのー",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A48FH",
-    "itemName": "ハートチェックラブ",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A47YC",
-    "itemName": "ノイジーフライヤー",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "P127OB",
     "itemName": "月凛華",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P127NM",
+    "itemName": "ラウフローズエーシェル",
     "parts": "P",
     "itemGender": "F"
   },
@@ -96,6 +48,12 @@
     "itemGender": "A"
   },
   {
+    "itemCode": "LC2EGL",
+    "itemName": "ロリポップミニ",
+    "parts": "L",
+    "itemGender": "F"
+  },
+  {
     "itemCode": "A26E0",
     "itemName": "アニラボかがみもち帽",
     "parts": "A2",
@@ -112,6 +70,54 @@
     "itemName": "忍者がーる",
     "parts": "HL",
     "itemGender": "F"
+  },
+  {
+    "itemCode": "A14F1",
+    "itemName": "にわとりさんだっこ",
+    "parts": "A1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "HC2BJQ",
+    "itemName": "ゆるっとラグラン",
+    "parts": "H",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "E2RM",
+    "itemName": "【POW＋1】トゲネズミ",
+    "parts": "E2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "FA1191",
+    "itemName": "くると・スノー",
+    "parts": "F",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "SB1H9",
+    "itemName": "本日の営業は終了しました。",
+    "parts": "SB",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "A487Z",
+    "itemName": "らくがきすのー",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A48FH",
+    "itemName": "ハートチェックラブ",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "A47YC",
+    "itemName": "ノイジーフライヤー",
+    "parts": "A4",
+    "itemGender": "A"
   },
   {
     "itemCode": "A413A2",
