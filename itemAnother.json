@@ -96,12 +96,6 @@
     "itemGender": "F"
   },
   {
-    "itemCode": "A4A2F",
-    "itemName": "スターパレード",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
     "itemCode": "A2502",
     "itemName": "告白とラブレター",
     "parts": "A2",
@@ -174,6 +168,12 @@
     "itemGender": "F"
   },
   {
+    "itemCode": "A4A2F",
+    "itemName": "スターパレード",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "A25CO",
     "itemName": "でかもみじ",
     "parts": "A2",
@@ -231,24 +231,6 @@
     "itemCode": "A23XT",
     "itemName": "【オトギ】オトギノソード",
     "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A4JT",
-    "itemName": "ミッドナイトリリー",
-    "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A3212N",
-    "itemName": "おやすみアイマスク（少女）",
-    "parts": "A3",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "AF7I",
-    "itemName": "【パチンコＤＸ】ピアス",
-    "parts": "AF",
     "itemGender": "A"
   }
 ]
