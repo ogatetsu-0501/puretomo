@@ -1,5 +1,11 @@
 [
   {
+    "itemCode": "AD1A0I",
+    "itemName": "[’S]ローズコンビクト",
+    "parts": "AD",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "LD29I3",
     "itemName": "さらりコットン",
     "parts": "HL",
@@ -84,9 +90,9 @@
     "itemGender": "F"
   },
   {
-    "itemCode": "P127OB",
-    "itemName": "月凛華",
-    "parts": "P",
+    "itemCode": "LD259T",
+    "itemName": "ギャルソンスタイル",
+    "parts": "HL",
     "itemGender": "F"
   },
   {
@@ -94,6 +100,18 @@
     "itemName": "スターパレード",
     "parts": "A4",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "A25CO",
+    "itemName": "でかもみじ",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "P127OB",
+    "itemName": "月凛華",
+    "parts": "P",
+    "itemGender": "F"
   },
   {
     "itemCode": "A2502",
@@ -111,18 +129,6 @@
     "itemCode": "E41OA",
     "itemName": "代わりに入ってみました",
     "parts": "E4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "LD259T",
-    "itemName": "ギャルソンスタイル",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A25CO",
-    "itemName": "でかもみじ",
-    "parts": "A2",
     "itemGender": "A"
   },
   {
