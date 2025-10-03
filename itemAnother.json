@@ -1,8 +1,14 @@
 [
   {
-    "itemCode": "P127OB",
-    "itemName": "月凛華",
-    "parts": "P",
+    "itemCode": "A21A4F",
+    "itemName": "まめまめヘアピンセット・トイ",
+    "parts": "A2",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "LD21A4Q",
+    "itemName": "あかピーマンのきもち",
+    "parts": "HL",
     "itemGender": "F"
   },
   {
@@ -10,6 +16,12 @@
     "itemName": "丸かばん・緑",
     "parts": "B1",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "P127OB",
+    "itemName": "月凛華",
+    "parts": "P",
+    "itemGender": "F"
   },
   {
     "itemCode": "LD259T",
@@ -76,18 +88,6 @@
     "itemName": "トゥワレース",
     "parts": "A4",
     "itemGender": "A"
-  },
-  {
-    "itemCode": "A21A4F",
-    "itemName": "まめまめヘアピンセット・トイ",
-    "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "LD21A4Q",
-    "itemName": "あかピーマンのきもち",
-    "parts": "HL",
-    "itemGender": "F"
   },
   {
     "itemCode": "LD148Y",
