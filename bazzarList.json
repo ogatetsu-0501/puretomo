@@ -1,5 +1,136 @@
 [
   {
+    "bazaarId": "98500f6a76f947ffa2451b6e56f75df2",
+    "hancoin": 1000,
+    "sellEndDate": "2025/10/08 02:00",
+    "listingItems": [
+      "AA19Z8",
+      "E41MR",
+      "A311O9",
+      "A46EL"
+    ]
+  },
+  {
+    "bazaarId": "6f87af1436164c2d830cdee0615fe6f6",
+    "hancoin": 600,
+    "sellEndDate": "2025/10/14 16:54",
+    "listingItems": [
+      "A46EL",
+      "LC2EMW",
+      "E2197"
+    ]
+  },
+  {
+    "bazaarId": "7d862ec8f5a3490c8acd32c66dd12a83",
+    "hancoin": 300,
+    "sellEndDate": "2025/10/10 23:46",
+    "listingItems": [
+      "LC2EMW"
+    ]
+  },
+  {
+    "bazaarId": "022095ff442e4731a647b54e9185b2df",
+    "hancoin": 600,
+    "sellEndDate": "2025/10/14 16:54",
+    "listingItems": [
+      "A15HS",
+      "B1UY",
+      "LC2DX9",
+      "B32E0"
+    ]
+  },
+  {
+    "bazaarId": "6a827eacb2334eea9d2a4b5fde7119ba",
+    "hancoin": 400,
+    "sellEndDate": "2025/10/09 15:32",
+    "listingItems": [
+      "A322EV",
+      "E31EN",
+      "LC2DX9"
+    ]
+  },
+  {
+    "bazaarId": "a6ab11ddac9f4b5ab0f44b9abb117438",
+    "hancoin": 300,
+    "sellEndDate": "2025/10/10 23:50",
+    "listingItems": [
+      "LC2DX9"
+    ]
+  },
+  {
+    "bazaarId": "4b9101cbd31f4e01a748032ffe307459",
+    "hancoin": 100,
+    "sellEndDate": "2025/10/12 22:05",
+    "listingItems": [
+      "A15HS"
+    ]
+  },
+  {
+    "bazaarId": "8a482fa204d54351ae2a71a2f290b5e2",
+    "hancoin": 200,
+    "sellEndDate": "2025/10/13 08:54",
+    "listingItems": [
+      "B17W",
+      "LC1DUO",
+      "A131L",
+      "A15HS"
+    ]
+  },
+  {
+    "bazaarId": "ec2971d73692424c9614fa7109167dad",
+    "hancoin": 300,
+    "sellEndDate": "2025/10/12 14:10",
+    "listingItems": [
+      "B32E0",
+      "B115W",
+      "AF1BY",
+      "B2J0"
+    ]
+  },
+  {
+    "bazaarId": "34a97638565e491fbc439dc75cc868d0",
+    "hancoin": 200,
+    "sellEndDate": "2025/10/14 16:42",
+    "listingItems": [
+      "LD1WUQ",
+      "A25SA",
+      "CT1SQ",
+      "LC1ECY"
+    ]
+  },
+  {
+    "bazaarId": "b7a2a521cde14a7ba6fb2adb6a43e3ae",
+    "hancoin": 200,
+    "sellEndDate": "2025/10/14 16:42",
+    "listingItems": [
+      "E11E1",
+      "B1DH",
+      "AF1BC",
+      "CT1HE"
+    ]
+  },
+  {
+    "bazaarId": "3ab266e66c654be9b0cd251cb4f6a21c",
+    "hancoin": 100,
+    "sellEndDate": "2025/10/10 16:06",
+    "listingItems": [
+      "LC2EDO",
+      "E41N0",
+      "B32A0"
+    ]
+  },
+  {
+    "bazaarId": "ceae0efacdb047b8b0d220f9629f7558",
+    "hancoin": 100,
+    "sellEndDate": "2025/10/11 23:58",
+    "listingItems": [
+      "LD249Y",
+      "B32A0",
+      "AFX4",
+      "E41N0"
+    ]
+  },
+  {
     "bazaarId": "4177df9c2cb947cdbcfa5012c858b210",
     "hancoin": 100,
     "sellEndDate": "2025/10/14 15:51",
@@ -52,17 +183,6 @@
       "A14F1",
       "HC2BJQ",
       "LC2EGL"
-    ]
-  },
-  {
-    "bazaarId": "ceae0efacdb047b8b0d220f9629f7558",
-    "hancoin": 100,
-    "sellEndDate": "2025/10/11 23:58",
-    "listingItems": [
-      "LD249Y",
-      "B32A0",
-      "AFX4",
-      "E41N0"
     ]
   },
   {
@@ -828,17 +948,6 @@
     ]
   },
   {
-    "bazaarId": "98500f6a76f947ffa2451b6e56f75df2",
-    "hancoin": 1000,
-    "sellEndDate": "2025/10/08 02:00",
-    "listingItems": [
-      "AA19Z8",
-      "E41MR",
-      "A311O9",
-      "A46EL"
-    ]
-  },
-  {
     "bazaarId": "b33b9e1bb8a840af898e8636fb38f95f",
     "hancoin": 600,
     "sellEndDate": "2025/10/08 19:19",
@@ -1045,16 +1154,6 @@
     ]
   },
   {
-    "bazaarId": "6a827eacb2334eea9d2a4b5fde7119ba",
-    "hancoin": 400,
-    "sellEndDate": "2025/10/09 15:32",
-    "listingItems": [
-      "A322EV",
-      "E31EN",
-      "LC2DX9"
-    ]
-  },
-  {
     "bazaarId": "df7933bb7054452b905c0f950c5b647f",
     "hancoin": 1200,
     "sellEndDate": "2025/10/08 01:14",
@@ -1063,14 +1162,6 @@
       "E31EN",
       "P115J1",
       "HD1UAJ"
-    ]
-  },
-  {
-    "bazaarId": "a6ab11ddac9f4b5ab0f44b9abb117438",
-    "hancoin": 300,
-    "sellEndDate": "2025/10/10 23:50",
-    "listingItems": [
-      "LC2DX9"
     ]
   },
   {
@@ -1127,25 +1218,6 @@
     "sellEndDate": "2025/10/08 21:40",
     "listingItems": [
       "AA2UW"
-    ]
-  },
-  {
-    "bazaarId": "4b9101cbd31f4e01a748032ffe307459",
-    "hancoin": 100,
-    "sellEndDate": "2025/10/12 22:05",
-    "listingItems": [
-      "A15HS"
-    ]
-  },
-  {
-    "bazaarId": "8a482fa204d54351ae2a71a2f290b5e2",
-    "hancoin": 200,
-    "sellEndDate": "2025/10/13 08:54",
-    "listingItems": [
-      "B17W",
-      "LC1DUO",
-      "A131L",
-      "A15HS"
     ]
   },
   {
@@ -1605,17 +1677,6 @@
     ]
   },
   {
-    "bazaarId": "ec2971d73692424c9614fa7109167dad",
-    "hancoin": 300,
-    "sellEndDate": "2025/10/12 14:10",
-    "listingItems": [
-      "B32E0",
-      "B115W",
-      "AF1BY",
-      "B2J0"
-    ]
-  },
-  {
     "bazaarId": "4f893662cb8a4e98acba31ef9e3fcc8b",
     "hancoin": 700,
     "sellEndDate": "2025/10/12 14:03",
@@ -2022,14 +2083,6 @@
     ]
   },
   {
-    "bazaarId": "7d862ec8f5a3490c8acd32c66dd12a83",
-    "hancoin": 300,
-    "sellEndDate": "2025/10/10 23:46",
-    "listingItems": [
-      "LC2EMW"
-    ]
-  },
-  {
     "bazaarId": "9c6747be02b8470e9abe2a2fb71e0e75",
     "hancoin": 300,
     "sellEndDate": "2025/10/10 23:46",
@@ -2148,14 +2201,6 @@
     "sellEndDate": "2025/10/10 03:41",
     "listingItems": [
       "E11L8"
-    ]
-  },
-  {
-    "bazaarId": "f5cb3c68953a4261a908666a2c9f4cb3",
-    "hancoin": 7700,
-    "sellEndDate": "2025/10/08 12:34",
-    "listingItems": [
-      "ABXKV"
     ]
   },
   {
@@ -2383,14 +2428,6 @@
       "CT1U0",
       "AE34T",
       "AB1MF"
-    ]
-  },
-  {
-    "bazaarId": "0a747b18438b4adeb7699e1fbc59a11b",
-    "hancoin": 7700,
-    "sellEndDate": "2025/10/08 12:35",
-    "listingItems": [
-      "AEYO0"
     ]
   },
   {
