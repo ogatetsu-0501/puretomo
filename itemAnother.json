@@ -1,5 +1,17 @@
 [
   {
+    "itemCode": "P127OB",
+    "itemName": "月凛華",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A4A2F",
+    "itemName": "スターパレード",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "E11D4",
     "itemName": "ぴよぴよ会議中",
     "parts": "E1",
@@ -10,12 +22,6 @@
     "itemName": "マキャベリストのイグアナ",
     "parts": "E1",
     "itemGender": "M"
-  },
-  {
-    "itemCode": "P127OB",
-    "itemName": "月凛華",
-    "parts": "P",
-    "itemGender": "F"
   },
   {
     "itemCode": "LD219KC",
@@ -69,18 +75,6 @@
     "itemCode": "LD2195Q",
     "itemName": "【復刻】いたずらリラックスCh",
     "parts": "HL",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "AB48E",
-    "itemName": "トワイライトバタフライムーン",
-    "parts": "AB",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A26FV",
-    "itemName": "がじがじコーラキャンディ",
-    "parts": "A2",
     "itemGender": "F"
   }
 ]
