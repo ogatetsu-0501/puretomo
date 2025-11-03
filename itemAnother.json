@@ -1,5 +1,35 @@
 [
   {
+    "itemCode": "LD24CH",
+    "itemName": "【R】フォールライトグラス",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD2D7",
+    "itemName": "パーティシャイン",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD236K",
+    "itemName": "おめめルームウェア",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "P127OB",
+    "itemName": "月凛華",
+    "parts": "P",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "A4A2F",
+    "itemName": "スターパレード",
+    "parts": "A4",
+    "itemGender": "A"
+  },
+  {
     "itemCode": "E119F",
     "itemName": "おもちゃつみつみ",
     "parts": "E1",
@@ -22,36 +52,6 @@
     "itemName": "だいなそーさっく",
     "parts": "B3",
     "itemGender": "F"
-  },
-  {
-    "itemCode": "PN1V6",
-    "itemName": "ラフアレンジ",
-    "parts": "P",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "B1UJ",
-    "itemName": "もこもこバッグ",
-    "parts": "B1",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "LC1EEE",
-    "itemName": "ロリポップスリム",
-    "parts": "L",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "P127OB",
-    "itemName": "月凛華",
-    "parts": "P",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "A4A2F",
-    "itemName": "スターパレード",
-    "parts": "A4",
-    "itemGender": "A"
   },
   {
     "itemCode": "LD27AI",
@@ -81,24 +81,6 @@
     "itemCode": "A484B",
     "itemName": "ハロースクロール",
     "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "B2194P",
-    "itemName": "[’S]漆黒メカクレ",
-    "parts": "B2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "A23EQ",
-    "itemName": "THE苦無",
-    "parts": "A2",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "ABFO",
-    "itemName": "三千世界【特賞】",
-    "parts": "AB",
     "itemGender": "A"
   }
 ]
