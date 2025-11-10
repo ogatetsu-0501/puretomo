@@ -6,12 +6,6 @@
     "itemGender": "A"
   },
   {
-    "itemCode": "LD27AI",
-    "itemName": "サムライ無双",
-    "parts": "HL",
-    "itemGender": "F"
-  },
-  {
     "itemCode": "AA1AI9",
     "itemName": "蜘蛛の住処",
     "parts": "AA",
@@ -27,6 +21,12 @@
     "itemCode": "B21AMP",
     "itemName": "マリフラ♀",
     "parts": "B2",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD27AI",
+    "itemName": "サムライ無双",
+    "parts": "HL",
     "itemGender": "F"
   },
   {
@@ -51,24 +51,6 @@
     "itemCode": "A4A2F",
     "itemName": "スターパレード",
     "parts": "A4",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AB3J6",
-    "itemName": "赤ずれメガネ・18th",
-    "parts": "AB",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AB3N6",
-    "itemName": "[Je]クレイジーシグナル",
-    "parts": "AB",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "AB2UU",
-    "itemName": "プロボケイション・ソファ",
-    "parts": "AB",
     "itemGender": "A"
   },
   {
