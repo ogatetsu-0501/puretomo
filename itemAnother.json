@@ -1,8 +1,38 @@
 [
   {
-    "itemCode": "LD27AI",
-    "itemName": "サムライ無双",
+    "itemCode": "A14F1",
+    "itemName": "にわとりさんだっこ",
+    "parts": "A1",
+    "itemGender": "A"
+  },
+  {
+    "itemCode": "B31A3",
+    "itemName": "ぴよさんと一緒",
+    "parts": "B3",
+    "itemGender": "M"
+  },
+  {
+    "itemCode": "LD254E",
+    "itemName": "どこでもらくがきっず",
     "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LD236K",
+    "itemName": "おめめルームウェア",
+    "parts": "HL",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "HC2BJQ",
+    "itemName": "ゆるっとラグラン",
+    "parts": "H",
+    "itemGender": "F"
+  },
+  {
+    "itemCode": "LC2EGL",
+    "itemName": "ロリポップミニ",
+    "parts": "L",
     "itemGender": "F"
   },
   {
@@ -28,6 +58,12 @@
     "itemName": "スターパレード",
     "parts": "A4",
     "itemGender": "A"
+  },
+  {
+    "itemCode": "LD27AI",
+    "itemName": "サムライ無双",
+    "parts": "HL",
+    "itemGender": "F"
   },
   {
     "itemCode": "A2220",
@@ -58,30 +94,6 @@
     "itemName": "とあるお家のお庭で",
     "parts": "A4",
     "itemGender": "A"
-  },
-  {
-    "itemCode": "A14F1",
-    "itemName": "にわとりさんだっこ",
-    "parts": "A1",
-    "itemGender": "A"
-  },
-  {
-    "itemCode": "B31A3",
-    "itemName": "ぴよさんと一緒",
-    "parts": "B3",
-    "itemGender": "M"
-  },
-  {
-    "itemCode": "HC2BJQ",
-    "itemName": "ゆるっとラグラン",
-    "parts": "H",
-    "itemGender": "F"
-  },
-  {
-    "itemCode": "LC2EGL",
-    "itemName": "ロリポップミニ",
-    "parts": "L",
-    "itemGender": "F"
   },
   {
     "itemCode": "P111262",
